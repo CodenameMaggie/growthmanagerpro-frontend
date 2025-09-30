@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Growth Manager Pro - Campaigns</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f7fa; }
+        
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        
+        .header { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+        .header h1 { color: #2c3e50; font-size: 2rem; margin-bottom: 0.5rem; }
+        .header .subtitle { color: #7f8c8d; }
+        
+        .status { position: fixed; top: 20px; right: 20px; padding: 10px 15px; border-radius: 6px; font-size: 0.9rem; font-weight: 600; z-index: 1000; }
+        .status.loading { background: #fff3cd; color: #856404; }
+        .status.connected { background: #d4edda; color: #155724; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .stat-card { background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center; }
+        .stat-number { font-size: 2rem; font-weight: bold; margin-bottom: 0.5rem; }
+        .stat-label { color: #7f8c8d; font-size: 0.9rem; text-transform: uppercase; }
+        
+        .data-container { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); overflow: hidden; }
+        .data-header { background: #e67e22; color: white; padding: 1.5rem; }
+        
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #d35400; color: white; padding: 1rem; text-align: left; font-weight: 600; }
+        td { padding: 1rem; border-bottom: 1px solid #ecf0f1; }
+        tr:hover { background: #f8f9fa; }
+        
+        .campaign-name { font-weight: 600; color: #2c3e50; }
+        
+        .badge { padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: bold; }
+        .badge.active { background: #d4edda; color: #155724; }
+        .badge.paused { background: #fff3cd; color: #856404; }
+        .badge.completed { background: #d1ecf1; color: #0c5460; }
+        
+        .btn { background: #e67e22; color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 6px; cursor: pointer; }
+        .btn:hover { background: #d35400; }
+        
+        .error-box { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 1rem; border-radius: 6px; margin: 1rem; }
+        
+        .empty-state { text-align: center; padding: 3rem; color: #7f8c8d; }
+        .empty-state h3 { margin-bottom: 1rem; color: #2c3e50; }
+    </style>
+</head>
+<body>
+    <div class="status loading" id="status">Loading...</div>
+    
+    <div class="container">
+        <div class="header">
+            <h1>Campaigns</h1>
+            <p class="subtitle">Outreach tracking - Ready for Instantly integration</p>
+            <button class="btn" onclick="loadData()" style="margin-top: 1rem;">Refresh Data</button>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" style="color: #e67e22;" id="total">0</div>
+                <div class="stat-label">Total Campaigns</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" style="color: #27ae60;" id="active">0</div>
+                <div class="stat-label">Active</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" style="color: #f39c12;" id="paused">0</div>
+                <div class="stat-label">Paused</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" style="color: #3498db;" id="completed">0</div>
+                <div class="stat-label">Completed</div>
+            </div>
+        </div>
+
+        <div class="data-container">
+            <div class="data-header">
+                <h2>All Campaigns (<span id="count">0</span>)</h2>
+            </div>
+            <div id="tableContainer">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Campaign</th>
+                            <th>Type</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Status</th>
+                            <th>Target Audience</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody">
+                        <tr><td colspan="6" style="text-align: center; padding: 2rem;">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://growthmanagerpro-backend.vercel.app';
+        
+        let data = [];
+
+        async function loadData() {
+            const status = document.getElementById('status');
+            status.className = 'status loading';
+            status.textContent = 'Loading...';
+
+            try {
+                const response = await fetch(`${API_URL}/api/campaigns`);
+                
+                if (!response.ok) {
+                    throw new Error(`API returned ${response.status}`);
+                }
+
+                const result = await response.json();
+                
+                if (!result.success) {
+                    throw new Error(result.error || 'API returned error');
+                }
+
+                data = result.data.campaigns;
+                updateStats(result.data.stats);
+                renderTable();
+                
+                status.className = 'status connected';
+                status.textContent = '✓ Connected';
+                
+            } catch (error) {
+                console.error('Error:', error);
+                status.className = 'status error';
+                status.textContent = '✗ Error';
+                showError(error.message);
+            }
+        }
+
+        function updateStats(stats) {
+            document.getElementById('total').textContent = stats.totalCampaigns;
+            document.getElementById('active').textContent = stats.activeCampaigns;
+            document.getElementById('paused').textContent = stats.pausedCampaigns;
+            document.getElementById('completed').textContent = stats.completedCampaigns;
+            document.getElementById('count').textContent = data.length;
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('tbody');
+            
+            if (data.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6">
+                            <div class="empty-state">
+                                <h3>No Campaigns Yet</h3>
+                                <p>Add campaigns through Supabase or connect Instantly integration</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = data.map(item => `
+                <tr>
+                    <td class="campaign-name">${item.campaignName}</td>
+                    <td>${item.campaignType || 'N/A'}</td>
+                    <td>${item.startDate ? new Date(item.startDate).toLocaleDateString() : 'N/A'}</td>
+                    <td>${item.endDate ? new Date(item.endDate).toLocaleDateString() : 'N/A'}</td>
+                    <td><span class="badge ${(item.status || '').toLowerCase()}">${item.status || 'N/A'}</span></td>
+                    <td>${item.targetAudience || 'N/A'}</td>
+                </tr>
+            `).join('');
+        }
+
+        function showError(message) {
+            const tbody = document.getElementById('tbody');
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6">
+                        <div class="error-box">
+                            <strong>Error loading data:</strong> ${message}
+                            <br><br>
+                            <button class="btn" onclick="loadData()">Retry</button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
+
+        document.addEventListener('DOMContentLoaded', loadData);
+    </script>
+</body>
+</html>
