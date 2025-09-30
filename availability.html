@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Growth Manager Pro - Availability</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f7fa; }
+        
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        
+        .header { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+        .header h1 { color: #2c3e50; font-size: 2rem; margin-bottom: 0.5rem; }
+        .header .subtitle { color: #7f8c8d; }
+        
+        .status { position: fixed; top: 20px; right: 20px; padding: 10px 15px; border-radius: 6px; font-size: 0.9rem; font-weight: 600; z-index: 1000; }
+        .status.loading { background: #fff3cd; color: #856404; }
+        .status.connected { background: #d4edda; color: #155724; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .stat-card { background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center; }
+        .stat-number { font-size: 2rem; font-weight: bold; margin-bottom: 0.5rem; }
+        .stat-label { color: #7f8c8d; font-size: 0.9rem; text-transform: uppercase; }
+        
+        .data-container { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); overflow: hidden; }
+        .data-header { background: #1abc9c; color: white; padding: 1.5rem; }
+        
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #16a085; color: white; padding: 1rem; text-align: left; font-weight: 600; }
+        td { padding: 1rem; border-bottom: 1px solid #ecf0f1; }
+        tr:hover { background: #f8f9fa; }
+        
+        .badge { padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: bold; }
+        .badge.available { background: #d4edda; color: #155724; }
+        .badge.booked { background: #f8d7da; color: #721c24; }
+        
+        .time-slot { font-weight: 600; color: #2c3e50; }
+        
+        .btn { background: #1abc9c; color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 6px; cursor: pointer; }
+        .btn:hover { background: #16a085; }
+        
+        .error-box { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 1rem; border-radius: 6px; margin: 1rem; }
+        
+        .empty-state { text-align: center; padding: 3rem; color: #7f8c8d; }
+        .empty-state h3 { margin-bottom: 1rem; color: #2c3e50; }
+    </style>
+</head>
+<body>
+    <div class="status loading" id="status">Loading...</div>
+    
+    <div class="container">
+        <div class="header">
+            <h1>Availability</h1>
+            <p class="subtitle">Schedule settings - Ready for calendar integration</p>
+            <button class="btn" onclick="loadData()" style="margin-top: 1rem;">Refresh Data</button>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" style="color: #1abc9c;" id="total">0</div>
+                <div class="stat-label">Total Slots</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" style="color: #27ae60;" id="available">0</div>
+                <div class="stat-label">Available</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" style="color: #e74c3c;" id="booked">0</div>
+                <div class="stat-label">Booked</div>
+            </div>
+        </div>
+
+        <div class="data-container">
+            <div class="data-header">
+                <h2>Calendar Schedule (<span id="count">0</span>)</h2>
+            </div>
+            <div id="tableContainer">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Time Slot</th>
+                            <th>Status</th>
+                            <th>Event</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody">
+                        <tr><td colspan="5" style="text-align: center; padding: 2rem;">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://growthmanagerpro-backend.vercel.app';
+        
+        let data = [];
+
+        async function loadData() {
+            const status = document.getElementById('status');
+            status.className = 'status loading';
+            status.textContent = 'Loading...';
+
+            try {
+                const response = await fetch(`${API_URL}/api/availability`);
+                
+                if (!response.ok) {
+                    throw new Error(`API returned ${response.status}`);
+                }
+
+                const result = await response.json();
+                
+                if (!result.success) {
+                    throw new Error(result.error || 'API returned error');
+                }
+
+                data = result.data.availability;
+                updateStats(result.data.stats);
+                renderTable();
+                
+                status.className = 'status connected';
+                status.textContent = '✓ Connected';
+                
+            } catch (error) {
+                console.error('Error:', error);
+                status.className = 'status error';
+                status.textContent = '✗ Error';
+                showError(error.message);
+            }
+        }
+
+        function updateStats(stats) {
+            document.getElementById('total').textContent = stats.totalSlots;
+            document.getElementById('available').textContent = stats.availableSlots;
+            document.getElementById('booked').textContent = stats.bookedSlots;
+            document.getElementById('count').textContent = data.length;
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('tbody');
+            
+            if (data.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5">
+                            <div class="empty-state">
+                                <h3>No Schedule Data Yet</h3>
+                                <p>Add availability slots through Supabase or connect your calendar</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = data.map(item => `
+                <tr>
+                    <td>${item.date ? new Date(item.date).toLocaleDateString() : 'N/A'}</td>
+                    <td class="time-slot">${item.timeSlot || 'N/A'}</td>
+                    <td><span class="badge ${item.isAvailable ? 'available' : 'booked'}">${item.isAvailable ? 'Available' : 'Booked'}</span></td>
+                    <td>
+                        <div style="font-weight: 600;">${item.eventTitle || 'No event'}</div>
+                        <div style="font-size: 0.85rem; color: #7f8c8d;">${item.eventDescription || ''}</div>
+                    </td>
+                    <td>${item.notes || 'N/A'}</td>
+                </tr>
+            `).join('');
+        }
+
+        function showError(message) {
+            const tbody = document.getElementById('tbody');
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="5">
+                        <div class="error-box">
+                            <strong>Error loading data:</strong> ${message}
+                            <br><br>
+                            <button class="btn" onclick="loadData()">Retry</button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
+
+        document.addEventListener('DOMContentLoaded', loadData);
+    </script>
+</body>
+</html>
