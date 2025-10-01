@@ -10,16 +10,25 @@
         
         .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
         
-        .header { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 2rem; }
-        .header h1 { color: #2c3e50; font-size: 2rem; margin-bottom: 0.5rem; }
+        .header { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+        .header h1 { color: #2c3e50; font-size: 2rem; }
         .header .subtitle { color: #7f8c8d; }
+        
+        .btn { background: #3498db; color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 6px; cursor: pointer; font-size: 0.9rem; }
+        .btn:hover { background: #2980b9; }
+        .btn.success { background: #27ae60; }
+        .btn.success:hover { background: #229954; }
+        .btn.danger { background: #e74c3c; }
+        .btn.danger:hover { background: #c0392b; }
+        .btn.secondary { background: #95a5a6; }
+        .btn.secondary:hover { background: #7f8c8d; }
         
         .status { position: fixed; top: 20px; right: 20px; padding: 10px 15px; border-radius: 6px; font-size: 0.9rem; font-weight: 600; z-index: 1000; }
         .status.loading { background: #fff3cd; color: #856404; }
         .status.connected { background: #d4edda; color: #155724; }
         .status.error { background: #f8d7da; color: #721c24; }
         
-        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
         .stat-card { background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center; }
         .stat-number { font-size: 2rem; font-weight: bold; margin-bottom: 0.5rem; }
         .stat-label { color: #7f8c8d; font-size: 0.9rem; text-transform: uppercase; }
@@ -32,27 +41,38 @@
         td { padding: 1rem; border-bottom: 1px solid #ecf0f1; }
         tr:hover { background: #f8f9fa; }
         
-        .deal-info { font-weight: 600; color: #2c3e50; }
-        .company-name { font-size: 0.9rem; color: #7f8c8d; margin-top: 0.25rem; }
+        .badge { padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: bold; text-transform: uppercase; }
+        .badge.discovery { background: #e0e7ff; color: #3730a3; }
+        .badge.proposal { background: #fef3c7; color: #92400e; }
+        .badge.negotiation { background: #fecaca; color: #dc2626; }
+        .badge.closed-won { background: #d1fae5; color: #065f46; }
+        .badge.closed-lost { background: #fee2e2; color: #991b1b; }
         
-        .badge { padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: bold; }
-        .badge.prospecting { background: #e3f2fd; color: #1565c0; }
-        .badge.qualified { background: #f3e5f5; color: #6a1b9a; }
-        .badge.proposal { background: #fff3e0; color: #e65100; }
-        .badge.negotiation { background: #fce4ec; color: #c2185b; }
-        .badge.closed-won { background: #e8f5e9; color: #2e7d32; }
-        .badge.closed-lost { background: #ffebee; color: #c62828; }
+        .deal-value { font-weight: bold; color: #27ae60; font-size: 1.1rem; }
         
-        .value { font-weight: 600; color: #27ae60; font-size: 1.1rem; }
-        .probability { font-size: 0.9rem; color: #7f8c8d; }
+        .probability-bar { width: 80px; height: 6px; background: #ecf0f1; border-radius: 3px; overflow: hidden; display: inline-block; vertical-align: middle; margin-right: 0.5rem; }
+        .probability-fill { height: 100%; background: linear-gradient(90deg, #e74c3c, #f39c12, #27ae60); border-radius: 3px; }
         
-        .btn { background: #3498db; color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 6px; cursor: pointer; }
-        .btn:hover { background: #2980b9; }
+        .actions { display: flex; gap: 0.5rem; }
+        .action-btn { padding: 0.4rem 0.8rem; border: none; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
+        .action-btn.edit { background: #3498db; color: white; }
+        .action-btn.delete { background: #e74c3c; color: white; }
         
-        .error-box { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 1rem; border-radius: 6px; margin: 1rem; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center; }
+        .modal.show { display: flex; }
+        .modal-content { background: white; padding: 2rem; border-radius: 12px; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .modal-header h2 { color: #2c3e50; }
+        .close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #7f8c8d; }
+        
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; color: #2c3e50; font-weight: 500; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.8rem; border: 1px solid #e1e5e9; border-radius: 6px; font-size: 0.9rem; }
+        .form-group textarea { min-height: 100px; resize: vertical; }
+        
+        .form-actions { display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem; }
         
         .empty-state { text-align: center; padding: 3rem; color: #7f8c8d; }
-        .empty-state h3 { margin-bottom: 1rem; color: #2c3e50; }
     </style>
 </head>
 <body>
@@ -60,9 +80,14 @@
     
     <div class="container">
         <div class="header">
-            <h1>Live Sales Pipeline</h1>
-            <p class="subtitle">Real-time data from Supabase • Deal progression tracking</p>
-            <button class="btn" onclick="loadData()" style="margin-top: 1rem;">Refresh Data</button>
+            <div>
+                <h1>Sales Pipeline</h1>
+                <p class="subtitle">Deal tracking & progression management</p>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+                <button class="btn success" onclick="openAddModal()">+ Add Deal</button>
+                <button class="btn" onclick="loadData()">Refresh</button>
+            </div>
         </div>
 
         <div class="stats">
@@ -79,38 +104,100 @@
                 <div class="stat-label">Weighted Value</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number" style="color: #f39c12;" id="average">$0</div>
-                <div class="stat-label">Average Deal Size</div>
+                <div class="stat-number" style="color: #e67e22;" id="avg">$0</div>
+                <div class="stat-label">Avg Deal Size</div>
             </div>
         </div>
 
         <div class="data-container">
             <div class="data-header">
-                <h2>Live Pipeline from Supabase (<span id="count">0</span>)</h2>
+                <h2>Pipeline Deals (<span id="count">0</span>)</h2>
             </div>
-            <div id="tableContainer">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Deal</th>
-                            <th>Company</th>
-                            <th>Value</th>
-                            <th>Stage</th>
-                            <th>Probability</th>
-                            <th>Expected Close</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tbody">
-                        <tr><td colspan="6" style="text-align: center; padding: 2rem;">Loading...</td></tr>
-                    </tbody>
-                </table>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Deal</th>
+                        <th>Contact</th>
+                        <th>Company</th>
+                        <th>Value</th>
+                        <th>Stage</th>
+                        <th>Probability</th>
+                        <th>Close Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody">
+                    <tr><td colspan="8" style="text-align: center; padding: 2rem;">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="modal" id="dealModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Add Deal</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
             </div>
+            <form id="dealForm" onsubmit="saveDeal(event)">
+                <input type="hidden" id="dealId">
+                
+                <div class="form-group">
+                    <label>Deal Name *</label>
+                    <input type="text" id="dealName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Contact Name *</label>
+                    <input type="text" id="contactName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Company</label>
+                    <input type="text" id="company">
+                </div>
+                
+                <div class="form-group">
+                    <label>Deal Value ($)</label>
+                    <input type="number" id="value" min="0" step="100" value="0">
+                </div>
+                
+                <div class="form-group">
+                    <label>Stage</label>
+                    <select id="stage">
+                        <option value="discovery">Discovery</option>
+                        <option value="proposal">Proposal</option>
+                        <option value="negotiation">Negotiation</option>
+                        <option value="closed-won">Closed Won</option>
+                        <option value="closed-lost">Closed Lost</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Probability (%)</label>
+                    <input type="number" id="probability" min="0" max="100" value="50">
+                </div>
+                
+                <div class="form-group">
+                    <label>Expected Close Date</label>
+                    <input type="date" id="expectedClose">
+                </div>
+                
+                <div class="form-group">
+                    <label>Notes</label>
+                    <textarea id="notes"></textarea>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn secondary" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn success">Save</button>
+                </div>
+            </form>
         </div>
     </div>
 
     <script>
         const API_URL = 'https://growthmanagerpro-backend.vercel.app';
-        
         let data = [];
 
         async function loadData() {
@@ -136,21 +223,26 @@
                 renderTable();
                 
                 status.className = 'status connected';
-                status.textContent = '✓ Connected';
+                status.textContent = 'Connected';
                 
             } catch (error) {
                 console.error('Error:', error);
                 status.className = 'status error';
-                status.textContent = '✗ Error';
-                showError(error.message);
+                status.textContent = 'Error';
+                document.getElementById('tbody').innerHTML = `
+                    <tr><td colspan="8" style="text-align: center; padding: 2rem; color: #e74c3c;">
+                        Error: ${error.message}<br>
+                        <button class="btn" onclick="loadData()" style="margin-top: 1rem;">Retry</button>
+                    </td></tr>
+                `;
             }
         }
 
         function updateStats(stats) {
             document.getElementById('total').textContent = stats.totalDeals;
-            document.getElementById('pipeline').textContent = '$' + stats.pipelineValue.toLocaleString('en-US', {maximumFractionDigits: 0});
-            document.getElementById('weighted').textContent = '$' + stats.weightedValue.toLocaleString('en-US', {maximumFractionDigits: 0});
-            document.getElementById('average').textContent = '$' + stats.avgDealSize.toLocaleString('en-US', {maximumFractionDigits: 0});
+            document.getElementById('pipeline').textContent = '$' + Math.round(stats.pipelineValue || 0).toLocaleString();
+            document.getElementById('weighted').textContent = '$' + Math.round(stats.weightedValue || 0).toLocaleString();
+            document.getElementById('avg').textContent = '$' + Math.round(stats.avgDealSize || 0).toLocaleString();
             document.getElementById('count').textContent = data.length;
         }
 
@@ -159,46 +251,140 @@
             
             if (data.length === 0) {
                 tbody.innerHTML = `
-                    <tr>
-                        <td colspan="6">
-                            <div class="empty-state">
-                                <h3>No Pipeline Deals Yet</h3>
-                                <p>Add deals through Supabase to start tracking your pipeline</p>
-                            </div>
-                        </td>
-                    </tr>
+                    <tr><td colspan="8">
+                        <div class="empty-state">
+                            <h3>No deals in pipeline</h3>
+                            <p>Click "Add Deal" to create your first pipeline deal</p>
+                        </div>
+                    </td></tr>
                 `;
                 return;
             }
 
             tbody.innerHTML = data.map(item => `
                 <tr>
-                    <td>
-                        <div class="deal-info">${item.dealName}</div>
-                        <div class="company-name">${item.contactName || 'No contact'}</div>
-                    </td>
+                    <td><strong>${item.dealName}</strong></td>
+                    <td>${item.contactName}</td>
                     <td>${item.company || 'N/A'}</td>
-                    <td class="value">$${parseFloat(item.value || 0).toLocaleString('en-US')}</td>
-                    <td><span class="badge ${(item.stage || '').toLowerCase().replace(/\s+/g, '-')}">${item.stage || 'N/A'}</span></td>
-                    <td class="probability">${item.probability || 0}%</td>
-                    <td>${item.expectedCloseDate ? new Date(item.expectedCloseDate).toLocaleDateString() : 'N/A'}</td>
+                    <td><span class="deal-value">$${(item.value || 0).toLocaleString()}</span></td>
+                    <td><span class="badge ${item.stage}">${item.stage}</span></td>
+                    <td>
+                        <div class="probability-bar">
+                            <div class="probability-fill" style="width: ${item.probability || 0}%"></div>
+                        </div>
+                        ${item.probability || 0}%
+                    </td>
+                    <td>${item.expectedClose ? new Date(item.expectedClose).toLocaleDateString() : 'TBD'}</td>
+                    <td>
+                        <div class="actions">
+                            <button class="action-btn edit" onclick='editDeal(${JSON.stringify(item)})'>Edit</button>
+                            <button class="action-btn delete" onclick="deleteDeal('${item.id}', '${item.dealName}')">Delete</button>
+                        </div>
+                    </td>
                 </tr>
             `).join('');
         }
 
-        function showError(message) {
-            const tbody = document.getElementById('tbody');
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="6">
-                        <div class="error-box">
-                            <strong>Error loading data:</strong> ${message}
-                            <br><br>
-                            <button class="btn" onclick="loadData()">Retry</button>
-                        </div>
-                    </td>
-                </tr>
-            `;
+        function openAddModal() {
+            document.getElementById('modalTitle').textContent = 'Add Deal';
+            document.getElementById('dealForm').reset();
+            document.getElementById('dealId').value = '';
+            document.getElementById('value').value = '0';
+            document.getElementById('probability').value = '50';
+            document.getElementById('dealModal').classList.add('show');
+        }
+
+        function editDeal(deal) {
+            document.getElementById('modalTitle').textContent = 'Edit Deal';
+            document.getElementById('dealId').value = deal.id;
+            document.getElementById('dealName').value = deal.dealName;
+            document.getElementById('contactName').value = deal.contactName;
+            document.getElementById('company').value = deal.company || '';
+            document.getElementById('value').value = deal.value || 0;
+            document.getElementById('stage').value = deal.stage || 'discovery';
+            document.getElementById('probability').value = deal.probability || 50;
+            document.getElementById('notes').value = deal.notes || '';
+            
+            if (deal.expectedClose) {
+                const date = new Date(deal.expectedClose);
+                document.getElementById('expectedClose').value = date.toISOString().split('T')[0];
+            }
+            
+            document.getElementById('dealModal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('dealModal').classList.remove('show');
+        }
+
+        async function saveDeal(event) {
+            event.preventDefault();
+            
+            const id = document.getElementById('dealId').value;
+            const dealData = {
+                dealName: document.getElementById('dealName').value,
+                contactName: document.getElementById('contactName').value,
+                company: document.getElementById('company').value,
+                value: parseFloat(document.getElementById('value').value) || 0,
+                stage: document.getElementById('stage').value,
+                probability: parseInt(document.getElementById('probability').value) || 50,
+                expectedClose: document.getElementById('expectedClose').value || null,
+                notes: document.getElementById('notes').value
+            };
+
+            try {
+                const isEdit = !!id;
+                if (isEdit) {
+                    dealData.id = id;
+                }
+
+                const response = await fetch(`${API_URL}/api/pipeline`, {
+                    method: isEdit ? 'PUT' : 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(dealData)
+                });
+
+                const result = await response.json();
+
+                if (!result.success) {
+                    throw new Error(result.error || 'Failed to save');
+                }
+
+                alert(isEdit ? 'Deal updated successfully!' : 'Deal added successfully!');
+                closeModal();
+                loadData();
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error: ' + error.message);
+            }
+        }
+
+        async function deleteDeal(id, name) {
+            if (!confirm(`Are you sure you want to delete ${name}?`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/api/pipeline`, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id })
+                });
+
+                const result = await response.json();
+
+                if (!result.success) {
+                    throw new Error(result.error || 'Failed to delete');
+                }
+
+                alert('Deal deleted successfully!');
+                loadData();
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error: ' + error.message);
+            }
         }
 
         document.addEventListener('DOMContentLoaded', loadData);
