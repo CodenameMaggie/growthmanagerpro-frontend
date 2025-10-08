@@ -10,50 +10,71 @@
         
         .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
         
-        .header { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 2rem; }
-        .header h1 { color: #2c3e50; font-size: 2rem; margin-bottom: 0.5rem; }
+        .header { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+        .header h1 { color: #2c3e50; font-size: 2rem; }
         .header .subtitle { color: #7f8c8d; }
+        
+        .btn { background: #3498db; color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 6px; cursor: pointer; font-size: 0.9rem; }
+        .btn:hover { background: #2980b9; }
+        .btn.success { background: #27ae60; }
+        .btn.success:hover { background: #229954; }
+        .btn.danger { background: #e74c3c; }
+        .btn.danger:hover { background: #c0392b; }
+        .btn.secondary { background: #95a5a6; }
+        .btn.secondary:hover { background: #7f8c8d; }
         
         .status { position: fixed; top: 20px; right: 20px; padding: 10px 15px; border-radius: 6px; font-size: 0.9rem; font-weight: 600; z-index: 1000; }
         .status.loading { background: #fff3cd; color: #856404; }
         .status.connected { background: #d4edda; color: #155724; }
         .status.error { background: #f8d7da; color: #721c24; }
         
-        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
         .stat-card { background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center; }
         .stat-number { font-size: 2rem; font-weight: bold; margin-bottom: 0.5rem; }
         .stat-label { color: #7f8c8d; font-size: 0.9rem; text-transform: uppercase; }
         
-        .cash-positive { color: #27ae60; }
-        .cash-negative { color: #e74c3c; }
+        .filters { background: white; padding: 1rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 2rem; display: flex; gap: 1rem; flex-wrap: wrap; }
+        .filter-group { display: flex; align-items: center; gap: 0.5rem; }
+        .filter-group label { font-size: 0.9rem; color: #2c3e50; font-weight: 500; }
+        .filter-select, .search-input { padding: 0.5rem 0.8rem; border: 1px solid #e1e5e9; border-radius: 6px; font-size: 0.9rem; outline: none; }
+        .search-input { min-width: 250px; }
         
         .data-container { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); overflow: hidden; }
-        .data-header { background: #f39c12; color: white; padding: 1.5rem; }
+        .data-header { background: #2ecc71; color: white; padding: 1.5rem; }
         
         table { width: 100%; border-collapse: collapse; }
-        th { background: #e67e22; color: white; padding: 1rem; text-align: left; font-weight: 600; }
+        th { background: #27ae60; color: white; padding: 1rem; text-align: left; font-weight: 600; }
         td { padding: 1rem; border-bottom: 1px solid #ecf0f1; }
         tr:hover { background: #f8f9fa; }
         
-        .amount { font-weight: 600; font-size: 1.1rem; }
+        .badge { padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: bold; text-transform: uppercase; }
+        .badge.income { background: #d1fae5; color: #065f46; }
+        .badge.expense { background: #fee2e2; color: #991b1b; }
+        
+        .amount { font-weight: bold; font-size: 1.1rem; }
         .amount.income { color: #27ae60; }
         .amount.expense { color: #e74c3c; }
         
-        .badge { padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: bold; }
-        .badge.income { background: #d4edda; color: #155724; }
-        .badge.expense { background: #f8d7da; color: #721c24; }
+        .actions { display: flex; gap: 0.5rem; }
+        .action-btn { padding: 0.4rem 0.8rem; border: none; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
+        .action-btn.edit { background: #3498db; color: white; }
+        .action-btn.delete { background: #e74c3c; color: white; }
         
-        .btn { background: #f39c12; color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 6px; cursor: pointer; }
-        .btn:hover { background: #e67e22; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center; }
+        .modal.show { display: flex; }
+        .modal-content { background: white; padding: 2rem; border-radius: 12px; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .modal-header h2 { color: #2c3e50; }
+        .close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #7f8c8d; }
         
-        .error-box { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 1rem; border-radius: 6px; margin: 1rem; }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; color: #2c3e50; font-weight: 500; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.8rem; border: 1px solid #e1e5e9; border-radius: 6px; font-size: 0.9rem; }
+        .form-group textarea { min-height: 100px; resize: vertical; }
+        
+        .form-actions { display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem; }
         
         .empty-state { text-align: center; padding: 3rem; color: #7f8c8d; }
-        .empty-state h3 { margin-bottom: 1rem; color: #2c3e50; }
-        
-        .balance-indicator { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-left: 0.5rem; }
-        .balance-indicator.positive { background: #27ae60; }
-        .balance-indicator.negative { background: #e74c3c; }
     </style>
 </head>
 <body>
@@ -61,9 +82,29 @@
     
     <div class="container">
         <div class="header">
-            <h1>Cash Flow</h1>
-            <p class="subtitle">Financial tracking - Monitor when you're cash positive</p>
-            <button class="btn" onclick="loadData()" style="margin-top: 1rem;">Refresh Data</button>
+            <div>
+                <h1>Cash Flow</h1>
+                <p class="subtitle">Personal income & expense tracking</p>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+                <button class="btn success" onclick="openAddModal()">+ Add Transaction</button>
+                <button class="btn" onclick="loadData()">Refresh</button>
+            </div>
+        </div>
+
+        <div class="filters">
+            <div class="filter-group">
+                <label>Search:</label>
+                <input type="text" class="search-input" placeholder="Search transactions..." id="searchInput" onkeyup="filterData()">
+            </div>
+            <div class="filter-group">
+                <label>Type:</label>
+                <select class="filter-select" id="typeFilter" onchange="filterData()">
+                    <option value="">All</option>
+                    <option value="income">Income</option>
+                    <option value="expense">Expense</option>
+                </select>
+            </div>
         </div>
 
         <div class="stats">
@@ -76,43 +117,91 @@
                 <div class="stat-label">Total Expenses</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number" id="netFlow">$0</div>
+                <div class="stat-number" style="color: #3498db;" id="net">$0</div>
                 <div class="stat-label">Net Cash Flow</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number" id="balance">$0</div>
-                <div class="stat-label">Current Balance</div>
+                <div class="stat-number" style="color: #7f8c8d;" id="count">0</div>
+                <div class="stat-label">Transactions</div>
             </div>
         </div>
 
         <div class="data-container">
             <div class="data-header">
-                <h2>Transaction History (<span id="count">0</span>)</h2>
+                <h2>All Transactions (<span id="tableCount">0</span>)</h2>
             </div>
-            <div id="tableContainer">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Description</th>
-                            <th>Category</th>
-                            <th>Type</th>
-                            <th>Amount</th>
-                            <th>Running Balance</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tbody">
-                        <tr><td colspan="6" style="text-align: center; padding: 2rem;">Loading...</td></tr>
-                    </tbody>
-                </table>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Description</th>
+                        <th>Category</th>
+                        <th>Type</th>
+                        <th>Amount</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody">
+                    <tr><td colspan="6" style="text-align: center; padding: 2rem;">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="modal" id="transactionModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Add Transaction</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
             </div>
+            <form id="transactionForm" onsubmit="saveTransaction(event)">
+                <input type="hidden" id="transactionId">
+                
+                <div class="form-group">
+                    <label>Description *</label>
+                    <input type="text" id="description" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Amount ($) *</label>
+                    <input type="number" id="amount" min="0" step="0.01" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Type *</label>
+                    <select id="transactionType" required>
+                        <option value="income">Income</option>
+                        <option value="expense">Expense</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Category</label>
+                    <input type="text" id="category" placeholder="e.g., Salary, Rent, Marketing">
+                </div>
+                
+                <div class="form-group">
+                    <label>Date</label>
+                    <input type="date" id="transactionDate">
+                </div>
+                
+                <div class="form-group">
+                    <label>Notes</label>
+                    <textarea id="notes"></textarea>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn secondary" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn success">Save</button>
+                </div>
+            </form>
         </div>
     </div>
 
     <script>
         const API_URL = 'https://growthmanagerpro-backend.vercel.app';
-        
         let data = [];
+        let filteredData = [];
 
         async function loadData() {
             const status = document.getElementById('status');
@@ -133,85 +222,180 @@
                 }
 
                 data = result.data.transactions;
+                filteredData = [...data];
                 updateStats(result.data.stats);
                 renderTable();
                 
                 status.className = 'status connected';
-                status.textContent = '✓ Connected';
+                status.textContent = 'Connected';
                 
             } catch (error) {
                 console.error('Error:', error);
                 status.className = 'status error';
-                status.textContent = '✗ Error';
-                showError(error.message);
+                status.textContent = 'Error';
+                document.getElementById('tbody').innerHTML = `
+                    <tr><td colspan="6" style="text-align: center; padding: 2rem; color: #e74c3c;">
+                        Error: ${error.message}<br>
+                        <button class="btn" onclick="loadData()" style="margin-top: 1rem;">Retry</button>
+                    </td></tr>
+                `;
             }
         }
 
         function updateStats(stats) {
-            document.getElementById('income').textContent = '$' + stats.totalIncome.toLocaleString('en-US', {maximumFractionDigits: 0});
-            document.getElementById('expenses').textContent = '$' + stats.totalExpenses.toLocaleString('en-US', {maximumFractionDigits: 0});
-            
-            const netFlowEl = document.getElementById('netFlow');
-            netFlowEl.textContent = '$' + stats.netCashFlow.toLocaleString('en-US', {maximumFractionDigits: 0});
-            netFlowEl.className = 'stat-number ' + (stats.netCashFlow >= 0 ? 'cash-positive' : 'cash-negative');
-            
-            const balanceEl = document.getElementById('balance');
-            balanceEl.textContent = '$' + stats.currentBalance.toLocaleString('en-US', {maximumFractionDigits: 0});
-            balanceEl.className = 'stat-number ' + (stats.currentBalance >= 0 ? 'cash-positive' : 'cash-negative');
-            
-            document.getElementById('count').textContent = data.length;
+            document.getElementById('income').textContent = '$' + Math.round(stats.totalIncome || 0).toLocaleString();
+            document.getElementById('expenses').textContent = '$' + Math.round(stats.totalExpenses || 0).toLocaleString();
+            document.getElementById('net').textContent = '$' + Math.round(stats.netCashFlow || 0).toLocaleString();
+            document.getElementById('count').textContent = stats.transactionCount;
+            document.getElementById('tableCount').textContent = filteredData.length;
         }
 
         function renderTable() {
             const tbody = document.getElementById('tbody');
             
-            if (data.length === 0) {
+            if (filteredData.length === 0) {
                 tbody.innerHTML = `
-                    <tr>
-                        <td colspan="6">
-                            <div class="empty-state">
-                                <h3>No Transactions Yet</h3>
-                                <p>Add transactions through Supabase to start tracking your cash flow</p>
-                            </div>
-                        </td>
-                    </tr>
+                    <tr><td colspan="6">
+                        <div class="empty-state">
+                            <h3>No transactions yet</h3>
+                            <p>Click "Add Transaction" to record your first transaction</p>
+                        </div>
+                    </td></tr>
                 `;
                 return;
             }
 
-            tbody.innerHTML = data.map(item => {
-                const amount = parseFloat(item.amount || 0);
-                const balance = parseFloat(item.runningBalance || 0);
-                const isIncome = item.type === 'Income';
-                
-                return `
+            tbody.innerHTML = filteredData.map(item => `
                 <tr>
                     <td>${item.transactionDate ? new Date(item.transactionDate).toLocaleDateString() : 'N/A'}</td>
-                    <td style="font-weight: 500;">${item.description || 'N/A'}</td>
+                    <td><strong>${item.description}</strong></td>
                     <td>${item.category || 'N/A'}</td>
-                    <td><span class="badge ${item.type.toLowerCase()}">${item.type}</span></td>
-                    <td class="amount ${item.type.toLowerCase()}">${isIncome ? '+' : '-'}$${amount.toLocaleString('en-US')}</td>
+                    <td><span class="badge ${item.transactionType}">${item.transactionType}</span></td>
+                    <td><span class="amount ${item.transactionType}">$${(item.amount || 0).toLocaleString()}</span></td>
                     <td>
-                        $${balance.toLocaleString('en-US')}
-                        <span class="balance-indicator ${balance >= 0 ? 'positive' : 'negative'}"></span>
-                    </td>
-                </tr>
-            `}).join('');
-        }
-
-        function showError(message) {
-            const tbody = document.getElementById('tbody');
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="6">
-                        <div class="error-box">
-                            <strong>Error loading data:</strong> ${message}
-                            <br><br>
-                            <button class="btn" onclick="loadData()">Retry</button>
+                        <div class="actions">
+                            <button class="action-btn edit" onclick='editTransaction(${JSON.stringify(item)})'>Edit</button>
+                            <button class="action-btn delete" onclick="deleteTransaction('${item.id}', '${item.description}')">Delete</button>
                         </div>
                     </td>
                 </tr>
-            `;
+            `).join('');
+        }
+
+        function filterData() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const typeFilter = document.getElementById('typeFilter').value;
+
+            filteredData = data.filter(item => {
+                const matchesSearch = !searchTerm || 
+                    item.description.toLowerCase().includes(searchTerm) ||
+                    (item.category && item.category.toLowerCase().includes(searchTerm));
+
+                const matchesType = !typeFilter || item.transactionType === typeFilter;
+
+                return matchesSearch && matchesType;
+            });
+
+            document.getElementById('tableCount').textContent = filteredData.length;
+            renderTable();
+        }
+
+        function openAddModal() {
+            document.getElementById('modalTitle').textContent = 'Add Transaction';
+            document.getElementById('transactionForm').reset();
+            document.getElementById('transactionId').value = '';
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('transactionDate').value = today;
+            document.getElementById('transactionModal').classList.add('show');
+        }
+
+        function editTransaction(transaction) {
+            document.getElementById('modalTitle').textContent = 'Edit Transaction';
+            document.getElementById('transactionId').value = transaction.id;
+            document.getElementById('description').value = transaction.description;
+            document.getElementById('amount').value = transaction.amount;
+            document.getElementById('transactionType').value = transaction.transactionType;
+            document.getElementById('category').value = transaction.category || '';
+            document.getElementById('notes').value = transaction.notes || '';
+            
+            if (transaction.transactionDate) {
+                const date = new Date(transaction.transactionDate);
+                document.getElementById('transactionDate').value = date.toISOString().split('T')[0];
+            }
+            
+            document.getElementById('transactionModal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('transactionModal').classList.remove('show');
+        }
+
+        async function saveTransaction(event) {
+            event.preventDefault();
+            
+            const id = document.getElementById('transactionId').value;
+            const transactionData = {
+                description: document.getElementById('description').value,
+                amount: parseFloat(document.getElementById('amount').value),
+                transactionType: document.getElementById('transactionType').value,
+                category: document.getElementById('category').value,
+                transactionDate: document.getElementById('transactionDate').value,
+                notes: document.getElementById('notes').value
+            };
+
+            try {
+                const isEdit = !!id;
+                if (isEdit) {
+                    transactionData.id = id;
+                }
+
+                const response = await fetch(`${API_URL}/api/cash-flow`, {
+                    method: isEdit ? 'PUT' : 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(transactionData)
+                });
+
+                const result = await response.json();
+
+                if (!result.success) {
+                    throw new Error(result.error || 'Failed to save');
+                }
+
+                alert(isEdit ? 'Transaction updated successfully!' : 'Transaction added successfully!');
+                closeModal();
+                loadData();
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error: ' + error.message);
+            }
+        }
+
+        async function deleteTransaction(id, description) {
+            if (!confirm(`Are you sure you want to delete "${description}"?`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/api/cash-flow`, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id })
+                });
+
+                const result = await response.json();
+
+                if (!result.success) {
+                    throw new Error(result.error || 'Failed to delete');
+                }
+
+                alert('Transaction deleted successfully!');
+                loadData();
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error: ' + error.message);
+            }
         }
 
         document.addEventListener('DOMContentLoaded', loadData);
