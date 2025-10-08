@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Growth Manager Pro - Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #e8eef3; }
+        
+        .container { max-width: 1600px; margin: 0 auto; padding: 20px; }
+        
+        .status { position: fixed; top: 20px; right: 20px; padding: 10px 15px; border-radius: 6px; font-size: 0.9rem; font-weight: 600; z-index: 1000; }
+        .status.loading { background: #fff3cd; color: #856404; }
+        .status.connected { background: #d4edda; color: #155724; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        
+        .header-section { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 2rem; text-align: center; }
+        .header-section h1 { color: #2c3e50; font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .header-section .subtitle { color: #7f8c8d; font-size: 1.1rem; margin-bottom: 1.5rem; }
+        .north-star { background: linear-gradient(135deg, #27ae60, #229954); color: white; padding: 1rem 2rem; border-radius: 8px; display: inline-block; font-size: 1.1rem; font-weight: bold; }
+        
+        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .metric-card { background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center; }
+        .metric-number { font-size: 2.5rem; font-weight: bold; margin-bottom: 0.5rem; }
+        .metric-label { color: #7f8c8d; font-size: 0.85rem; text-transform: uppercase; font-weight: 600; }
+        
+        .two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+        
+        .panel { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); overflow: hidden; }
+        .panel-header { background: #34495e; color: white; padding: 1.2rem 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+        .panel-header h2 { font-size: 1.3rem; }
+        .panel-header .week { font-size: 0.9rem; opacity: 0.9; }
+        .panel-body { padding: 1.5rem; }
+        
+        .task-item { padding: 1rem; border-left: 4px solid #3498db; background: #f8f9fa; margin-bottom: 0.8rem; border-radius: 4px; }
+        .task-item h3 { font-size: 1rem; color: #2c3e50; margin-bottom: 0.3rem; }
+        .task-item p { font-size: 0.9rem; color: #7f8c8d; margin-bottom: 0.5rem; }
+        .task-status { display: inline-block; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; }
+        .task-status.on-track { background: #d1fae5; color: #065f46; }
+        .task-status.finished { background: #dbeafe; color: #1e40af; }
+        .task-status.off-track { background: #fee2e2; color: #991b1b; }
+        .task-status.blocked { background: #fef3c7; color: #92400e; }
+        
+        .prospect-item { padding: 1rem; border-left: 4px solid #3498db; background: #f8f9fa; margin-bottom: 0.8rem; border-radius: 4px; }
+        .prospect-item h3 { font-size: 1rem; color: #2c3e50; margin-bottom: 0.3rem; }
+        .prospect-item p { font-size: 0.9rem; color: #7f8c8d; }
+        
+        .advisor-section { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); padding: 2rem; }
+        .advisor-section h2 { color: #2c3e50; font-size: 1.8rem; margin-bottom: 1.5rem; }
+        
+        .advisor-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2rem; margin-bottom: 2rem; }
+        
+        .summary-box { background: #f8f9fa; padding: 1.5rem; border-radius: 8px; }
+        .summary-box h3 { color: #2c3e50; margin-bottom: 1rem; font-size: 1.2rem; }
+        .summary-item { display: flex; justify-content: space-between; padding: 0.8rem 0; border-bottom: 1px solid #e1e5e9; }
+        .summary-item:last-child { border-bottom: none; }
+        .summary-label { color: #7f8c8d; }
+        .summary-value { font-weight: bold; color: #2c3e50; }
+        
+        .metrics-box { text-align: center; }
+        .big-metric { font-size: 3rem; font-weight: bold; margin-bottom: 0.5rem; }
+        .big-metric.green { color: #27ae60; }
+        .metric-sublabel { color: #7f8c8d; font-size: 0.9rem; text-transform: uppercase; margin-bottom: 1.5rem; }
+        
+        .report-buttons { display: flex; flex-direction: column; gap: 0.8rem; }
+        .report-btn { padding: 1rem; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; color: white; }
+        .report-btn.blue { background: #3498db; }
+        .report-btn.green { background: #27ae60; }
+        .report-btn.orange { background: #e67e22; }
+        .report-btn:hover { opacity: 0.9; }
+        
+        .blockers-box { background: #fff3cd; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #f39c12; margin-top: 1.5rem; }
+        .blockers-box h3 { color: #856404; margin-bottom: 1rem; }
+        .blockers-box ul { list-style: none; }
+        .blockers-box li { color: #856404; padding: 0.5rem 0; padding-left: 1.5rem; position: relative; }
+        .blockers-box li:before { content: "•"; position: absolute; left: 0; font-weight: bold; }
+        
+        .empty-state { text-align: center; padding: 2rem; color: #7f8c8d; }
+        
+        @media (max-width: 1200px) {
+            .two-column { grid-template-columns: 1fr; }
+            .advisor-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="status loading" id="status">Loading...</div>
+    
+    <div class="container">
+        <!-- Header Section -->
+        <div class="header-section">
+            <h1>Growth Manager Pro</h1>
+            <p class="subtitle">Business Development Dashboard - Client Acquisition System</p>
+            <div class="north-star">
+                <span id="northStarGoal">North Star Goal: $50k/month | 3-Month Target: $25k/month</span>
+            </div>
+        </div>
+
+        <!-- Key Metrics -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-number" style="color: #27ae60;" id="tasksFinished">0</div>
+                <div class="metric-label">Tasks Finished</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-number" style="color: #3498db;" id="onTrack">0</div>
+                <div class="metric-label">On Track</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-number" style="color: #e74c3c;" id="offTrack">0</div>
+                <div class="metric-label">Off Track</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-number" style="color: #f39c12;" id="blocked">0</div>
+                <div class="metric-label">Blocked</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-number" style="color: #9b59b6;" id="podcastCalls">0</div>
+                <div class="metric-label">Podcast Calls</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-number" style="color: #e67e22;" id="qualifiedDiscovery">0</div>
+                <div class="metric-label">Qualified for Discovery</div>
+            </div>
+        </div>
+
+        <!-- Two Column Layout -->
+        <div class="two-column">
+            <!-- Current Sprint Tasks -->
+            <div class="panel">
+                <div class="panel-header">
+                    <h2>Current Sprint Tasks</h2>
+                    <span class="week" id="currentWeek">Week 39 (Sep 27, 2025)</span>
+                </div>
+                <div class="panel-body" id="sprintTasks">
+                    <div class="empty-state">Loading tasks...</div>
+                </div>
+            </div>
+
+            <!-- Podcast Funnel Pipeline -->
+            <div class="panel">
+                <div class="panel-header">
+                    <h2>Podcast Funnel Pipeline</h2>
+                    <span class="week">Live Data</span>
+                </div>
+                <div class="panel-body" id="pipelineFunnel">
+                    <div class="empty-state">Loading pipeline...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Advisor Reporting Dashboard -->
+        <div class="advisor-section">
+            <h2>Advisor Reporting Dashboard</h2>
+            
+            <div class="advisor-grid">
+                <!-- Weekly Progress Summary -->
+                <div class="summary-box">
+                    <h3>Weekly Progress Summary</h3>
+                    <div class="summary-item">
+                        <span class="summary-label">Sprint Tasks Completed:</span>
+                        <span class="summary-value" id="summaryTasksCompleted">0/0 (0%)</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Podcast Calls This Week:</span>
+                        <span class="summary-value" id="summaryPodcastCalls">0 calls</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Qualified for Discovery:</span>
+                        <span class="summary-value" id="summaryQualified">0 prospects</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Pipeline Movement:</span>
+                        <span class="summary-value" id="summaryPipeline">0 prospects advanced</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Revenue This Month:</span>
+                        <span class="summary-value" id="summaryRevenue">$0</span>
+                    </div>
+                </div>
+
+                <!-- Podcast Funnel Metrics -->
+                <div class="metrics-box">
+                    <h3>Podcast Funnel Metrics</h3>
+                    <div class="big-metric green" id="totalCalls">0</div>
+                    <div class="metric-sublabel">Total Calls</div>
+                    
+                    <div class="big-metric green" id="qualificationRate">0%</div>
+                    <div class="metric-sublabel">Qualification Rate</div>
+                    
+                    <div class="big-metric green" id="avgScore">0</div>
+                    <div class="metric-sublabel">Avg Score</div>
+                </div>
+
+                <!-- Generate Reports -->
+                <div>
+                    <h3>Generate Reports</h3>
+                    <div class="report-buttons">
+                        <button class="report-btn blue" onclick="generateReport('weekly')">📊 Weekly Progress Report</button>
+                        <button class="report-btn green" onclick="generateReport('funnel')">📈 Podcast Funnel Analysis</button>
+                        <button class="report-btn orange" onclick="generateReport('pipeline')">💼 Pipeline & Forecasting</button>
+                        <button class="report-btn blue" onclick="generateReport('tasks')">✅ Task Completion Summary</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key Blockers & Challenges -->
+            <div class="blockers-box">
+                <h3>Key Blockers & Challenges:</h3>
+                <ul id="blockersList">
+                    <li>Loading blockers...</li>
+                </ul>
+            </div>
+
+            <div style="text-align: right; margin-top: 1.5rem; color: #7f8c8d; font-size: 0.9rem;">
+                Last Updated: <span id="lastUpdated">-</span> | API Status: <span id="apiStatus" style="color: #27ae60;">All Systems Connected</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://growthmanagerpro-backend.vercel.app';
+
+        function getWeekNumber() {
+            const now = new Date();
+            const start = new Date(now.getFullYear(), 0, 1);
+            const diff = now - start;
+            const oneWeek = 1000 * 60 * 60 * 24 * 7;
+            return Math.ceil(diff / oneWeek);
+        }
+
+        function formatDate(date) {
+            return new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+
+        async function loadDashboard() {
+            const status = document.getElementById('status');
+            status.className = 'status loading';
+            status.textContent = 'Loading Dashboard...';
+
+            try {
+                const response = await fetch(`${API_URL}/api/dashboard`);
+                
+                if (!response.ok) {
+                    throw new Error(`API returned ${response.status}`);
+                }
+
+                const result = await response.json();
+                
+                if (!result.success) {
+                    throw new Error(result.error || 'API returned error');
+                }
+
+                const data = result.data;
+                
+                // Update top metrics
+                document.getElementById('tasksFinished').textContent = data.sprints.finished;
+                document.getElementById('onTrack').textContent = data.sprints.onTrack;
+                document.getElementById('offTrack').textContent = data.sprints.total - data.sprints.finished - data.sprints.onTrack - data.sprints.blocked;
+                document.getElementById('blocked').textContent = data.sprints.blocked;
+                document.getElementById('podcastCalls').textContent = data.discovery.total;
+                document.getElementById('qualifiedDiscovery').textContent = data.discovery.qualified;
+
+                // Update current week
+                const weekNum = getWeekNumber();
+                const today = formatDate(new Date());
+                document.getElementById('currentWeek').textContent = `Week ${weekNum} (${today})`;
+
+                // Render Sprint Tasks
+                renderSprintTasks(data.sprints.recentTasks);
+
+                // Render Pipeline Funnel
+                renderPipelineFunnel(data.discovery.recentCalls);
+
+                // Update Advisor Summary
+                document.getElementById('summaryTasksCompleted').textContent = 
+                    `${data.sprints.finished}/${data.sprints.total} (${data.sprints.total > 0 ? Math.round((data.sprints.finished/data.sprints.total)*100) : 0}%)`;
+                document.getElementById('summaryPodcastCalls').textContent = `${data.discovery.total} calls`;
+                document.getElementById('summaryQualified').textContent = `${data.discovery.qualified} prospects`;
+                document.getElementById('summaryPipeline').textContent = `${data.summary.pipelineMovement} prospects advanced`;
+                document.getElementById('summaryRevenue').textContent = `$${Math.round(data.summary.totalRevenue).toLocaleString()}`;
+
+                // Update Podcast Funnel Metrics
+                document.getElementById('totalCalls').textContent = data.discovery.total;
+                document.getElementById('qualificationRate').textContent = data.summary.qualificationRate + '%';
+                document.getElementById('avgScore').textContent = data.discovery.avgScore;
+
+                // Update blockers
+                renderBlockers(data);
+
+                // Update footer
+                document.getElementById('lastUpdated').textContent = new Date().toLocaleString();
+                document.getElementById('apiStatus').textContent = 'All Systems Connected';
+
+                status.className = 'status connected';
+                status.textContent = '✓ Live Data Connected';
+                
+            } catch (error) {
+                console.error('Error:', error);
+                status.className = 'status error';
+                status.textContent = 'Connection Error';
+                document.getElementById('apiStatus').textContent = 'Connection Error';
+                document.getElementById('apiStatus').style.color = '#e74c3c';
+            }
+        }
+
+        function renderSprintTasks(tasks) {
+            const container = document.getElementById('sprintTasks');
+            
+            if (!tasks || tasks.length === 0) {
+                container.innerHTML = '<div class="empty-state">No active tasks</div>';
+                return;
+            }
+
+            container.innerHTML = tasks.map(task => {
+                const statusMap = {
+                    'completed': 'finished',
+                    'in_progress': 'on-track',
+                    'todo': task.priority === 'high' ? 'blocked' : 'off-track'
+                };
+                const status = statusMap[task.status] || 'off-track';
+                const statusLabel = task.status === 'completed' ? 'FINISHED' : 
+                                   task.status === 'in_progress' ? 'ON TRACK' : 
+                                   task.priority === 'high' ? 'BLOCKED' : 'OFF TRACK';
+
+                return `
+                    <div class="task-item">
+                        <h3>${task.name}</h3>
+                        <p>${task.description || 'No description'}</p>
+                        <span class="task-status ${status}">${statusLabel}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderPipelineFunnel(calls) {
+            const container = document.getElementById('pipelineFunnel');
+            
+            if (!calls || calls.length === 0) {
+                container.innerHTML = '<div class="empty-state">No recent calls</div>';
+                return;
+            }
+
+            container.innerHTML = calls.map(call => `
+                <div class="prospect-item">
+                    <h3>${call.prospect} - ${call.company}</h3>
+                    <p>Score: ${call.score}/10 • ${call.outcome} • ${call.date ? formatDate(call.date) : 'No date'}</p>
+                </div>
+            `).join('');
+        }
+
+        function renderBlockers(data) {
+            const blockersList = document.getElementById('blockersList');
+            const blockers = [];
+
+            // Generate dynamic blockers based on data
+            if (data.sprints.blocked > 0) {
+                blockers.push(`${data.sprints.blocked} high-priority tasks blocked`);
+            }
+            if (data.discovery.total === 0) {
+                blockers.push('No podcast calls scheduled this week');
+            }
+            if (data.campaigns.active === 0) {
+                blockers.push('No active marketing campaigns');
+            }
+            if (data.pipeline.qualified < 3) {
+                blockers.push('Low pipeline - need more qualified prospects');
+            }
+
+            if (blockers.length === 0) {
+                blockers.push('No major blockers - all systems go! ✅');
+            }
+
+            blockersList.innerHTML = blockers.map(b => `<li>${b}</li>`).join('');
+        }
+
+        function generateReport(type) {
+            const reportNames = {
+                'weekly': 'Weekly Progress Report',
+                'funnel': 'Podcast Funnel Analysis',
+                'pipeline': 'Pipeline & Forecasting',
+                'tasks': 'Task Completion Summary'
+            };
+            alert(`Generating ${reportNames[type]}...\n\nThis feature will export a detailed report for your advisor.`);
+        }
+
+        // Load dashboard on page load
+        document.addEventListener('DOMContentLoaded', loadDashboard);
+
+        // Auto-refresh every 5 minutes
+        setInterval(loadDashboard, 300000);
+    </script>
+</body>
+</html>
