@@ -202,13 +202,12 @@
                 
                 if (!result.success) throw new Error(result.error);
                 
-                const calls = result.data || [];
+                const calls = result.data.interviews || [];
+                const stats = result.data.stats || {};
                 
                 // Update metrics
-                document.getElementById('activeCompleted').textContent = 
-                    calls.filter(c => c.status === 'completed').length;
-                document.getElementById('convertedToDiscovery').textContent = 
-                    calls.filter(c => c.converted_to_discovery).length;
+                document.getElementById('activeCompleted').textContent = stats.completedInterviews || 0;
+                document.getElementById('convertedToDiscovery').textContent = stats.qualifiedGuests || 0;
                 document.getElementById('noShows').textContent = 
                     calls.filter(c => c.status === 'no-show').length;
                 
@@ -233,15 +232,15 @@
                 <div class="call-item">
                     <div class="call-avatar">📞</div>
                     <div class="call-info">
-                        <h3>${call.guest_name}</h3>
-                        <p>${call.call_date ? new Date(call.call_date).toLocaleDateString() : 'No Date Set'}</p>
+                        <h3>${call.guestName || 'Unknown Guest'} - ${call.company || 'No Company'}</h3>
+                        <p>${call.scheduledDate ? new Date(call.scheduledDate).toLocaleDateString() : 'No Date Set'}</p>
                     </div>
-                    <span class="call-status completed">${call.status || 'Completed'}</span>
+                    <span class="call-status completed">${call.status || 'Scheduled'}</span>
                     <div class="call-actions">
                         <button class="call-btn" onclick="openUploadModal()">📤 Upload Recording</button>
-                        <button class="call-btn" onclick="generateAISummary(${call.id})">👁️ AI Summary</button>
-                        <button class="call-btn" onclick="openReviewModal(${call.id})">📝 Add Review</button>
-                        <button class="call-btn" onclick="moveToDiscovery(${call.id})">🎯 Move to Discovery</button>
+                        <button class="call-btn" onclick="generateAISummary('${call.id}')">👁️ AI Summary</button>
+                        <button class="call-btn" onclick="openReviewModal('${call.id}')">📝 Add Review</button>
+                        <button class="call-btn" onclick="moveToDiscovery('${call.id}')">🎯 Move to Discovery</button>
                     </div>
                 </div>
             `).join('');
@@ -268,8 +267,8 @@
             event.preventDefault();
             
             const data = {
-                guest_name: document.getElementById('guestName').value,
-                call_date: document.getElementById('callDate').value,
+                guestName: document.getElementById('guestName').value,
+                scheduledDate: document.getElementById('callDate').value,
                 status: document.getElementById('callStatus').value,
                 notes: document.getElementById('callNotes').value
             };
@@ -303,7 +302,7 @@
                 const response = await fetch(`${API_URL}/api/podcast-interviews/${currentCallId}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ review_notes: reviewNotes })
+                    body: JSON.stringify({ notes: reviewNotes })
                 });
                 
                 const result = await response.json();
@@ -415,7 +414,7 @@
                 const response = await fetch(`${API_URL}/api/podcast-interviews/${callId}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ converted_to_discovery: true })
+                    body: JSON.stringify({ status: 'converted' })
                 });
                 
                 const result = await response.json();
