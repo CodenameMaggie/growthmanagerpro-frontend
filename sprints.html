@@ -10,9 +10,18 @@
         
         .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
         
-        .header { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 2rem; }
-        .header h1 { color: #2c3e50; font-size: 2rem; margin-bottom: 0.5rem; }
+        .header { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+        .header h1 { color: #2c3e50; font-size: 2rem; }
         .header .subtitle { color: #7f8c8d; }
+        
+        .btn { background: #3498db; color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 6px; cursor: pointer; font-size: 0.9rem; }
+        .btn:hover { background: #2980b9; }
+        .btn.success { background: #27ae60; }
+        .btn.success:hover { background: #229954; }
+        .btn.danger { background: #e74c3c; }
+        .btn.danger:hover { background: #c0392b; }
+        .btn.secondary { background: #95a5a6; }
+        .btn.secondary:hover { background: #7f8c8d; }
         
         .status { position: fixed; top: 20px; right: 20px; padding: 10px 15px; border-radius: 6px; font-size: 0.9rem; font-weight: 600; z-index: 1000; }
         .status.loading { background: #fff3cd; color: #856404; }
@@ -24,34 +33,48 @@
         .stat-number { font-size: 2rem; font-weight: bold; margin-bottom: 0.5rem; }
         .stat-label { color: #7f8c8d; font-size: 0.9rem; text-transform: uppercase; }
         
+        .filters { background: white; padding: 1rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 2rem; display: flex; gap: 1rem; flex-wrap: wrap; }
+        .filter-group { display: flex; align-items: center; gap: 0.5rem; }
+        .filter-group label { font-size: 0.9rem; color: #2c3e50; font-weight: 500; }
+        .filter-select, .search-input { padding: 0.5rem 0.8rem; border: 1px solid #e1e5e9; border-radius: 6px; font-size: 0.9rem; outline: none; }
+        .search-input { min-width: 250px; }
+        
         .data-container { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); overflow: hidden; }
-        .data-header { background: #9b59b6; color: white; padding: 1.5rem; }
+        .data-header { background: #e67e22; color: white; padding: 1.5rem; }
         
         table { width: 100%; border-collapse: collapse; }
-        th { background: #8e44ad; color: white; padding: 1rem; text-align: left; font-weight: 600; }
+        th { background: #d35400; color: white; padding: 1rem; text-align: left; font-weight: 600; }
         td { padding: 1rem; border-bottom: 1px solid #ecf0f1; }
         tr:hover { background: #f8f9fa; }
         
-        .sprint-name { font-weight: 600; color: #2c3e50; }
-        .sprint-goal { font-size: 0.9rem; color: #7f8c8d; margin-top: 0.25rem; }
+        .badge { padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: bold; text-transform: uppercase; }
+        .badge.todo { background: #fee2e2; color: #991b1b; }
+        .badge.in_progress { background: #fef3c7; color: #92400e; }
+        .badge.completed { background: #d1fae5; color: #065f46; }
+        .badge.high { background: #fee2e2; color: #991b1b; }
+        .badge.medium { background: #fef3c7; color: #92400e; }
+        .badge.low { background: #dbeafe; color: #1e40af; }
         
-        .badge { padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: bold; }
-        .badge.active { background: #d4edda; color: #155724; }
-        .badge.planning { background: #d1ecf1; color: #0c5460; }
-        .badge.completed { background: #e8f5e9; color: #2e7d32; }
+        .actions { display: flex; gap: 0.5rem; }
+        .action-btn { padding: 0.4rem 0.8rem; border: none; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
+        .action-btn.edit { background: #3498db; color: white; }
+        .action-btn.delete { background: #e74c3c; color: white; }
         
-        .progress-bar { width: 100%; height: 8px; background: #ecf0f1; border-radius: 4px; overflow: hidden; }
-        .progress-fill { height: 100%; background: #27ae60; transition: width 0.3s; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center; }
+        .modal.show { display: flex; }
+        .modal-content { background: white; padding: 2rem; border-radius: 12px; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .modal-header h2 { color: #2c3e50; }
+        .close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #7f8c8d; }
         
-        .task-count { font-size: 0.9rem; color: #7f8c8d; margin-top: 0.25rem; }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; color: #2c3e50; font-weight: 500; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.8rem; border: 1px solid #e1e5e9; border-radius: 6px; font-size: 0.9rem; }
+        .form-group textarea { min-height: 100px; resize: vertical; }
         
-        .btn { background: #9b59b6; color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 6px; cursor: pointer; }
-        .btn:hover { background: #8e44ad; }
-        
-        .error-box { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 1rem; border-radius: 6px; margin: 1rem; }
+        .form-actions { display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem; }
         
         .empty-state { text-align: center; padding: 3rem; color: #7f8c8d; }
-        .empty-state h3 { margin-bottom: 1rem; color: #2c3e50; }
     </style>
 </head>
 <body>
@@ -59,61 +82,141 @@
     
     <div class="container">
         <div class="header">
-            <h1>Sprints</h1>
-            <p class="subtitle">Task management</p>
-            <button class="btn" onclick="loadData()" style="margin-top: 1rem;">Refresh Data</button>
+            <div>
+                <h1>Sprint Tasks</h1>
+                <p class="subtitle">Task management & productivity tracking</p>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+                <button class="btn success" onclick="openAddModal()">+ Add Task</button>
+                <button class="btn" onclick="loadData()">Refresh</button>
+            </div>
+        </div>
+
+        <div class="filters">
+            <div class="filter-group">
+                <label>Search:</label>
+                <input type="text" class="search-input" placeholder="Search tasks..." id="searchInput" onkeyup="filterData()">
+            </div>
+            <div class="filter-group">
+                <label>Status:</label>
+                <select class="filter-select" id="statusFilter" onchange="filterData()">
+                    <option value="">All</option>
+                    <option value="todo">To Do</option>
+                    <option value="in_progress">In Progress</option>
+                    <option value="completed">Completed</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Priority:</label>
+                <select class="filter-select" id="priorityFilter" onchange="filterData()">
+                    <option value="">All</option>
+                    <option value="high">High</option>
+                    <option value="medium">Medium</option>
+                    <option value="low">Low</option>
+                </select>
+            </div>
         </div>
 
         <div class="stats">
             <div class="stat-card">
-                <div class="stat-number" style="color: #9b59b6;" id="total">0</div>
-                <div class="stat-label">Total Sprints</div>
+                <div class="stat-number" style="color: #e67e22;" id="total">0</div>
+                <div class="stat-label">Total Tasks</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number" style="color: #27ae60;" id="active">0</div>
-                <div class="stat-label">Active</div>
+                <div class="stat-number" style="color: #e74c3c;" id="todo">0</div>
+                <div class="stat-label">To Do</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number" style="color: #3498db;" id="completed">0</div>
+                <div class="stat-number" style="color: #f39c12;" id="inProgress">0</div>
+                <div class="stat-label">In Progress</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" style="color: #27ae60;" id="completed">0</div>
                 <div class="stat-label">Completed</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" style="color: #2ecc71;" id="tasksCompleted">0</div>
-                <div class="stat-label">Tasks Done</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" style="color: #e67e22;" id="tasksRemaining">0</div>
-                <div class="stat-label">Tasks Remaining</div>
             </div>
         </div>
 
         <div class="data-container">
             <div class="data-header">
-                <h2>All Sprints (<span id="count">0</span>)</h2>
+                <h2>All Tasks (<span id="count">0</span>)</h2>
             </div>
-            <div id="tableContainer">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Sprint</th>
-                            <th>Timeline</th>
-                            <th>Status</th>
-                            <th>Progress</th>
-                            <th>Team</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tbody">
-                        <tr><td colspan="5" style="text-align: center; padding: 2rem;">Loading...</td></tr>
-                    </tbody>
-                </table>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Task</th>
+                        <th>Status</th>
+                        <th>Priority</th>
+                        <th>Assigned To</th>
+                        <th>Due Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody">
+                    <tr><td colspan="6" style="text-align: center; padding: 2rem;">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="modal" id="taskModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Add Task</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
             </div>
+            <form id="taskForm" onsubmit="saveTask(event)">
+                <input type="hidden" id="taskId">
+                
+                <div class="form-group">
+                    <label>Task Name *</label>
+                    <input type="text" id="taskName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="taskStatus">
+                        <option value="todo">To Do</option>
+                        <option value="in_progress">In Progress</option>
+                        <option value="completed">Completed</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Priority</label>
+                    <select id="priority">
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Assigned To</label>
+                    <input type="text" id="assignedTo" placeholder="e.g., Your Name">
+                </div>
+                
+                <div class="form-group">
+                    <label>Due Date</label>
+                    <input type="date" id="dueDate">
+                </div>
+                
+                <div class="form-group">
+                    <label>Notes</label>
+                    <textarea id="notes"></textarea>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn secondary" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn success">Save</button>
+                </div>
+            </form>
         </div>
     </div>
 
     <script>
         const API_URL = 'https://growthmanagerpro-backend.vercel.app';
-        
         let data = [];
+        let filteredData = [];
 
         async function loadData() {
             const status = document.getElementById('status');
@@ -133,88 +236,182 @@
                     throw new Error(result.error || 'API returned error');
                 }
 
-                data = result.data.sprints;
+                data = result.data.tasks;
+                filteredData = [...data];
                 updateStats(result.data.stats);
                 renderTable();
                 
                 status.className = 'status connected';
-                status.textContent = '✓ Connected';
+                status.textContent = 'Connected';
                 
             } catch (error) {
                 console.error('Error:', error);
                 status.className = 'status error';
-                status.textContent = '✗ Error';
-                showError(error.message);
+                status.textContent = 'Error';
+                document.getElementById('tbody').innerHTML = `
+                    <tr><td colspan="6" style="text-align: center; padding: 2rem; color: #e74c3c;">
+                        Error: ${error.message}<br>
+                        <button class="btn" onclick="loadData()" style="margin-top: 1rem;">Retry</button>
+                    </td></tr>
+                `;
             }
         }
 
         function updateStats(stats) {
-            document.getElementById('total').textContent = stats.totalSprints;
-            document.getElementById('active').textContent = stats.activeSprints;
-            document.getElementById('completed').textContent = stats.completedSprints;
-            document.getElementById('tasksCompleted').textContent = stats.totalTasksCompleted;
-            document.getElementById('tasksRemaining').textContent = stats.totalTasksRemaining;
-            document.getElementById('count').textContent = data.length;
+            document.getElementById('total').textContent = stats.totalTasks;
+            document.getElementById('todo').textContent = stats.todoTasks;
+            document.getElementById('inProgress').textContent = stats.inProgressTasks;
+            document.getElementById('completed').textContent = stats.completedTasks;
+            document.getElementById('count').textContent = filteredData.length;
         }
 
         function renderTable() {
             const tbody = document.getElementById('tbody');
             
-            if (data.length === 0) {
+            if (filteredData.length === 0) {
                 tbody.innerHTML = `
-                    <tr>
-                        <td colspan="5">
-                            <div class="empty-state">
-                                <h3>No Sprints Yet</h3>
-                                <p>Add sprints through Supabase to start managing your tasks</p>
-                            </div>
-                        </td>
-                    </tr>
+                    <tr><td colspan="6">
+                        <div class="empty-state">
+                            <h3>No tasks yet</h3>
+                            <p>Click "Add Task" to create your first task</p>
+                        </div>
+                    </td></tr>
                 `;
                 return;
             }
 
-            tbody.innerHTML = data.map(item => {
-                const completed = item.tasksCompleted || 0;
-                const remaining = item.tasksRemaining || 0;
-                const total = completed + remaining;
-                const progress = total > 0 ? (completed / total * 100) : 0;
-                
-                return `
+            tbody.innerHTML = filteredData.map(item => `
                 <tr>
+                    <td><strong>${item.taskName}</strong></td>
+                    <td><span class="badge ${item.taskStatus}">${item.taskStatus.replace('_', ' ')}</span></td>
+                    <td><span class="badge ${item.priority}">${item.priority}</span></td>
+                    <td>${item.assignedTo || 'Unassigned'}</td>
+                    <td>${item.dueDate ? new Date(item.dueDate).toLocaleDateString() : 'No due date'}</td>
                     <td>
-                        <div class="sprint-name">${item.sprintName}</div>
-                        <div class="sprint-goal">${item.goal || 'No goal set'}</div>
-                    </td>
-                    <td>
-                        ${item.startDate ? new Date(item.startDate).toLocaleDateString() : 'N/A'} - 
-                        ${item.endDate ? new Date(item.endDate).toLocaleDateString() : 'N/A'}
-                    </td>
-                    <td><span class="badge ${(item.status || '').toLowerCase()}">${item.status || 'N/A'}</span></td>
-                    <td>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: ${progress}%"></div>
+                        <div class="actions">
+                            <button class="action-btn edit" onclick='editTask(${JSON.stringify(item)})'>Edit</button>
+                            <button class="action-btn delete" onclick="deleteTask('${item.id}', '${item.taskName}')">Delete</button>
                         </div>
-                        <div class="task-count">${completed} / ${total} tasks</div>
                     </td>
-                    <td>${item.teamMembers || 'No team assigned'}</td>
                 </tr>
-            `}).join('');
+            `).join('');
         }
 
-        function showError(message) {
-            const tbody = document.getElementById('tbody');
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="5">
-                        <div class="error-box">
-                            <strong>Error loading data:</strong> ${message}
-                            <br><br>
-                            <button class="btn" onclick="loadData()">Retry</button>
-                        </div>
-                    </td>
-                </tr>
-            `;
+        function filterData() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+            const priorityFilter = document.getElementById('priorityFilter').value;
+
+            filteredData = data.filter(item => {
+                const matchesSearch = !searchTerm || 
+                    item.taskName.toLowerCase().includes(searchTerm) ||
+                    (item.assignedTo && item.assignedTo.toLowerCase().includes(searchTerm));
+
+                const matchesStatus = !statusFilter || item.taskStatus === statusFilter;
+                const matchesPriority = !priorityFilter || item.priority === priorityFilter;
+
+                return matchesSearch && matchesStatus && matchesPriority;
+            });
+
+            document.getElementById('count').textContent = filteredData.length;
+            renderTable();
+        }
+
+        function openAddModal() {
+            document.getElementById('modalTitle').textContent = 'Add Task';
+            document.getElementById('taskForm').reset();
+            document.getElementById('taskId').value = '';
+            document.getElementById('priority').value = 'medium';
+            document.getElementById('taskModal').classList.add('show');
+        }
+
+        function editTask(task) {
+            document.getElementById('modalTitle').textContent = 'Edit Task';
+            document.getElementById('taskId').value = task.id;
+            document.getElementById('taskName').value = task.taskName;
+            document.getElementById('taskStatus').value = task.taskStatus || 'todo';
+            document.getElementById('priority').value = task.priority || 'medium';
+            document.getElementById('assignedTo').value = task.assignedTo || '';
+            document.getElementById('notes').value = task.notes || '';
+            
+            if (task.dueDate) {
+                const date = new Date(task.dueDate);
+                document.getElementById('dueDate').value = date.toISOString().split('T')[0];
+            }
+            
+            document.getElementById('taskModal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('taskModal').classList.remove('show');
+        }
+
+        async function saveTask(event) {
+            event.preventDefault();
+            
+            const id = document.getElementById('taskId').value;
+            const taskData = {
+                taskName: document.getElementById('taskName').value,
+                taskStatus: document.getElementById('taskStatus').value,
+                priority: document.getElementById('priority').value,
+                assignedTo: document.getElementById('assignedTo').value || null,
+                dueDate: document.getElementById('dueDate').value || null,
+                notes: document.getElementById('notes').value
+            };
+
+            try {
+                const isEdit = !!id;
+                if (isEdit) {
+                    taskData.id = id;
+                }
+
+                const response = await fetch(`${API_URL}/api/sprints`, {
+                    method: isEdit ? 'PUT' : 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(taskData)
+                });
+
+                const result = await response.json();
+
+                if (!result.success) {
+                    throw new Error(result.error || 'Failed to save');
+                }
+
+                alert(isEdit ? 'Task updated successfully!' : 'Task added successfully!');
+                closeModal();
+                loadData();
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error: ' + error.message);
+            }
+        }
+
+        async function deleteTask(id, name) {
+            if (!confirm(`Are you sure you want to delete "${name}"?`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/api/sprints`, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id })
+                });
+
+                const result = await response.json();
+
+                if (!result.success) {
+                    throw new Error(result.error || 'Failed to delete');
+                }
+
+                alert('Task deleted successfully!');
+                loadData();
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error: ' + error.message);
+            }
         }
 
         document.addEventListener('DOMContentLoaded', loadData);
