@@ -76,7 +76,8 @@ function checkPageAccess(user) {
     
     // Define restricted pages for advisors (only admins can access)
     const adminOnlyPages = [
-        'cash-flow.html'
+        'cash-flow.html',
+        'user-management.html'
     ];
     
     const currentPage = window.location.pathname.split('/').pop();
