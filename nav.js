@@ -34,6 +34,7 @@ function addNavBar() {
     // Navigation items
     const navItems = [
         { name: 'Dashboard', url: 'dashboard.html', icon: '📊' },
+        { name: 'Podcast Calls', url: 'podcast-calls.html', icon: '🎙️' },
         { name: 'Discovery Calls', url: 'discovery-calls.html', icon: '📞' },
         { name: 'Sales Calls', url: 'sales-calls.html', icon: '💼' },
         { name: 'Pipeline', url: 'pipeline.html', icon: '🔄' },
@@ -46,6 +47,7 @@ function addNavBar() {
     // Add Cash Flow only for admin
     if (user.role === 'admin') {
         navItems.push({ name: 'Cash Flow', url: 'cash-flow.html', icon: '💵' });
+        navItems.push({ name: 'User Management', url: 'user-management.html', icon: '⚙️' });
     }
     
     // Build navigation HTML
