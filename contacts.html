@@ -10,9 +10,16 @@
         
         .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
         
-        .header { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 2rem; }
-        .header h1 { color: #2c3e50; font-size: 2rem; margin-bottom: 0.5rem; }
+        .header { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+        .header h1 { color: #2c3e50; font-size: 2rem; }
         .header .subtitle { color: #7f8c8d; }
+        
+        .btn { background: #3498db; color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 6px; cursor: pointer; font-size: 0.9rem; }
+        .btn:hover { background: #2980b9; }
+        .btn.success { background: #27ae60; }
+        .btn.success:hover { background: #229954; }
+        .btn.secondary { background: #95a5a6; }
+        .btn.secondary:hover { background: #7f8c8d; }
         
         .status { position: fixed; top: 20px; right: 20px; padding: 10px 15px; border-radius: 6px; font-size: 0.9rem; font-weight: 600; z-index: 1000; }
         .status.loading { background: #fff3cd; color: #856404; }
@@ -24,30 +31,45 @@
         .stat-number { font-size: 2rem; font-weight: bold; margin-bottom: 0.5rem; }
         .stat-label { color: #7f8c8d; font-size: 0.9rem; text-transform: uppercase; }
         
+        .filters { background: white; padding: 1rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 2rem; display: flex; gap: 1rem; flex-wrap: wrap; }
+        .filter-group { display: flex; align-items: center; gap: 0.5rem; }
+        .filter-group label { font-size: 0.9rem; color: #2c3e50; font-weight: 500; }
+        .filter-select, .search-input { padding: 0.5rem 0.8rem; border: 1px solid #e1e5e9; border-radius: 6px; font-size: 0.9rem; outline: none; }
+        .search-input { min-width: 250px; }
+        
         .data-container { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); overflow: hidden; }
-        .data-header { background: #8e44ad; color: white; padding: 1.5rem; }
+        .data-header { background: #3498db; color: white; padding: 1.5rem; }
         
         table { width: 100%; border-collapse: collapse; }
-        th { background: #7d3c98; color: white; padding: 1rem; text-align: left; font-weight: 600; }
+        th { background: #2980b9; color: white; padding: 1rem; text-align: left; font-weight: 600; }
         td { padding: 1rem; border-bottom: 1px solid #ecf0f1; }
         tr:hover { background: #f8f9fa; }
         
-        .contact-info { display: flex; align-items: center; gap: 1rem; }
-        .avatar { width: 40px; height: 40px; border-radius: 50%; background: #8e44ad; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; }
+        .badge { padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: bold; text-transform: uppercase; }
+        .badge.lead { background: #dbeafe; color: #3498db; }
+        .badge.prospect { background: #fef3c7; color: #f39c12; }
+        .badge.customer { background: #d1fae5; color: #065f46; }
         
-        .badge { padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: bold; }
-        .badge.lead { background: #e3f2fd; color: #1565c0; }
-        .badge.prospect { background: #fff3e0; color: #e65100; }
-        .badge.customer { background: #e8f5e9; color: #2e7d32; }
-        .badge.inactive { background: #f5f5f5; color: #757575; }
+        .actions { display: flex; gap: 0.5rem; }
+        .action-btn { padding: 0.4rem 0.8rem; border: none; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
+        .action-btn.edit { background: #3498db; color: white; }
+        .action-btn.delete { background: #e74c3c; color: white; }
         
-        .btn { background: #8e44ad; color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 6px; cursor: pointer; }
-        .btn:hover { background: #7d3c98; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center; }
+        .modal.show { display: flex; }
+        .modal-content { background: white; padding: 2rem; border-radius: 12px; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .modal-header h2 { color: #2c3e50; }
+        .close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #7f8c8d; }
         
-        .error-box { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 1rem; border-radius: 6px; margin: 1rem; }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; color: #2c3e50; font-weight: 500; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.8rem; border: 1px solid #e1e5e9; border-radius: 6px; font-size: 0.9rem; }
+        .form-group textarea { min-height: 100px; resize: vertical; }
+        
+        .form-actions { display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem; }
         
         .empty-state { text-align: center; padding: 3rem; color: #7f8c8d; }
-        .empty-state h3 { margin-bottom: 1rem; color: #2c3e50; }
     </style>
 </head>
 <body>
@@ -55,14 +77,35 @@
     
     <div class="container">
         <div class="header">
-            <h1>Contacts</h1>
-            <p class="subtitle">Prospect database</p>
-            <button class="btn" onclick="loadData()" style="margin-top: 1rem;">Refresh Data</button>
+            <div>
+                <h1>Contacts</h1>
+                <p class="subtitle">Lead & prospect management</p>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+                <button class="btn success" onclick="openAddModal()">+ Add Contact</button>
+                <button class="btn" onclick="loadData()">Refresh</button>
+            </div>
+        </div>
+
+        <div class="filters">
+            <div class="filter-group">
+                <label>Search:</label>
+                <input type="text" class="search-input" placeholder="Search contacts..." id="searchInput" onkeyup="filterData()">
+            </div>
+            <div class="filter-group">
+                <label>Status:</label>
+                <select class="filter-select" id="statusFilter" onchange="filterData()">
+                    <option value="">All</option>
+                    <option value="Lead">Lead</option>
+                    <option value="Prospect">Prospect</option>
+                    <option value="Customer">Customer</option>
+                </select>
+            </div>
         </div>
 
         <div class="stats">
             <div class="stat-card">
-                <div class="stat-number" style="color: #8e44ad;" id="total">0</div>
+                <div class="stat-number" style="color: #3498db;" id="total">0</div>
                 <div class="stat-label">Total Contacts</div>
             </div>
             <div class="stat-card">
@@ -83,30 +126,85 @@
             <div class="data-header">
                 <h2>All Contacts (<span id="count">0</span>)</h2>
             </div>
-            <div id="tableContainer">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Contact</th>
-                            <th>Company</th>
-                            <th>Phone</th>
-                            <th>Status</th>
-                            <th>Source</th>
-                            <th>Last Contact</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tbody">
-                        <tr><td colspan="6" style="text-align: center; padding: 2rem;">Loading...</td></tr>
-                    </tbody>
-                </table>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Company</th>
+                        <th>Phone</th>
+                        <th>Status</th>
+                        <th>Source</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody">
+                    <tr><td colspan="7" style="text-align: center; padding: 2rem;">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="modal" id="contactModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Add Contact</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
             </div>
+            <form id="contactForm" onsubmit="saveContact(event)">
+                <input type="hidden" id="contactId">
+                
+                <div class="form-group">
+                    <label>Name *</label>
+                    <input type="text" id="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" id="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Company</label>
+                    <input type="text" id="company">
+                </div>
+                
+                <div class="form-group">
+                    <label>Phone</label>
+                    <input type="tel" id="phone">
+                </div>
+                
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="contactStatus">
+                        <option value="Lead">Lead</option>
+                        <option value="Prospect">Prospect</option>
+                        <option value="Customer">Customer</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Source</label>
+                    <input type="text" id="source" placeholder="e.g., Instantly, Referral, Website">
+                </div>
+                
+                <div class="form-group">
+                    <label>Notes</label>
+                    <textarea id="notes"></textarea>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn secondary" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn success">Save</button>
+                </div>
+            </form>
         </div>
     </div>
 
     <script>
         const API_URL = 'https://growthmanagerpro-backend.vercel.app';
-        
         let data = [];
+        let filteredData = [];
 
         async function loadData() {
             const status = document.getElementById('status');
@@ -127,17 +225,23 @@
                 }
 
                 data = result.data.contacts;
+                filteredData = [...data];
                 updateStats(result.data.stats);
                 renderTable();
                 
                 status.className = 'status connected';
-                status.textContent = '✓ Connected';
+                status.textContent = 'Connected';
                 
             } catch (error) {
                 console.error('Error:', error);
                 status.className = 'status error';
-                status.textContent = '✗ Error';
-                showError(error.message);
+                status.textContent = 'Error';
+                document.getElementById('tbody').innerHTML = `
+                    <tr><td colspan="7" style="text-align: center; padding: 2rem; color: #e74c3c;">
+                        Error: ${error.message}<br>
+                        <button class="btn" onclick="loadData()" style="margin-top: 1rem;">Retry</button>
+                    </td></tr>
+                `;
             }
         }
 
@@ -146,59 +250,152 @@
             document.getElementById('leads').textContent = stats.leads;
             document.getElementById('prospects').textContent = stats.prospects;
             document.getElementById('customers').textContent = stats.customers;
-            document.getElementById('count').textContent = data.length;
+            document.getElementById('count').textContent = filteredData.length;
         }
 
         function renderTable() {
             const tbody = document.getElementById('tbody');
             
-            if (data.length === 0) {
+            if (filteredData.length === 0) {
                 tbody.innerHTML = `
-                    <tr>
-                        <td colspan="6">
-                            <div class="empty-state">
-                                <h3>No Contacts Yet</h3>
-                                <p>Add contacts through Supabase to start building your prospect database</p>
-                            </div>
-                        </td>
-                    </tr>
+                    <tr><td colspan="7">
+                        <div class="empty-state">
+                            <h3>No contacts yet</h3>
+                            <p>Click "Add Contact" to create your first contact</p>
+                        </div>
+                    </td></tr>
                 `;
                 return;
             }
 
-            tbody.innerHTML = data.map(item => `
+            tbody.innerHTML = filteredData.map(item => `
                 <tr>
-                    <td>
-                        <div class="contact-info">
-                            <div class="avatar">${item.name.charAt(0)}</div>
-                            <div>
-                                <div style="font-weight: 600;">${item.name}</div>
-                                <div style="font-size: 0.85rem; color: #7f8c8d;">${item.email || 'No email'}</div>
-                            </div>
-                        </div>
-                    </td>
+                    <td><strong>${item.name}</strong></td>
+                    <td>${item.email}</td>
                     <td>${item.company || 'N/A'}</td>
                     <td>${item.phone || 'N/A'}</td>
-                    <td><span class="badge ${(item.status || '').toLowerCase()}">${item.status || 'N/A'}</span></td>
-                    <td>${item.source || 'N/A'}</td>
-                    <td>${item.lastContactDate ? new Date(item.lastContactDate).toLocaleDateString() : 'Never'}</td>
+                    <td><span class="badge ${item.status.toLowerCase()}">${item.status}</span></td>
+                    <td>${item.source || 'Manual'}</td>
+                    <td>
+                        <div class="actions">
+                            <button class="action-btn edit" onclick='editContact(${JSON.stringify(item)})'>Edit</button>
+                            <button class="action-btn delete" onclick="deleteContact('${item.id}', '${item.name}')">Delete</button>
+                        </div>
+                    </td>
                 </tr>
             `).join('');
         }
 
-        function showError(message) {
-            const tbody = document.getElementById('tbody');
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="6">
-                        <div class="error-box">
-                            <strong>Error loading data:</strong> ${message}
-                            <br><br>
-                            <button class="btn" onclick="loadData()">Retry</button>
-                        </div>
-                    </td>
-                </tr>
-            `;
+        function filterData() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+
+            filteredData = data.filter(item => {
+                const matchesSearch = !searchTerm || 
+                    item.name.toLowerCase().includes(searchTerm) ||
+                    item.email.toLowerCase().includes(searchTerm) ||
+                    (item.company && item.company.toLowerCase().includes(searchTerm));
+
+                const matchesStatus = !statusFilter || item.status === statusFilter;
+
+                return matchesSearch && matchesStatus;
+            });
+
+            document.getElementById('count').textContent = filteredData.length;
+            renderTable();
+        }
+
+        function openAddModal() {
+            document.getElementById('modalTitle').textContent = 'Add Contact';
+            document.getElementById('contactForm').reset();
+            document.getElementById('contactId').value = '';
+            document.getElementById('contactModal').classList.add('show');
+        }
+
+        function editContact(contact) {
+            document.getElementById('modalTitle').textContent = 'Edit Contact';
+            document.getElementById('contactId').value = contact.id;
+            document.getElementById('name').value = contact.name;
+            document.getElementById('email').value = contact.email;
+            document.getElementById('company').value = contact.company || '';
+            document.getElementById('phone').value = contact.phone || '';
+            document.getElementById('contactStatus').value = contact.status;
+            document.getElementById('source').value = contact.source || '';
+            document.getElementById('notes').value = contact.notes || '';
+            document.getElementById('contactModal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('contactModal').classList.remove('show');
+        }
+
+        async function saveContact(event) {
+            event.preventDefault();
+            
+            const id = document.getElementById('contactId').value;
+            const contactData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                company: document.getElementById('company').value,
+                phone: document.getElementById('phone').value,
+                status: document.getElementById('contactStatus').value,
+                source: document.getElementById('source').value,
+                notes: document.getElementById('notes').value
+            };
+
+            try {
+                const isEdit = !!id;
+                if (isEdit) {
+                    contactData.id = id;
+                }
+
+                const response = await fetch(`${API_URL}/api/contacts`, {
+                    method: isEdit ? 'PUT' : 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(contactData)
+                });
+
+                const result = await response.json();
+
+                if (!result.success) {
+                    throw new Error(result.error || 'Failed to save');
+                }
+
+                alert(isEdit ? 'Contact updated successfully!' : 'Contact added successfully!');
+                closeModal();
+                loadData();
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error: ' + error.message);
+            }
+        }
+
+        async function deleteContact(id, name) {
+            if (!confirm(`Are you sure you want to delete ${name}?`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/api/contacts`, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id })
+                });
+
+                const result = await response.json();
+
+                if (!result.success) {
+                    throw new Error(result.error || 'Failed to delete');
+                }
+
+                alert('Contact deleted successfully!');
+                loadData();
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error: ' + error.message);
+            }
         }
 
         document.addEventListener('DOMContentLoaded', loadData);
