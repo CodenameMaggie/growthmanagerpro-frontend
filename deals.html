@@ -10,45 +10,70 @@
         
         .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
         
-        .header { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 2rem; }
-        .header h1 { color: #2c3e50; font-size: 2rem; margin-bottom: 0.5rem; }
+        .header { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+        .header h1 { color: #2c3e50; font-size: 2rem; }
         .header .subtitle { color: #7f8c8d; }
+        
+        .btn { background: #3498db; color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 6px; cursor: pointer; font-size: 0.9rem; }
+        .btn:hover { background: #2980b9; }
+        .btn.success { background: #27ae60; }
+        .btn.success:hover { background: #229954; }
+        .btn.danger { background: #e74c3c; }
+        .btn.danger:hover { background: #c0392b; }
+        .btn.secondary { background: #95a5a6; }
+        .btn.secondary:hover { background: #7f8c8d; }
         
         .status { position: fixed; top: 20px; right: 20px; padding: 10px 15px; border-radius: 6px; font-size: 0.9rem; font-weight: 600; z-index: 1000; }
         .status.loading { background: #fff3cd; color: #856404; }
         .status.connected { background: #d4edda; color: #155724; }
         .status.error { background: #f8d7da; color: #721c24; }
         
-        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
         .stat-card { background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center; }
         .stat-number { font-size: 2rem; font-weight: bold; margin-bottom: 0.5rem; }
         .stat-label { color: #7f8c8d; font-size: 0.9rem; text-transform: uppercase; }
         
+        .filters { background: white; padding: 1rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 2rem; display: flex; gap: 1rem; flex-wrap: wrap; }
+        .filter-group { display: flex; align-items: center; gap: 0.5rem; }
+        .filter-group label { font-size: 0.9rem; color: #2c3e50; font-weight: 500; }
+        .filter-select, .search-input { padding: 0.5rem 0.8rem; border: 1px solid #e1e5e9; border-radius: 6px; font-size: 0.9rem; outline: none; }
+        .search-input { min-width: 250px; }
+        
         .data-container { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); overflow: hidden; }
-        .data-header { background: #16a085; color: white; padding: 1.5rem; }
+        .data-header { background: #27ae60; color: white; padding: 1.5rem; }
         
         table { width: 100%; border-collapse: collapse; }
-        th { background: #138d75; color: white; padding: 1rem; text-align: left; font-weight: 600; }
+        th { background: #229954; color: white; padding: 1rem; text-align: left; font-weight: 600; }
         td { padding: 1rem; border-bottom: 1px solid #ecf0f1; }
         tr:hover { background: #f8f9fa; }
         
-        .deal-info { font-weight: 600; color: #2c3e50; }
-        .company-name { font-size: 0.9rem; color: #7f8c8d; margin-top: 0.25rem; }
+        .badge { padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: bold; text-transform: uppercase; }
+        .badge.won { background: #d1fae5; color: #065f46; }
+        .badge.lost { background: #fee2e2; color: #991b1b; }
+        .badge.pending { background: #fef3c7; color: #92400e; }
         
-        .badge { padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: bold; }
-        .badge.closed-won { background: #d4edda; color: #155724; }
-        .badge.closed-lost { background: #f8d7da; color: #721c24; }
-        .badge.pending { background: #fff3cd; color: #856404; }
+        .deal-value { font-weight: bold; color: #27ae60; font-size: 1.1rem; }
         
-        .value { font-weight: 600; color: #16a085; font-size: 1.1rem; }
+        .actions { display: flex; gap: 0.5rem; }
+        .action-btn { padding: 0.4rem 0.8rem; border: none; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
+        .action-btn.edit { background: #3498db; color: white; }
+        .action-btn.delete { background: #e74c3c; color: white; }
         
-        .btn { background: #16a085; color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 6px; cursor: pointer; }
-        .btn:hover { background: #138d75; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center; }
+        .modal.show { display: flex; }
+        .modal-content { background: white; padding: 2rem; border-radius: 12px; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .modal-header h2 { color: #2c3e50; }
+        .close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #7f8c8d; }
         
-        .error-box { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 1rem; border-radius: 6px; margin: 1rem; }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; color: #2c3e50; font-weight: 500; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.8rem; border: 1px solid #e1e5e9; border-radius: 6px; font-size: 0.9rem; }
+        .form-group textarea { min-height: 100px; resize: vertical; }
+        
+        .form-actions { display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem; }
         
         .empty-state { text-align: center; padding: 3rem; color: #7f8c8d; }
-        .empty-state h3 { margin-bottom: 1rem; color: #2c3e50; }
     </style>
 </head>
 <body>
@@ -56,58 +81,134 @@
     
     <div class="container">
         <div class="header">
-            <h1>Deals</h1>
-            <p class="subtitle">Closed deals tracking</p>
-            <button class="btn" onclick="loadData()" style="margin-top: 1rem;">Refresh Data</button>
+            <div>
+                <h1>Closed Deals</h1>
+                <p class="subtitle">Revenue tracking & closed sales</p>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+                <button class="btn success" onclick="openAddModal()">+ Add Deal</button>
+                <button class="btn" onclick="loadData()">Refresh</button>
+            </div>
+        </div>
+
+        <div class="filters">
+            <div class="filter-group">
+                <label>Search:</label>
+                <input type="text" class="search-input" placeholder="Search deals..." id="searchInput" onkeyup="filterData()">
+            </div>
+            <div class="filter-group">
+                <label>Status:</label>
+                <select class="filter-select" id="statusFilter" onchange="filterData()">
+                    <option value="">All</option>
+                    <option value="won">Won</option>
+                    <option value="lost">Lost</option>
+                    <option value="pending">Pending</option>
+                </select>
+            </div>
         </div>
 
         <div class="stats">
             <div class="stat-card">
-                <div class="stat-number" style="color: #16a085;" id="total">0</div>
+                <div class="stat-number" style="color: #27ae60;" id="total">0</div>
                 <div class="stat-label">Total Deals</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number" style="color: #27ae60;" id="totalValue">$0</div>
-                <div class="stat-label">Total Value</div>
+                <div class="stat-number" style="color: #27ae60;" id="won">0</div>
+                <div class="stat-label">Won Deals</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number" style="color: #2ecc71;" id="closedWon">0</div>
-                <div class="stat-label">Closed Won</div>
+                <div class="stat-number" style="color: #27ae60;" id="revenue">$0</div>
+                <div class="stat-label">Total Revenue</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number" style="color: #3498db;" id="average">$0</div>
-                <div class="stat-label">Avg Deal Value</div>
+                <div class="stat-number" style="color: #3498db;" id="avg">$0</div>
+                <div class="stat-label">Avg Deal Size</div>
             </div>
         </div>
 
         <div class="data-container">
             <div class="data-header">
-                <h2>Closed Deals (<span id="count">0</span>)</h2>
+                <h2>All Deals (<span id="count">0</span>)</h2>
             </div>
-            <div id="tableContainer">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Deal</th>
-                            <th>Company</th>
-                            <th>Contact</th>
-                            <th>Value</th>
-                            <th>Stage</th>
-                            <th>Close Date</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tbody">
-                        <tr><td colspan="6" style="text-align: center; padding: 2rem;">Loading...</td></tr>
-                    </tbody>
-                </table>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Deal Name</th>
+                        <th>Client</th>
+                        <th>Company</th>
+                        <th>Value</th>
+                        <th>Status</th>
+                        <th>Close Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody">
+                    <tr><td colspan="7" style="text-align: center; padding: 2rem;">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="modal" id="dealModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Add Deal</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
             </div>
+            <form id="dealForm" onsubmit="saveDeal(event)">
+                <input type="hidden" id="dealId">
+                
+                <div class="form-group">
+                    <label>Deal Name *</label>
+                    <input type="text" id="dealName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Client Name *</label>
+                    <input type="text" id="clientName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Company</label>
+                    <input type="text" id="company">
+                </div>
+                
+                <div class="form-group">
+                    <label>Deal Value ($)</label>
+                    <input type="number" id="dealValue" min="0" step="100" value="0">
+                </div>
+                
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="dealStatus">
+                        <option value="won">Won</option>
+                        <option value="lost">Lost</option>
+                        <option value="pending">Pending</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Close Date</label>
+                    <input type="date" id="closeDate">
+                </div>
+                
+                <div class="form-group">
+                    <label>Notes</label>
+                    <textarea id="notes"></textarea>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn secondary" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn success">Save</button>
+                </div>
+            </form>
         </div>
     </div>
 
     <script>
         const API_URL = 'https://growthmanagerpro-backend.vercel.app';
-        
         let data = [];
+        let filteredData = [];
 
         async function loadData() {
             const status = document.getElementById('status');
@@ -128,72 +229,183 @@
                 }
 
                 data = result.data.deals;
+                filteredData = [...data];
                 updateStats(result.data.stats);
                 renderTable();
                 
                 status.className = 'status connected';
-                status.textContent = '✓ Connected';
+                status.textContent = 'Connected';
                 
             } catch (error) {
                 console.error('Error:', error);
                 status.className = 'status error';
-                status.textContent = '✗ Error';
-                showError(error.message);
+                status.textContent = 'Error';
+                document.getElementById('tbody').innerHTML = `
+                    <tr><td colspan="7" style="text-align: center; padding: 2rem; color: #e74c3c;">
+                        Error: ${error.message}<br>
+                        <button class="btn" onclick="loadData()" style="margin-top: 1rem;">Retry</button>
+                    </td></tr>
+                `;
             }
         }
 
         function updateStats(stats) {
             document.getElementById('total').textContent = stats.totalDeals;
-            document.getElementById('totalValue').textContent = '$' + stats.totalValue.toLocaleString('en-US', {maximumFractionDigits: 0});
-            document.getElementById('closedWon').textContent = stats.closedWon;
-            document.getElementById('average').textContent = '$' + stats.avgDealValue.toLocaleString('en-US', {maximumFractionDigits: 0});
-            document.getElementById('count').textContent = data.length;
+            document.getElementById('won').textContent = stats.wonDeals;
+            document.getElementById('revenue').textContent = '$' + Math.round(stats.totalRevenue || 0).toLocaleString();
+            document.getElementById('avg').textContent = '$' + Math.round(stats.avgDealSize || 0).toLocaleString();
+            document.getElementById('count').textContent = filteredData.length;
         }
 
         function renderTable() {
             const tbody = document.getElementById('tbody');
             
-            if (data.length === 0) {
+            if (filteredData.length === 0) {
                 tbody.innerHTML = `
-                    <tr>
-                        <td colspan="6">
-                            <div class="empty-state">
-                                <h3>No Closed Deals Yet</h3>
-                                <p>Add deals through Supabase to start tracking closed deals</p>
-                            </div>
-                        </td>
-                    </tr>
+                    <tr><td colspan="7">
+                        <div class="empty-state">
+                            <h3>No deals yet</h3>
+                            <p>Click "Add Deal" to create your first closed deal</p>
+                        </div>
+                    </td></tr>
                 `;
                 return;
             }
 
-            tbody.innerHTML = data.map(item => `
+            tbody.innerHTML = filteredData.map(item => `
                 <tr>
-                    <td>
-                        <div class="deal-info">${item.dealName}</div>
-                    </td>
+                    <td><strong>${item.dealName}</strong></td>
+                    <td>${item.clientName}</td>
                     <td>${item.company || 'N/A'}</td>
-                    <td>${item.contactName || 'N/A'}</td>
-                    <td class="value">$${parseFloat(item.dealValue || 0).toLocaleString('en-US')}</td>
-                    <td><span class="badge ${(item.stage || '').toLowerCase().replace(/\s+/g, '-')}">${item.stage || 'N/A'}</span></td>
-                    <td>${item.closeDate ? new Date(item.closeDate).toLocaleDateString() : 'N/A'}</td>
+                    <td><span class="deal-value">$${(item.dealValue || 0).toLocaleString()}</span></td>
+                    <td><span class="badge ${item.dealStatus}">${item.dealStatus}</span></td>
+                    <td>${item.closeDate ? new Date(item.closeDate).toLocaleDateString() : 'TBD'}</td>
+                    <td>
+                        <div class="actions">
+                            <button class="action-btn edit" onclick='editDeal(${JSON.stringify(item)})'>Edit</button>
+                            <button class="action-btn delete" onclick="deleteDeal('${item.id}', '${item.dealName}')">Delete</button>
+                        </div>
+                    </td>
                 </tr>
             `).join('');
         }
 
-        function showError(message) {
-            const tbody = document.getElementById('tbody');
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="6">
-                        <div class="error-box">
-                            <strong>Error loading data:</strong> ${message}
-                            <br><br>
-                            <button class="btn" onclick="loadData()">Retry</button>
-                        </div>
-                    </td>
-                </tr>
-            `;
+        function filterData() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+
+            filteredData = data.filter(item => {
+                const matchesSearch = !searchTerm || 
+                    item.dealName.toLowerCase().includes(searchTerm) ||
+                    item.clientName.toLowerCase().includes(searchTerm) ||
+                    (item.company && item.company.toLowerCase().includes(searchTerm));
+
+                const matchesStatus = !statusFilter || item.dealStatus === statusFilter;
+
+                return matchesSearch && matchesStatus;
+            });
+
+            document.getElementById('count').textContent = filteredData.length;
+            renderTable();
+        }
+
+        function openAddModal() {
+            document.getElementById('modalTitle').textContent = 'Add Deal';
+            document.getElementById('dealForm').reset();
+            document.getElementById('dealId').value = '';
+            document.getElementById('dealValue').value = '0';
+            document.getElementById('dealModal').classList.add('show');
+        }
+
+        function editDeal(deal) {
+            document.getElementById('modalTitle').textContent = 'Edit Deal';
+            document.getElementById('dealId').value = deal.id;
+            document.getElementById('dealName').value = deal.dealName;
+            document.getElementById('clientName').value = deal.clientName;
+            document.getElementById('company').value = deal.company || '';
+            document.getElementById('dealValue').value = deal.dealValue || 0;
+            document.getElementById('dealStatus').value = deal.dealStatus || 'won';
+            document.getElementById('notes').value = deal.notes || '';
+            
+            if (deal.closeDate) {
+                const date = new Date(deal.closeDate);
+                document.getElementById('closeDate').value = date.toISOString().split('T')[0];
+            }
+            
+            document.getElementById('dealModal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('dealModal').classList.remove('show');
+        }
+
+        async function saveDeal(event) {
+            event.preventDefault();
+            
+            const id = document.getElementById('dealId').value;
+            const dealData = {
+                dealName: document.getElementById('dealName').value,
+                clientName: document.getElementById('clientName').value,
+                company: document.getElementById('company').value,
+                dealValue: parseFloat(document.getElementById('dealValue').value) || 0,
+                dealStatus: document.getElementById('dealStatus').value,
+                closeDate: document.getElementById('closeDate').value || null,
+                notes: document.getElementById('notes').value
+            };
+
+            try {
+                const isEdit = !!id;
+                if (isEdit) {
+                    dealData.id = id;
+                }
+
+                const response = await fetch(`${API_URL}/api/deals`, {
+                    method: isEdit ? 'PUT' : 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(dealData)
+                });
+
+                const result = await response.json();
+
+                if (!result.success) {
+                    throw new Error(result.error || 'Failed to save');
+                }
+
+                alert(isEdit ? 'Deal updated successfully!' : 'Deal added successfully!');
+                closeModal();
+                loadData();
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error: ' + error.message);
+            }
+        }
+
+        async function deleteDeal(id, name) {
+            if (!confirm(`Are you sure you want to delete ${name}?`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/api/deals`, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id })
+                });
+
+                const result = await response.json();
+
+                if (!result.success) {
+                    throw new Error(result.error || 'Failed to delete');
+                }
+
+                alert('Deal deleted successfully!');
+                loadData();
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error: ' + error.message);
+            }
         }
 
         document.addEventListener('DOMContentLoaded', loadData);
