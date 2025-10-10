@@ -5,301 +5,692 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Growth Manager Pro - Discovery Calls</title>
     <script src="/auth.js"></script>
-    <script src="/nav.js"></script>  <!-- ADD THIS LINE -->
+    <script src="/nav.js"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f7fa; }
-        
-        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
-        
-        .header { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
-        .header h1 { color: #2c3e50; font-size: 2rem; }
-        .header .subtitle { color: #7f8c8d; }
-        
-        .btn { background: #3498db; color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 6px; cursor: pointer; font-size: 0.9rem; }
-        .btn:hover { background: #2980b9; }
-        .btn.success { background: #27ae60; }
-        .btn.success:hover { background: #229954; }
-        .btn.danger { background: #e74c3c; }
-        .btn.danger:hover { background: #c0392b; }
-        .btn.secondary { background: #95a5a6; }
-        .btn.secondary:hover { background: #7f8c8d; }
-        
-        .status { position: fixed; top: 20px; right: 20px; padding: 10px 15px; border-radius: 6px; font-size: 0.9rem; font-weight: 600; z-index: 1000; }
-        .status.loading { background: #fff3cd; color: #856404; }
-        .status.connected { background: #d4edda; color: #155724; }
-        .status.error { background: #f8d7da; color: #721c24; }
-        
-        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
-        .stat-card { background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center; }
-        .stat-number { font-size: 2rem; font-weight: bold; margin-bottom: 0.5rem; }
-        .stat-label { color: #7f8c8d; font-size: 0.9rem; text-transform: uppercase; }
-        
-        .data-container { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); overflow: hidden; }
-        .data-header { background: #9b59b6; color: white; padding: 1.5rem; }
-        
-        table { width: 100%; border-collapse: collapse; }
-        th { background: #8e44ad; color: white; padding: 1rem; text-align: left; font-weight: 600; }
-        td { padding: 1rem; border-bottom: 1px solid #ecf0f1; }
-        tr:hover { background: #f8f9fa; }
-        
-        .badge { padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: bold; }
-        .badge.scheduled { background: #e0e7ff; color: #3730a3; }
-        .badge.completed { background: #d1fae5; color: #065f46; }
-        .badge.qualified { background: #d5f4e6; color: #27ae60; }
-        .badge.cancelled { background: #fee2e2; color: #991b1b; }
-        
-        .actions { display: flex; gap: 0.5rem; }
-        .action-btn { padding: 0.4rem 0.8rem; border: none; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
-        .action-btn.edit { background: #3498db; color: white; }
-        .action-btn.delete { background: #e74c3c; color: white; }
-        
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center; }
-        .modal.show { display: flex; }
-        .modal-content { background: white; padding: 2rem; border-radius: 12px; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto; }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
-        .modal-header h2 { color: #2c3e50; }
-        .close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #7f8c8d; }
-        
-        .form-group { margin-bottom: 1rem; }
-        .form-group label { display: block; margin-bottom: 0.5rem; color: #2c3e50; font-weight: 500; }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.8rem; border: 1px solid #e1e5e9; border-radius: 6px; font-size: 0.9rem; }
-        .form-group textarea { min-height: 100px; resize: vertical; }
-        
-        .form-actions { display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem; }
-        
-        .empty-state { text-align: center; padding: 3rem; color: #7f8c8d; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            min-height: 100vh;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left h1 {
+            color: #2c3e50;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header-left .subtitle {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            font-weight: 600;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn.success {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+        }
+
+        .btn.secondary {
+            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+        }
+
+        .filters-bar {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-group label {
+            font-size: 0.9rem;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+
+        .filter-select, .search-input {
+            padding: 0.5rem 0.8rem;
+            border: 1px solid #e1e5e9;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            outline: none;
+            min-width: 150px;
+        }
+
+        .filter-select:focus, .search-input:focus {
+            border-color: #3498db;
+        }
+
+        .search-input {
+            min-width: 250px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .calls-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .calls-header {
+            background: #2c3e50;
+            color: white;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .calls-header h2 {
+            font-size: 1.5rem;
+        }
+
+        .calls-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .calls-table th {
+            background: #34495e;
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .calls-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #ecf0f1;
+            vertical-align: middle;
+        }
+
+        .calls-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .prospect-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .prospect-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .prospect-details h4 {
+            color: #2c3e50;
+            margin-bottom: 0.2rem;
+            font-size: 1rem;
+        }
+
+        .prospect-details p {
+            color: #7f8c8d;
+            font-size: 0.8rem;
+        }
+
+        .status-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .status-scheduled { background: #e0e7ff; color: #3730a3; }
+        .status-completed { background: #d1fae5; color: #065f46; }
+        .status-qualified { background: #d5f4e6; color: #27ae60; }
+        .status-cancelled { background: #fee2e2; color: #991b1b; }
+        .status-pending { background: #fef3c7; color: #92400e; }
+
+        .actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 0.5rem 0.8rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: opacity 0.2s ease;
+            font-weight: 600;
+        }
+
+        .action-btn:hover {
+            opacity: 0.8;
+        }
+
+        .action-btn.primary {
+            background: #3498db;
+            color: white;
+        }
+
+        .action-btn.success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .action-btn.warning {
+            background: #f39c12;
+            color: white;
+        }
+
+        .action-btn.danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .connection-status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            z-index: 1100;
+        }
+
+        .connection-status.connected {
+            background: #d5f4e6;
+            color: #27ae60;
+        }
+
+        .connection-status.disconnected {
+            background: #fef2f2;
+            color: #e74c3c;
+        }
+
+        .connection-status.loading {
+            background: #fef3cd;
+            color: #f39c12;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h2 {
+            color: #2c3e50;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #7f8c8d;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #e1e5e9;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .filters-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="status loading" id="status">Loading...</div>
-    
-    <div class="container">
-        <div class="header">
-            <div>
-                <h1>Discovery Calls</h1>
-                <p class="subtitle">Qualification call management</p>
-            </div>
-            <div style="display: flex; gap: 0.5rem;">
-                <button class="btn success" onclick="openAddModal()">+ Schedule Call</button>
-                <button class="btn" onclick="loadData()">Refresh</button>
-            </div>
-        </div>
+    <div id="connectionStatus" class="connection-status loading">🔄 Loading Discovery Data...</div>
 
-        <div class="stats">
-            <div class="stat-card">
-                <div class="stat-number" style="color: #e67e22;" id="total">0</div>
-                <div class="stat-label">Total Calls</div>
+    <div class="main-content">
+        <div class="container">
+            <div class="header">
+                <div class="header-left">
+                    <h1>🎯 Live Discovery Calls</h1>
+                    <p class="subtitle">Real-time data from Supabase • Qualification call management</p>
+                </div>
+                <div class="header-right">
+                    <button class="btn success" onclick="openAddModal()">+ Schedule Call</button>
+                    <button class="btn secondary" onclick="exportCalls()">📋 Export</button>
+                    <button class="btn" onclick="syncData()">🔄 Sync Data</button>
+                </div>
             </div>
-            <div class="stat-card">
-                <div class="stat-number" style="color: #3498db;" id="scheduled">0</div>
-                <div class="stat-label">Scheduled</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" style="color: #27ae60;" id="qualified">0</div>
-                <div class="stat-label">Qualified</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" style="color: #9b59b6;" id="rate">0%</div>
-                <div class="stat-label">Qualification Rate</div>
-            </div>
-        </div>
 
-        <div class="data-container">
-            <div class="data-header">
-                <h2>All Calls (<span id="count">0</span>)</h2>
+            <div class="filters-bar">
+                <div class="filter-group">
+                    <label>Search:</label>
+                    <input type="text" class="search-input" placeholder="Search prospects..." id="searchInput" onkeyup="filterCalls()">
+                </div>
+                <div class="filter-group">
+                    <label>Status:</label>
+                    <select class="filter-select" id="statusFilter" onchange="filterCalls()">
+                        <option value="">All Statuses</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Qualified">Qualified</option>
+                        <option value="Not Qualified">Not Qualified</option>
+                    </select>
+                </div>
             </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Contact</th>
-                        <th>Company</th>
-                        <th>Email</th>
-                        <th>Call Date</th>
-                        <th>Status</th>
-                        <th>Source</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="tbody">
-                    <tr><td colspan="7" style="text-align: center; padding: 2rem;">Loading...</td></tr>
-                </tbody>
-            </table>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" style="color: #3498db;" id="total-calls">0</div>
+                    <div class="stat-label">Total Calls</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" style="color: #27ae60;" id="qualified-calls">0</div>
+                    <div class="stat-label">Qualified</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" style="color: #f39c12;" id="avg-score">0</div>
+                    <div class="stat-label">Avg Score</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" style="color: #9b59b6;" id="conversion-rate">0%</div>
+                    <div class="stat-label">Qualification Rate</div>
+                </div>
+            </div>
+
+            <div class="calls-container">
+                <div class="calls-header">
+                    <h2>Live Discovery Calls (<span id="call-count">0</span>)</h2>
+                    <span id="last-sync">Connecting to database...</span>
+                </div>
+                
+                <table class="calls-table">
+                    <thead>
+                        <tr>
+                            <th>Prospect</th>
+                            <th>Company</th>
+                            <th>Call Date</th>
+                            <th>Score</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="calls-table-body">
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 2rem;">
+                                🔄 Loading live discovery call data...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
+    <!-- Add/Edit Call Modal -->
     <div class="modal" id="callModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 id="modalTitle">Schedule Call</h2>
+                <h2 id="modalTitle">Add Discovery Call</h2>
                 <button class="close-btn" onclick="closeModal()">&times;</button>
             </div>
-            <form id="callForm" onsubmit="saveCall(event)">
+            <form onsubmit="saveCall(event)">
                 <input type="hidden" id="callId">
-                
                 <div class="form-group">
-                    <label>Contact Name *</label>
-                    <input type="text" id="contactName" required>
+                    <label>Prospect Name *</label>
+                    <input type="text" id="prospectName" required>
                 </div>
-                
-                <div class="form-group">
-                    <label>Email *</label>
-                    <input type="email" id="email" required>
-                </div>
-                
                 <div class="form-group">
                     <label>Company</label>
                     <input type="text" id="company">
                 </div>
-                
                 <div class="form-group">
                     <label>Call Date</label>
-                    <input type="datetime-local" id="callDate">
+                    <input type="date" id="callDate">
                 </div>
-                
                 <div class="form-group">
-                    <label>Status</label>
-                    <select id="callStatus">
-                        <option value="scheduled">Scheduled</option>
-                        <option value="completed">Completed</option>
-                        <option value="qualified">Qualified</option>
-                        <option value="cancelled">Cancelled</option>
-                        <option value="no-show">No Show</option>
+                    <label>Qualification Score (1-10)</label>
+                    <input type="number" id="qualScore" min="1" max="10">
+                </div>
+                <div class="form-group">
+                    <label>Call Outcome</label>
+                    <select id="callOutcome">
+                        <option value="Pending">Pending</option>
+                        <option value="Qualified">Qualified</option>
+                        <option value="Not Qualified">Not Qualified</option>
                     </select>
                 </div>
-                
-                <div class="form-group">
-                    <label>Source</label>
-                    <select id="callSource">
-                        <option value="">Select source</option>
-                        <option value="podcast">From Podcast</option>
-                        <option value="cold-email">Cold Email</option>
-                        <option value="linkedin">LinkedIn</option>
-                        <option value="referral">Referral</option>
-                        <option value="website">Website</option>
-                    </select>
-                </div>
-                
                 <div class="form-group">
                     <label>Notes</label>
                     <textarea id="notes"></textarea>
                 </div>
-                
-                <div class="form-actions">
-                    <button type="button" class="btn secondary" onclick="closeModal()">Cancel</button>
-                    <button type="submit" class="btn success">Save</button>
-                </div>
+                <button type="submit" class="btn success" style="width: 100%;">Save Call</button>
             </form>
         </div>
     </div>
 
     <script>
-        const API_URL = 'https://growthmanagerpro-backend.vercel.app';
-        let data = [];
+        const API_BASE = 'https://growthmanagerpro-backend.vercel.app';
+        let callsData = [];
+        let filteredCalls = [];
+        let lastDataUpdate = null;
 
-        async function loadData() {
-            const status = document.getElementById('status');
-            status.className = 'status loading';
-            status.textContent = 'Loading...';
+        function updateConnectionStatus(status) {
+            const statusEl = document.getElementById('connectionStatus');
+            statusEl.className = `connection-status ${status}`;
+            
+            switch(status) {
+                case 'connected':
+                    statusEl.textContent = '✓ Live Supabase Connected';
+                    break;
+                case 'disconnected':
+                    statusEl.textContent = '✗ Connection Failed';
+                    break;
+                case 'loading':
+                    statusEl.textContent = '🔄 Loading Discovery Data...';
+                    break;
+            }
+        }
 
+        async function loadCallsData() {
+            console.log('[Discovery] Loading data from Supabase...');
+            updateConnectionStatus('loading');
+            
             try {
-                const response = await fetch(`${API_URL}/api/discovery-calls`);
+                const response = await fetch(`${API_BASE}/api/discovery-calls`);
                 
                 if (!response.ok) {
                     throw new Error(`API returned ${response.status}`);
                 }
 
-                const result = await response.json();
+                const data = await response.json();
                 
-                if (!result.success) {
-                    throw new Error(result.error || 'API returned error');
+                if (!data.success) {
+                    throw new Error('Invalid API response');
                 }
 
-                data = result.data.calls;
-                updateStats(result.data.stats);
-                renderTable();
-                
-                status.className = 'status connected';
-                status.textContent = 'Connected';
+                callsData = data.data || [];
+                updateDisplay();
+                updateConnectionStatus('connected');
+                lastDataUpdate = new Date();
+                document.getElementById('last-sync').innerHTML = `
+                    <strong>Last sync:</strong> ${lastDataUpdate.toLocaleTimeString()} 
+                    <span style="color: #27ae60;">• Live</span>
+                `;
                 
             } catch (error) {
-                console.error('Error:', error);
-                status.className = 'status error';
-                status.textContent = 'Error';
-                document.getElementById('tbody').innerHTML = `
-                    <tr><td colspan="7" style="text-align: center; padding: 2rem; color: #e74c3c;">
-                        Error: ${error.message}<br>
-                        <button class="btn" onclick="loadData()" style="margin-top: 1rem;">Retry</button>
-                    </td></tr>
+                console.error('[Discovery] Error:', error);
+                updateConnectionStatus('disconnected');
+                const tbody = document.getElementById('calls-table-body');
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 3rem; color: #e74c3c;">
+                            <h3>⚠️ Unable to Load Data</h3>
+                            <p>Error: ${error.message}</p>
+                            <button class="btn" onclick="loadCallsData()" style="margin-top: 1rem;">
+                                🔄 Retry
+                            </button>
+                        </td>
+                    </tr>
                 `;
             }
         }
 
-        function updateStats(stats) {
-            document.getElementById('total').textContent = stats.totalCalls;
-            document.getElementById('scheduled').textContent = stats.scheduledCalls;
-            document.getElementById('qualified').textContent = stats.qualifiedCalls;
-            document.getElementById('rate').textContent = stats.qualificationRate + '%';
-            document.getElementById('count').textContent = data.length;
+        function updateDisplay() {
+            filteredCalls = [...callsData];
+            
+            // Update stats
+            const qualified = callsData.filter(c => c.call_outcome === 'Qualified').length;
+            const scores = callsData.filter(c => c.qualification_score).map(c => parseFloat(c.qualification_score));
+            const avgScore = scores.length > 0 ? (scores.reduce((a,b) => a+b, 0) / scores.length).toFixed(1) : 0;
+            const qualRate = callsData.length > 0 ? Math.round((qualified / callsData.length) * 100) : 0;
+            
+            document.getElementById('total-calls').textContent = callsData.length;
+            document.getElementById('qualified-calls').textContent = qualified;
+            document.getElementById('avg-score').textContent = avgScore;
+            document.getElementById('conversion-rate').textContent = `${qualRate}%`;
+            document.getElementById('call-count').textContent = callsData.length;
+            
+            renderTable();
         }
 
         function renderTable() {
-            const tbody = document.getElementById('tbody');
+            const tbody = document.getElementById('calls-table-body');
             
-            if (data.length === 0) {
+            if (filteredCalls.length === 0) {
                 tbody.innerHTML = `
-                    <tr><td colspan="7">
-                        <div class="empty-state">
-                            <h3>No calls yet</h3>
-                            <p>Click "Schedule Call" to create your first discovery call</p>
-                        </div>
-                    </td></tr>
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 2rem; color: #7f8c8d;">
+                            No discovery calls found.
+                        </td>
+                    </tr>
                 `;
                 return;
             }
 
-            tbody.innerHTML = data.map(item => `
+            tbody.innerHTML = filteredCalls.map(call => `
                 <tr>
-                    <td><strong>${item.contactName}</strong></td>
-                    <td>${item.company || 'N/A'}</td>
-                    <td>${item.email || 'N/A'}</td>
-                    <td>${item.callDate ? new Date(item.callDate).toLocaleString() : 'Not scheduled'}</td>
-                    <td><span class="badge ${item.callStatus}">${item.callStatus || 'scheduled'}</span></td>
-                    <td>${item.callSource || 'N/A'}</td>
+                    <td>
+                        <div class="prospect-info">
+                            <div class="prospect-avatar">${call.prospect_name.charAt(0).toUpperCase()}</div>
+                            <div class="prospect-details">
+                                <h4>${call.prospect_name}</h4>
+                            </div>
+                        </div>
+                    </td>
+                    <td><strong>${call.company || 'N/A'}</strong></td>
+                    <td>${call.call_date ? new Date(call.call_date).toLocaleDateString() : 'Not Set'}</td>
+                    <td>${call.qualification_score ? `<span style="background: #27ae60; color: white; padding: 0.3rem 0.6rem; border-radius: 15px; font-weight: bold;">${call.qualification_score}/10</span>` : 'N/A'}</td>
+                    <td>
+                        <span class="status-badge status-${call.call_outcome?.toLowerCase() || 'pending'}">${call.call_outcome || 'Pending'}</span>
+                    </td>
                     <td>
                         <div class="actions">
-                            <button class="action-btn edit" onclick='editCall(${JSON.stringify(item)})'>Edit</button>
-                            <button class="action-btn delete" onclick="deleteCall('${item.id}', '${item.contactName}')">Delete</button>
+                            ${call.call_outcome === 'Qualified' ? 
+                                `<button class="action-btn success" onclick="moveToSales('${call.id}')">💼 Move to Sales</button>` :
+                                `<button class="action-btn primary" onclick="markQualified('${call.id}')">✓ Qualify</button>`
+                            }
+                            <button class="action-btn warning" onclick="editCall('${call.id}')">✏️ Edit</button>
+                            <button class="action-btn danger" onclick="deleteCall('${call.id}')">🗑️ Delete</button>
                         </div>
                     </td>
                 </tr>
             `).join('');
         }
 
+        function filterCalls() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const status = document.getElementById('statusFilter').value;
+
+            filteredCalls = callsData.filter(call => {
+                const matchSearch = !search || 
+                    call.prospect_name.toLowerCase().includes(search) ||
+                    (call.company && call.company.toLowerCase().includes(search));
+                const matchStatus = !status || call.call_outcome === status;
+                return matchSearch && matchStatus;
+            });
+
+            document.getElementById('call-count').textContent = filteredCalls.length;
+            renderTable();
+        }
+
         function openAddModal() {
-            document.getElementById('modalTitle').textContent = 'Schedule Call';
-            document.getElementById('callForm').reset();
+            document.getElementById('modalTitle').textContent = 'Add Discovery Call';
             document.getElementById('callId').value = '';
+            document.getElementById('prospectName').value = '';
+            document.getElementById('company').value = '';
+            document.getElementById('callDate').value = '';
+            document.getElementById('qualScore').value = '';
+            document.getElementById('callOutcome').value = 'Pending';
+            document.getElementById('notes').value = '';
             document.getElementById('callModal').classList.add('show');
         }
 
-        function editCall(call) {
-            document.getElementById('modalTitle').textContent = 'Edit Call';
+        function editCall(id) {
+            const call = callsData.find(c => c.id === id);
+            if (!call) return;
+            
+            document.getElementById('modalTitle').textContent = 'Edit Discovery Call';
             document.getElementById('callId').value = call.id;
-            document.getElementById('contactName').value = call.contactName;
-            document.getElementById('email').value = call.email || '';
+            document.getElementById('prospectName').value = call.prospect_name;
             document.getElementById('company').value = call.company || '';
-            document.getElementById('callStatus').value = call.callStatus || 'scheduled';
-            document.getElementById('callSource').value = call.callSource || '';
+            document.getElementById('callDate').value = call.call_date ? call.call_date.split('T')[0] : '';
+            document.getElementById('qualScore').value = call.qualification_score || '';
+            document.getElementById('callOutcome').value = call.call_outcome || 'Pending';
             document.getElementById('notes').value = call.notes || '';
-            
-            if (call.callDate) {
-                const date = new Date(call.callDate);
-                const offset = date.getTimezoneOffset() * 60000;
-                const localDate = new Date(date.getTime() - offset);
-                document.getElementById('callDate').value = localDate.toISOString().slice(0, 16);
-            }
-            
             document.getElementById('callModal').classList.add('show');
         }
 
@@ -311,72 +702,135 @@
             event.preventDefault();
             
             const id = document.getElementById('callId').value;
-            const callData = {
-                contactName: document.getElementById('contactName').value,
-                email: document.getElementById('email').value,
+            const data = {
+                prospect_name: document.getElementById('prospectName').value,
                 company: document.getElementById('company').value,
-                callDate: document.getElementById('callDate').value || null,
-                callStatus: document.getElementById('callStatus').value,
-                callSource: document.getElementById('callSource').value,
+                call_date: document.getElementById('callDate').value,
+                qualification_score: document.getElementById('qualScore').value,
+                call_outcome: document.getElementById('callOutcome').value,
                 notes: document.getElementById('notes').value
             };
-
+            
             try {
-                const isEdit = !!id;
-                if (isEdit) {
-                    callData.id = id;
-                }
-
-                const response = await fetch(`${API_URL}/api/discovery-calls`, {
-                    method: isEdit ? 'PUT' : 'POST',
+                const url = id ? `${API_BASE}/api/discovery-calls/${id}` : `${API_BASE}/api/discovery-calls`;
+                const method = id ? 'PUT' : 'POST';
+                
+                const response = await fetch(url, {
+                    method,
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(callData)
+                    body: JSON.stringify(data)
                 });
-
+                
                 const result = await response.json();
-
-                if (!result.success) {
-                    throw new Error(result.error || 'Failed to save');
-                }
-
-                alert(isEdit ? 'Call updated successfully!' : 'Call scheduled successfully!');
+                
+                if (!result.success) throw new Error(result.error);
+                
                 closeModal();
-                loadData();
-
+                loadCallsData();
+                alert(`Discovery call ${id ? 'updated' : 'added'} successfully!`);
             } catch (error) {
-                console.error('Error:', error);
                 alert('Error: ' + error.message);
             }
         }
 
-        async function deleteCall(id, name) {
-            if (!confirm(`Are you sure you want to delete the call with ${name}?`)) {
+        async function markQualified(id) {
+            if (!confirm('Mark this call as qualified?')) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/discovery-calls/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ call_outcome: 'Qualified' })
+                });
+                
+                const result = await response.json();
+                if (!result.success) throw new Error(result.error);
+                
+                loadCallsData();
+                alert('Marked as qualified!');
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        async function moveToSales(id) {
+            if (!confirm('Move this qualified prospect to Sales Calls?')) return;
+            
+            try {
+                const call = callsData.find(c => c.id === id);
+                if (!call) throw new Error('Call not found');
+                
+                const salesData = {
+                    prospect_name: call.prospect_name,
+                    company: call.company,
+                    call_date: new Date().toISOString().split('T')[0],
+                    deal_status: 'Pending',
+                    notes: `From Discovery (Score: ${call.qualification_score}/10). ${call.notes || ''}`
+                };
+                
+                const response = await fetch(`${API_BASE}/api/sales-calls`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(salesData)
+                });
+                
+                const result = await response.json();
+                if (!result.success) throw new Error(result.error);
+                
+                alert('Successfully moved to Sales Calls!');
+                loadCallsData();
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        async function deleteCall(id) {
+            if (!confirm('Delete this discovery call?')) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/discovery-calls/${id}`, {
+                    method: 'DELETE'
+                });
+                
+                const result = await response.json();
+                if (!result.success) throw new Error(result.error);
+                
+                loadCallsData();
+                alert('Call deleted!');
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        function exportCalls() {
+            if (callsData.length === 0) {
+                alert('No calls to export');
                 return;
             }
-
-            try {
-                const response = await fetch(`${API_URL}/api/discovery-calls`, {
-                    method: 'DELETE',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id })
-                });
-
-                const result = await response.json();
-
-                if (!result.success) {
-                    throw new Error(result.error || 'Failed to delete');
-                }
-
-                alert('Call deleted successfully!');
-                loadData();
-
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Error: ' + error.message);
-            }
+            
+            const csv = [
+                'Prospect,Company,Date,Score,Outcome,Notes',
+                ...callsData.map(c => `"${c.prospect_name}","${c.company || ''}","${c.call_date || ''}","${c.qualification_score || ''}","${c.call_outcome || ''}","${(c.notes || '').replace(/"/g, '""')}"`)
+            ].join('\n');
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `discovery-calls-${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
         }
 
-        document.addEventListener('DOMContentLoaded', loadData);
+        function syncData() {
+            loadCallsData();
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', loadCallsData);
+        
+        // Auto-refresh every 60 seconds
+        setInterval(loadCallsData, 60000);
     </script>
 </body>
 </html>
