@@ -1,6 +1,5 @@
 // Navigation Bar Script
 // Add this after auth.js on all pages
-
 (function() {
     // Wait for DOM to be ready
     if (document.readyState === 'loading') {
