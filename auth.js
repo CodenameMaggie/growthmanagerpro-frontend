@@ -1,6 +1,5 @@
 // Authentication & Authorization Script
 // Add this script to every page that requires login
-
 (function() {
     // Check if user is logged in
     const user = JSON.parse(localStorage.getItem('user') || 'null');
