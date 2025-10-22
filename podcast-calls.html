@@ -29,14 +29,16 @@
         .btn-primary { background: #27ae60; color: white; }
         .btn-secondary { background: #3498db; color: white; }
         .btn:hover { opacity: 0.9; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
         
         .calls-section { background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
         .calls-section h2 { color: #2c3e50; margin-bottom: 1.5rem; font-size: 1.5rem; }
         
-        .call-item { display: flex; align-items: center; gap: 1.5rem; padding: 1.5rem; border: 1px solid #e1e5e9; border-radius: 8px; margin-bottom: 1rem; transition: box-shadow 0.2s; }
+        .call-item { display: flex; flex-direction: column; gap: 1rem; padding: 1.5rem; border: 1px solid #e1e5e9; border-radius: 8px; margin-bottom: 1rem; transition: box-shadow 0.2s; }
         .call-item:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         
-        .call-avatar { width: 60px; height: 60px; background: #27ae60; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; }
+        .call-header { display: flex; align-items: center; gap: 1.5rem; }
+        .call-avatar { width: 60px; height: 60px; background: #27ae60; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; flex-shrink: 0; }
         
         .call-info { flex: 1; }
         .call-info h3 { color: #2c3e50; margin-bottom: 0.3rem; }
@@ -45,62 +47,88 @@
         .call-status { padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600; }
         .call-status.completed { background: #d4edda; color: #155724; }
         
+        .ai-scores { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 8px; }
+        .score-item { text-align: center; }
+        .score-value { font-size: 2rem; font-weight: bold; margin-bottom: 0.3rem; }
+        .score-value.high { color: #27ae60; }
+        .score-value.medium { color: #f39c12; }
+        .score-value.low { color: #e74c3c; }
+        .score-label { font-size: 0.85rem; color: #7f8c8d; }
+        .score-divider { font-size: 1.5rem; color: #bdc3c7; }
+        
+        .no-analysis { padding: 1rem; background: #fff3cd; border-radius: 8px; color: #856404; text-align: center; font-size: 0.9rem; }
+        
         .call-actions { display: flex; gap: 0.8rem; flex-wrap: wrap; }
         .call-btn { padding: 0.6rem 1rem; border: 1px solid #e1e5e9; background: white; border-radius: 6px; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; }
         .call-btn:hover { background: #f8f9fa; }
+        .call-btn.ai-btn { background: #9b59b6; color: white; border-color: #9b59b6; }
+        .call-btn.ai-btn:hover { background: #8e44ad; }
         
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
         .modal.show { display: flex; }
-        .modal-content { background: white; border-radius: 12px; padding: 2rem; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; }
+        .modal-content { background: white; border-radius: 12px; padding: 2rem; max-width: 800px; width: 90%; max-height: 80vh; overflow-y: auto; }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
         .modal-header h2 { color: #2c3e50; }
         .close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #7f8c8d; }
         
-        .analysis-section { margin-bottom: 1.5rem; }
-        .analysis-section h3 { color: #2c3e50; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+        .analysis-section { margin-bottom: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 8px; }
+        .analysis-section h3 { color: #2c3e50; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; font-size: 1.2rem; }
+        .analysis-subsection { margin-bottom: 1rem; padding: 1rem; background: white; border-radius: 6px; }
+        .analysis-subsection h4 { color: #34495e; margin-bottom: 0.5rem; font-size: 1rem; }
+        .analysis-feedback { color: #555; line-height: 1.6; margin-bottom: 0.8rem; }
+        .analysis-examples { list-style: none; margin-top: 0.5rem; }
+        .analysis-examples li { padding: 0.6rem; background: #e8f4f8; margin-bottom: 0.4rem; border-radius: 4px; font-style: italic; color: #2c3e50; }
+        
+        .overall-summary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; border-radius: 8px; margin-bottom: 2rem; }
+        .overall-summary h3 { margin-bottom: 1rem; font-size: 1.5rem; }
+        .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+        .summary-item { text-align: center; padding: 1rem; background: rgba(255,255,255,0.1); border-radius: 6px; }
+        .summary-score { font-size: 2.5rem; font-weight: bold; margin-bottom: 0.3rem; }
+        .summary-label { font-size: 0.9rem; opacity: 0.9; }
+        
         .key-points { list-style: none; }
-        .key-points li { padding: 0.8rem; background: #f8f9fa; margin-bottom: 0.5rem; border-radius: 6px; position: relative; padding-left: 2rem; }
-        .key-points li:before { content: "•"; position: absolute; left: 0.8rem; font-weight: bold; color: #27ae60; }
+        .key-points li { padding: 0.8rem; background: white; margin-bottom: 0.5rem; border-radius: 6px; position: relative; padding-left: 2rem; }
+        .key-points li:before { content: "✓"; position: absolute; left: 0.8rem; font-weight: bold; color: #27ae60; }
         
         .form-group { margin-bottom: 1.5rem; }
         .form-group label { display: block; margin-bottom: 0.5rem; color: #2c3e50; font-weight: 600; }
         .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 0.8rem; border: 1px solid #e1e5e9; border-radius: 6px; font-size: 1rem; }
         .form-group textarea { min-height: 100px; resize: vertical; }
         
-        .upload-area { border: 2px dashed #3498db; border-radius: 8px; padding: 2rem; text-align: center; cursor: pointer; transition: background 0.2s; }
-        .upload-area:hover { background: #f8f9fa; }
-        .upload-area input[type="file"] { display: none; }
-        
         .empty-state { text-align: center; padding: 3rem; color: #7f8c8d; }
+        
+        .loading { text-align: center; padding: 2rem; color: #7f8c8d; }
+        .spinner { display: inline-block; width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1>🎙️ Podcast Calls</h1>
-            <p>Track and analyze your podcast interviews</p>
+            <p>Track and analyze your podcast interviews with AI-powered insights</p>
         </div>
 
         <!-- Metrics -->
         <div class="metrics-grid">
             <div class="metric-card">
                 <div class="metric-number green" id="activeCompleted">0</div>
-                <div class="metric-label">Active Completed</div>
+                <div class="metric-label">Completed Interviews</div>
             </div>
             <div class="metric-card">
                 <div class="metric-number orange" id="convertedToDiscovery">0</div>
                 <div class="metric-label">Converted to Discovery</div>
             </div>
             <div class="metric-card">
-                <div class="metric-number red" id="noShows">0</div>
-                <div class="metric-label">No Shows</div>
+                <div class="metric-number" id="avgScore">0</div>
+                <div class="metric-label">Average AI Score</div>
             </div>
         </div>
 
         <!-- Action Bar -->
         <div class="action-bar">
             <button class="btn btn-primary" onclick="openAddCallModal()">+ Add Podcast Call</button>
-            <button class="btn btn-secondary" onclick="openUploadModal()">📤 Upload Recording</button>
+            <button class="btn btn-secondary" onclick="loadCalls()">🔄 Refresh</button>
         </div>
 
         <!-- Calls List -->
@@ -116,27 +144,14 @@
     <div class="modal" id="aiAnalysisModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>🤖 AI Call Analysis</h2>
+                <h2>🤖 Comprehensive AI Analysis</h2>
                 <button class="close-btn" onclick="closeModal('aiAnalysisModal')">&times;</button>
             </div>
             <div id="analysisContent">
-                <p style="text-align: center; color: #7f8c8d;">Generating AI analysis...</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Upload Recording Modal -->
-    <div class="modal" id="uploadModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Upload Recording</h2>
-                <button class="close-btn" onclick="closeModal('uploadModal')">&times;</button>
-            </div>
-            <div class="upload-area" onclick="document.getElementById('fileInput').click()">
-                <input type="file" id="fileInput" accept="audio/*,video/*" onchange="handleFileUpload(event)">
-                <p style="font-size: 2rem; margin-bottom: 0.5rem;">📁</p>
-                <p>Click to upload audio or video recording</p>
-                <p style="font-size: 0.85rem; color: #7f8c8d; margin-top: 0.5rem;">Supports: MP3, WAV, MP4, MOV</p>
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p style="margin-top: 1rem;">Analyzing interview with AI...</p>
+                </div>
             </div>
         </div>
     </div>
@@ -154,15 +169,27 @@
                     <input type="text" id="guestName" required>
                 </div>
                 <div class="form-group">
-                    <label>Date</label>
-                    <input type="date" id="callDate">
+                    <label>Guest Email</label>
+                    <input type="email" id="guestEmail">
+                </div>
+                <div class="form-group">
+                    <label>Company</label>
+                    <input type="text" id="company">
+                </div>
+                <div class="form-group">
+                    <label>Topic</label>
+                    <input type="text" id="topic">
+                </div>
+                <div class="form-group">
+                    <label>Scheduled Date</label>
+                    <input type="datetime-local" id="scheduledDate">
                 </div>
                 <div class="form-group">
                     <label>Status</label>
                     <select id="callStatus">
-                        <option value="completed">Completed</option>
                         <option value="scheduled">Scheduled</option>
-                        <option value="no-show">No Show</option>
+                        <option value="completed">Completed</option>
+                        <option value="cancelled">Cancelled</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -174,25 +201,8 @@
         </div>
     </div>
 
-    <!-- Add Review Modal -->
-    <div class="modal" id="reviewModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Add Review</h2>
-                <button class="close-btn" onclick="closeModal('reviewModal')">&times;</button>
-            </div>
-            <form onsubmit="addReview(event)">
-                <div class="form-group">
-                    <label>Review Notes</label>
-                    <textarea id="reviewNotes" required></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%;">Save Review</button>
-            </form>
-        </div>
-    </div>
-
     <script>
-        const API_URL = 'https://growthmanagerpro-backend.vercel.app';
+        const API_URL = 'https://growth-manager-pro.vercel.app';
         let currentCallId = null;
 
         async function loadCalls() {
@@ -203,20 +213,28 @@
                 if (!result.success) throw new Error(result.error);
                 
                 const calls = result.data.interviews || [];
-                const stats = result.data.stats || {};
                 
                 // Update metrics
-                document.getElementById('activeCompleted').textContent = stats.completedInterviews || 0;
-                document.getElementById('convertedToDiscovery').textContent = stats.qualifiedGuests || 0;
-                document.getElementById('noShows').textContent = 
-                    calls.filter(c => c.status === 'no-show').length;
+                document.getElementById('activeCompleted').textContent = 
+                    calls.filter(c => c.interview_status === 'completed').length;
+                document.getElementById('convertedToDiscovery').textContent = 
+                    calls.filter(c => c.discovery_call_id).length;
+                
+                // Calculate average score
+                const scoresExist = calls.filter(c => c.overall_score && c.overall_score > 0);
+                const avgScore = scoresExist.length > 0 
+                    ? (scoresExist.reduce((sum, c) => sum + c.overall_score, 0) / scoresExist.length).toFixed(1)
+                    : 0;
+                document.getElementById('avgScore').textContent = avgScore;
+                document.getElementById('avgScore').className = 
+                    avgScore >= 35 ? 'metric-number green' : avgScore >= 25 ? 'metric-number orange' : 'metric-number red';
                 
                 // Render calls
                 renderCalls(calls);
             } catch (error) {
                 console.error('Error:', error);
                 document.getElementById('callsList').innerHTML = 
-                    '<div class="empty-state">Error loading calls</div>';
+                    '<div class="empty-state">Error loading calls. Please try again.</div>';
             }
         }
 
@@ -228,35 +246,246 @@
                 return;
             }
             
-            container.innerHTML = calls.map(call => `
+            container.innerHTML = calls.map(call => {
+                const hasTranscript = call.transcript_text && call.transcript_text.length > 0;
+                const hasAnalysis = call.overall_score && call.overall_score > 0;
+                const overallScore = call.overall_score || 0;
+                const introScore = call.intro_score || 0;
+                const questionsScore = call.questions_flow_score || 0;
+                const closeScore = call.close_next_steps_score || 0;
+                
+                const scoreClass = overallScore >= 35 ? 'high' : overallScore >= 25 ? 'medium' : 'low';
+                
+                return `
                 <div class="call-item">
-                    <div class="call-avatar">📞</div>
-                    <div class="call-info">
-                        <h3>${call.guestName || 'Unknown Guest'} - ${call.company || 'No Company'}</h3>
-                        <p>${call.scheduledDate ? new Date(call.scheduledDate).toLocaleDateString() : 'No Date Set'}</p>
+                    <div class="call-header">
+                        <div class="call-avatar">🎙️</div>
+                        <div class="call-info">
+                            <h3>${call.guest_name || 'Unknown Guest'}${call.company_organization ? ` - ${call.company_organization}` : ''}</h3>
+                            <p>${call.topic || 'No topic set'} • ${call.scheduled_date ? new Date(call.scheduled_date).toLocaleDateString() : 'No date'}</p>
+                            ${call.discovery_call_id ? '<p style="color: #27ae60; font-weight: 600;">✓ Moved to Discovery</p>' : ''}
+                        </div>
+                        <span class="call-status completed">${call.interview_status || 'Scheduled'}</span>
                     </div>
-                    <span class="call-status completed">${call.status || 'Scheduled'}</span>
+                    
+                    ${hasAnalysis ? `
+                    <div class="ai-scores">
+                        <div class="score-item">
+                            <div class="score-value ${scoreClass}">${introScore.toFixed(1)}</div>
+                            <div class="score-label">Intro</div>
+                        </div>
+                        <div class="score-item">
+                            <div class="score-value ${scoreClass}">${questionsScore.toFixed(1)}</div>
+                            <div class="score-label">Questions & Flow</div>
+                        </div>
+                        <div class="score-item">
+                            <div class="score-value ${scoreClass}">${closeScore.toFixed(1)}</div>
+                            <div class="score-label">Close & Next Steps</div>
+                        </div>
+                        <div class="score-item">
+                            <div class="score-divider">|</div>
+                        </div>
+                        <div class="score-item">
+                            <div class="score-value ${scoreClass}">${overallScore.toFixed(1)}</div>
+                            <div class="score-label">Overall Score</div>
+                        </div>
+                    </div>
+                    ` : hasTranscript ? `
+                    <div class="no-analysis">
+                        ⚠️ Transcript available but not analyzed yet. Click "Analyze with AI" to generate insights.
+                    </div>
+                    ` : `
+                    <div class="no-analysis">
+                        📝 Waiting for Zoom transcript to be processed...
+                    </div>
+                    `}
+                    
                     <div class="call-actions">
-                        <button class="call-btn" onclick="openUploadModal()">📤 Upload Recording</button>
-                        <button class="call-btn" onclick="generateAISummary('${call.id}')">👁️ AI Summary</button>
-                        <button class="call-btn" onclick="openReviewModal('${call.id}')">📝 Add Review</button>
-                        <button class="call-btn" onclick="moveToDiscovery('${call.id}')">🎯 Move to Discovery</button>
+                        ${hasTranscript ? `
+                            <button class="call-btn ai-btn" onclick="analyzeWithAI('${call.id}')" ${!hasTranscript ? 'disabled' : ''}>
+                                🤖 ${hasAnalysis ? 'Re-Analyze' : 'Analyze with AI'}
+                            </button>
+                        ` : ''}
+                        ${hasAnalysis ? `
+                            <button class="call-btn" onclick="viewAnalysis('${call.id}')">
+                                👁️ View Full Analysis
+                            </button>
+                        ` : ''}
+                        ${call.zoom_recording_url ? `
+                            <button class="call-btn" onclick="window.open('${call.zoom_recording_url}', '_blank')">
+                                🎥 View Recording
+                            </button>
+                        ` : ''}
                     </div>
                 </div>
-            `).join('');
+                `;
+            }).join('');
+        }
+
+        async function analyzeWithAI(callId) {
+            const btn = event.target;
+            btn.disabled = true;
+            btn.textContent = '⏳ Analyzing...';
+            
+            try {
+                const response = await fetch(`${API_URL}/api/ai-analyze-podcast`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ interviewId: callId })
+                });
+                
+                const result = await response.json();
+                
+                if (!result.success) {
+                    throw new Error(result.error || 'Analysis failed');
+                }
+                
+                alert(`✅ Analysis Complete!\n\nOverall Score: ${result.overall_score}/50\n${result.discovery_call_created ? '🎯 Discovery call automatically created!' : ''}`);
+                
+                // Reload to show updated scores
+                await loadCalls();
+                
+            } catch (error) {
+                console.error('Error:', error);
+                alert('❌ Analysis failed: ' + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '🤖 Analyze with AI';
+            }
+        }
+
+        async function viewAnalysis(callId) {
+            document.getElementById('aiAnalysisModal').classList.add('show');
+            document.getElementById('analysisContent').innerHTML = '<div class="loading"><div class="spinner"></div><p style="margin-top: 1rem;">Loading analysis...</p></div>';
+            
+            try {
+                const response = await fetch(`${API_URL}/api/podcast-interviews`);
+                const result = await response.json();
+                const call = result.data.interviews.find(c => c.id === callId);
+                
+                if (!call || !call.ai_analysis) {
+                    throw new Error('Analysis not found');
+                }
+                
+                displayAnalysis(call);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('analysisContent').innerHTML = 
+                    `<div class="empty-state">Error loading analysis: ${error.message}</div>`;
+            }
+        }
+
+        function displayAnalysis(call) {
+            const analysis = call.ai_analysis;
+            
+            const html = `
+                <div class="overall-summary">
+                    <h3>📊 Overall Assessment</h3>
+                    <div class="summary-grid">
+                        <div class="summary-item">
+                            <div class="summary-score">${call.intro_score?.toFixed(1) || 0}/10</div>
+                            <div class="summary-label">Intro</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-score">${call.questions_flow_score?.toFixed(1) || 0}/10</div>
+                            <div class="summary-label">Questions & Flow</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-score">${call.close_next_steps_score?.toFixed(1) || 0}/10</div>
+                            <div class="summary-label">Close & Next Steps</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-score">${call.overall_score?.toFixed(1) || 0}/50</div>
+                            <div class="summary-label">Overall Score</div>
+                        </div>
+                    </div>
+                    ${call.discovery_call_ready ? '<p style="margin-top: 1rem; text-align: center;">✅ Qualified for Discovery Call</p>' : ''}
+                </div>
+
+                ${analysis.intro ? `
+                <div class="analysis-section">
+                    <h3>🎯 Intro Analysis (${analysis.intro.total_score}/10)</h3>
+                    
+                    ${renderSubsection('Rapport & Energy', analysis.intro.rapport_energy)}
+                    ${renderSubsection('Credibility', analysis.intro.credibility)}
+                    ${renderSubsection('Frame & Context', analysis.intro.frame_context)}
+                    ${renderSubsection('Hook', analysis.intro.hook)}
+                </div>
+                ` : ''}
+
+                ${analysis.questions_flow ? `
+                <div class="analysis-section">
+                    <h3>❓ Questions & Flow Analysis (${analysis.questions_flow.total_score}/10)</h3>
+                    
+                    ${renderSubsection('Question Quality', analysis.questions_flow.question_quality)}
+                    ${renderSubsection('Deep Diving', analysis.questions_flow.deep_diving)}
+                    ${renderSubsection('Pacing', analysis.questions_flow.pacing)}
+                    ${renderSubsection('Transitions', analysis.questions_flow.transitions)}
+                    ${renderSubsection('Guest Management', analysis.questions_flow.guest_management)}
+                    ${renderSubsection('Audience Awareness', analysis.questions_flow.audience_awareness)}
+                </div>
+                ` : ''}
+
+                ${analysis.close_next_steps ? `
+                <div class="analysis-section">
+                    <h3>🏁 Close & Next Steps Analysis (${analysis.close_next_steps.total_score}/10)</h3>
+                    
+                    ${renderSubsection('Summary', analysis.close_next_steps.summary)}
+                    ${renderSubsection('Guest Promotion', analysis.close_next_steps.guest_promotion)}
+                    ${renderSubsection('Call to Action', analysis.close_next_steps.call_to_action)}
+                    ${renderSubsection('Professional Closing', analysis.close_next_steps.professional_closing)}
+                </div>
+                ` : ''}
+
+                ${analysis.key_strengths ? `
+                <div class="analysis-section">
+                    <h3>✨ Key Strengths</h3>
+                    <ul class="key-points">
+                        ${analysis.key_strengths.map(s => `<li>${s}</li>`).join('')}
+                    </ul>
+                </div>
+                ` : ''}
+
+                ${analysis.areas_for_improvement ? `
+                <div class="analysis-section">
+                    <h3>📈 Areas for Improvement</h3>
+                    <ul class="key-points">
+                        ${analysis.areas_for_improvement.map(a => `<li>${a}</li>`).join('')}
+                    </ul>
+                </div>
+                ` : ''}
+
+                ${analysis.next_steps ? `
+                <div class="analysis-section">
+                    <h3>🎯 Recommended Next Steps</h3>
+                    <p class="analysis-feedback">${analysis.next_steps}</p>
+                </div>
+                ` : ''}
+            `;
+            
+            document.getElementById('analysisContent').innerHTML = html;
+        }
+
+        function renderSubsection(title, data) {
+            if (!data) return '';
+            
+            return `
+                <div class="analysis-subsection">
+                    <h4>${title} (${data.score}/10)</h4>
+                    ${data.feedback ? `<p class="analysis-feedback">${data.feedback}</p>` : ''}
+                    ${data.examples && data.examples.length > 0 ? `
+                        <ul class="analysis-examples">
+                            ${data.examples.map(ex => `<li>"${ex}"</li>`).join('')}
+                        </ul>
+                    ` : ''}
+                    ${data.script_example ? `<p class="analysis-feedback"><strong>Suggested Script:</strong> "${data.script_example}"</p>` : ''}
+                </div>
+            `;
         }
 
         function openAddCallModal() {
             document.getElementById('addCallModal').classList.add('show');
-        }
-
-        function openUploadModal() {
-            document.getElementById('uploadModal').classList.add('show');
-        }
-
-        function openReviewModal(callId) {
-            currentCallId = callId;
-            document.getElementById('reviewModal').classList.add('show');
         }
 
         function closeModal(modalId) {
@@ -267,9 +496,12 @@
             event.preventDefault();
             
             const data = {
-                guestName: document.getElementById('guestName').value,
-                scheduledDate: document.getElementById('callDate').value,
-                status: document.getElementById('callStatus').value,
+                guest_name: document.getElementById('guestName').value,
+                guest_email: document.getElementById('guestEmail').value,
+                company_organization: document.getElementById('company').value,
+                topic: document.getElementById('topic').value,
+                scheduled_date: document.getElementById('scheduledDate').value,
+                interview_status: document.getElementById('callStatus').value,
                 notes: document.getElementById('callNotes').value
             };
             
@@ -284,161 +516,19 @@
                 
                 if (!result.success) throw new Error(result.error);
                 
+                alert('✅ Podcast call added successfully!');
                 closeModal('addCallModal');
+                document.querySelector('#addCallModal form').reset();
                 loadCalls();
-                alert('Podcast call added successfully!');
+                
             } catch (error) {
                 console.error('Error:', error);
-                alert('Error adding call: ' + error.message);
-            }
-        }
-
-        async function addReview(event) {
-            event.preventDefault();
-            
-            const reviewNotes = document.getElementById('reviewNotes').value;
-            
-            try {
-                const response = await fetch(`${API_URL}/api/podcast-interviews/${currentCallId}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ notes: reviewNotes })
-                });
-                
-                const result = await response.json();
-                
-                if (!result.success) throw new Error(result.error);
-                
-                closeModal('reviewModal');
-                loadCalls();
-                alert('Review added successfully!');
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Error adding review: ' + error.message);
-            }
-        }
-
-        async function generateAISummary(callId) {
-            document.getElementById('aiAnalysisModal').classList.add('show');
-            
-            // Simulate AI analysis (integrate with Claude API for real analysis)
-            setTimeout(() => {
-                document.getElementById('analysisContent').innerHTML = `
-                    <div style="max-width: 100%; overflow-y: auto;">
-                        <h2 style="color: #2c3e50; margin-bottom: 1.5rem; font-size: 1.5rem;">Call Analysis Report</h2>
-                        
-                        <div class="analysis-section" style="background: #e8f5e9; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid #27ae60;">
-                            <h3 style="color: #27ae60; margin-bottom: 0.5rem;">📋 Recommendation</h3>
-                            <p style="color: #2c3e50; line-height: 1.6;">Based on the positive engagement and valuable insights exchanged during the discussion, it would be beneficial to book a follow-up Discovery Call to explore potential collaboration or further interviews.</p>
-                        </div>
-                        
-                        <div class="analysis-section">
-                            <h3>💡 Touch Points</h3>
-                            <ul class="key-points">
-                                <li>Need for effective project management systems</li>
-                                <li>Desire for collaboration and networking within the design industry</li>
-                                <li>Interest in life balance and understanding client relationships</li>
-                                <li>Aiming for growth and scalability in their design business</li>
-                                <li>Exploration of software solutions for project management</li>
-                            </ul>
-                        </div>
-                        
-                        <div class="analysis-section">
-                            <h3>🎭 Rapport & Energy</h3>
-                            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem;">
-                                <span style="font-size: 2rem; font-weight: bold; color: #27ae60;">8/10</span>
-                                <div style="flex: 1; height: 8px; background: #e1e5e9; border-radius: 4px; overflow: hidden;">
-                                    <div style="width: 80%; height: 100%; background: linear-gradient(90deg, #27ae60, #2ecc71);"></div>
-                                </div>
-                            </div>
-                            <p style="color: #7f8c8d; font-size: 0.9rem; line-height: 1.6;"><strong>Feedback:</strong> Created a warm and engaging atmosphere. Strong emotional engagement with enthusiastic affirmations. Direct quotes like "I'm really excited to chat with you" showed genuine enthusiasm.</p>
-                        </div>
-                        
-                        <div class="analysis-section">
-                            <h3>🎯 Frame & Context</h3>
-                            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem;">
-                                <span style="font-size: 2rem; font-weight: bold; color: #f39c12;">7/10</span>
-                                <div style="flex: 1; height: 8px; background: #e1e5e9; border-radius: 4px; overflow: hidden;">
-                                    <div style="width: 70%; height: 100%; background: linear-gradient(90deg, #f39c12, #f1c40f);"></div>
-                                </div>
-                            </div>
-                            <p style="color: #7f8c8d; font-size: 0.9rem; line-height: 1.6;"><strong>Feedback:</strong> Introduction was friendly and set a casual tone. Mentioned "this is going to be a super casual conversation," which set expectations. Could be slightly more structured in outlining objectives.</p>
-                        </div>
-                        
-                        <div class="analysis-section">
-                            <h3>💬 Questions & Flow</h3>
-                            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem;">
-                                <span style="font-size: 2rem; font-weight: bold; color: #27ae60;">8/10</span>
-                                <div style="flex: 1; height: 8px; background: #e1e5e9; border-radius: 4px; overflow: hidden;">
-                                    <div style="width: 80%; height: 100%; background: linear-gradient(90deg, #27ae60, #2ecc71);"></div>
-                                </div>
-                            </div>
-                            <p style="color: #7f8c8d; font-size: 0.9rem; line-height: 1.6;"><strong>Feedback:</strong> Asked insightful questions that prompted valuable insights. The conversation flowed naturally with questions like "What would you say your biggest win has been over the year?"</p>
-                        </div>
-                        
-                        <div class="analysis-section">
-                            <h3>⭐ Content Value</h3>
-                            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem;">
-                                <span style="font-size: 2rem; font-weight: bold; color: #27ae60;">9/10</span>
-                                <div style="flex: 1; height: 8px; background: #e1e5e9; border-radius: 4px; overflow: hidden;">
-                                    <div style="width: 90%; height: 100%; background: linear-gradient(90deg, #27ae60, #2ecc71);"></div>
-                                </div>
-                            </div>
-                            <p style="color: #7f8c8d; font-size: 0.9rem; line-height: 1.6;"><strong>Feedback:</strong> High content value addressing industry-specific challenges and personal experiences. Thoughts on managing systems and team dynamics were particularly actionable.</p>
-                        </div>
-                        
-                        <div class="analysis-section">
-                            <h3>🎬 Close & Next Steps</h3>
-                            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem;">
-                                <span style="font-size: 2rem; font-weight: bold; color: #f39c12;">7/10</span>
-                                <div style="flex: 1; height: 8px; background: #e1e5e9; border-radius: 4px; overflow: hidden;">
-                                    <div style="width: 70%; height: 100%; background: linear-gradient(90deg, #f39c12, #f1c40f);"></div>
-                                </div>
-                            </div>
-                            <p style="color: #7f8c8d; font-size: 0.9rem; line-height: 1.6;"><strong>Feedback:</strong> Closing was polite with basic promotion information. Could use stronger call to action or summary of key points covered. More emphasis on listener engagement would enhance this section.</p>
-                        </div>
-                        
-                        <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #e1e5e9;">
-                            <button class="btn btn-primary" style="width: 100%; margin-bottom: 0.5rem;" onclick="moveToDiscovery(${callId}); closeModal('aiAnalysisModal');">📞 Book Discovery Call</button>
-                            <button class="btn btn-secondary" style="width: 100%;" onclick="closeModal('aiAnalysisModal')">Close</button>
-                        </div>
-                    </div>
-                `;
-            }, 1500);
-        }
-
-        async function moveToDiscovery(callId) {
-            if (!confirm('Move this podcast call to discovery calls?')) return;
-            
-            try {
-                const response = await fetch(`${API_URL}/api/podcast-interviews/${callId}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ status: 'converted' })
-                });
-                
-                const result = await response.json();
-                
-                if (!result.success) throw new Error(result.error);
-                
-                alert('Moved to discovery calls successfully!');
-                loadCalls();
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Error moving to discovery: ' + error.message);
-            }
-        }
-
-        function handleFileUpload(event) {
-            const file = event.target.files[0];
-            if (file) {
-                alert('File selected: ' + file.name + '\n\nAI transcription feature coming soon!');
-                closeModal('uploadModal');
+                alert('❌ Failed to add call: ' + error.message);
             }
         }
 
         // Load calls on page load
-        document.addEventListener('DOMContentLoaded', loadCalls);
+        window.addEventListener('DOMContentLoaded', loadCalls);
     </script>
 </body>
 </html>
