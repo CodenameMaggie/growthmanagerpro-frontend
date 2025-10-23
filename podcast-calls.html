@@ -207,7 +207,7 @@
 
         async function loadCalls() {
             try {
-                const response = await fetch(`${API_URL}/api/podcast-interviews`);
+                const response = await fetch(`${API_URL}/api/podcast-interviews-with-ai`);
                 const result = await response.json();
                 
                 if (!result.success) throw new Error(result.error);
@@ -359,7 +359,7 @@
             document.getElementById('analysisContent').innerHTML = '<div class="loading"><div class="spinner"></div><p style="margin-top: 1rem;">Loading analysis...</p></div>';
             
             try {
-                const response = await fetch(`${API_URL}/api/podcast-interviews`);
+                const response = await fetch(`${API_URL}/api/podcast-interviews-with-ai`);
                 const result = await response.json();
                 const call = result.data.interviews.find(c => c.id === callId);
                 
@@ -506,7 +506,7 @@
             };
             
             try {
-                const response = await fetch(`${API_URL}/api/podcast-interviews`, {
+                const response = await fetch(`${API_URL}/api/podcast-interviews-with-ai`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
