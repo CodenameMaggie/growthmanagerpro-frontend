@@ -1,397 +1,1026 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Growth Manager Pro - Dashboard</title>
-    <script src="/auth.js"></script>
-    <script src="/nav.js"></script>  <!-- ADD THIS LINE -->
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #e8eef3; }
-        
-        .container { max-width: 1600px; margin: 0 auto; padding: 20px; }
-        
-        .status { position: fixed; top: 20px; right: 20px; padding: 10px 15px; border-radius: 6px; font-size: 0.9rem; font-weight: 600; z-index: 1000; }
-        .status.loading { background: #fff3cd; color: #856404; }
-        .status.connected { background: #d4edda; color: #155724; }
-        .status.error { background: #f8d7da; color: #721c24; }
-        
-        .header-section { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 2rem; text-align: center; }
-        .header-section h1 { color: #2c3e50; font-size: 2.5rem; margin-bottom: 0.5rem; }
-        .header-section .subtitle { color: #7f8c8d; font-size: 1.1rem; margin-bottom: 1.5rem; }
-        .north-star { background: linear-gradient(135deg, #27ae60, #229954); color: white; padding: 1rem 2rem; border-radius: 8px; display: inline-block; font-size: 1.1rem; font-weight: bold; }
-        
-        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
-        .metric-card { background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center; }
-        .metric-number { font-size: 2.5rem; font-weight: bold; margin-bottom: 0.5rem; }
-        .metric-label { color: #7f8c8d; font-size: 0.85rem; text-transform: uppercase; font-weight: 600; }
-        
-        .two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
-        
-        .panel { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); overflow: hidden; }
-        .panel-header { background: #34495e; color: white; padding: 1.2rem 1.5rem; display: flex; justify-content: space-between; align-items: center; }
-        .panel-header h2 { font-size: 1.3rem; }
-        .panel-header .week { font-size: 0.9rem; opacity: 0.9; }
-        .panel-body { padding: 1.5rem; }
-        
-        .task-item { padding: 1rem; border-left: 4px solid #3498db; background: #f8f9fa; margin-bottom: 0.8rem; border-radius: 4px; }
-        .task-item h3 { font-size: 1rem; color: #2c3e50; margin-bottom: 0.3rem; }
-        .task-item p { font-size: 0.9rem; color: #7f8c8d; margin-bottom: 0.5rem; }
-        .task-status { display: inline-block; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; }
-        .task-status.on-track { background: #d1fae5; color: #065f46; }
-        .task-status.finished { background: #dbeafe; color: #1e40af; }
-        .task-status.off-track { background: #fee2e2; color: #991b1b; }
-        .task-status.blocked { background: #fef3c7; color: #92400e; }
-        
-        .prospect-item { padding: 1rem; border-left: 4px solid #3498db; background: #f8f9fa; margin-bottom: 0.8rem; border-radius: 4px; }
-        .prospect-item h3 { font-size: 1rem; color: #2c3e50; margin-bottom: 0.3rem; }
-        .prospect-item p { font-size: 0.9rem; color: #7f8c8d; }
-        
-        .advisor-section { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); padding: 2rem; }
-        .advisor-section h2 { color: #2c3e50; font-size: 1.8rem; margin-bottom: 1.5rem; }
-        
-        .advisor-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2rem; margin-bottom: 2rem; }
-        
-        .summary-box { background: #f8f9fa; padding: 1.5rem; border-radius: 8px; }
-        .summary-box h3 { color: #2c3e50; margin-bottom: 1rem; font-size: 1.2rem; }
-        .summary-item { display: flex; justify-content: space-between; padding: 0.8rem 0; border-bottom: 1px solid #e1e5e9; }
-        .summary-item:last-child { border-bottom: none; }
-        .summary-label { color: #7f8c8d; }
-        .summary-value { font-weight: bold; color: #2c3e50; }
-        
-        .metrics-box { text-align: center; }
-        .big-metric { font-size: 3rem; font-weight: bold; margin-bottom: 0.5rem; }
-        .big-metric.green { color: #27ae60; }
-        .metric-sublabel { color: #7f8c8d; font-size: 0.9rem; text-transform: uppercase; margin-bottom: 1.5rem; }
-        
-        .report-buttons { display: flex; flex-direction: column; gap: 0.8rem; }
-        .report-btn { padding: 1rem; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; color: white; }
-        .report-btn.blue { background: #3498db; }
-        .report-btn.green { background: #27ae60; }
-        .report-btn.orange { background: #e67e22; }
-        .report-btn:hover { opacity: 0.9; }
-        
-        .blockers-box { background: #fff3cd; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #f39c12; margin-top: 1.5rem; }
-        .blockers-box h3 { color: #856404; margin-bottom: 1rem; }
-        .blockers-box ul { list-style: none; }
-        .blockers-box li { color: #856404; padding: 0.5rem 0; padding-left: 1.5rem; position: relative; }
-        .blockers-box li:before { content: "•"; position: absolute; left: 0; font-weight: bold; }
-        
-        .empty-state { text-align: center; padding: 2rem; color: #7f8c8d; }
-        
-        @media (max-width: 1200px) {
-            .two-column { grid-template-columns: 1fr; }
-            .advisor-grid { grid-template-columns: 1fr; }
-        }
-    </style>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2487.3">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
 </head>
 <body>
-    <div class="status loading" id="status">Loading...</div>
-    
-    <div class="container">
-        <!-- Header Section -->
-        <div class="header-section">
-            <h1>Growth Manager Pro</h1>
-            <p class="subtitle">Business Development Dashboard - Client Acquisition System</p>
-            <div class="north-star">
-                <span id="northStarGoal">North Star Goal: $50k/month | 3-Month Target: $25k/month</span>
-            </div>
-        </div>
-
-        <!-- Key Metrics -->
-        <div class="metrics-grid">
-            <div class="metric-card">
-                <div class="metric-number" style="color: #27ae60;" id="tasksFinished">0</div>
-                <div class="metric-label">Tasks Finished</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-number" style="color: #3498db;" id="onTrack">0</div>
-                <div class="metric-label">On Track</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-number" style="color: #e74c3c;" id="offTrack">0</div>
-                <div class="metric-label">Off Track</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-number" style="color: #f39c12;" id="blocked">0</div>
-                <div class="metric-label">Blocked</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-number" style="color: #9b59b6;" id="podcastCalls">0</div>
-                <div class="metric-label">Podcast Calls</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-number" style="color: #e67e22;" id="qualifiedDiscovery">0</div>
-                <div class="metric-label">Qualified for Discovery</div>
-            </div>
-        </div>
-
-        <!-- Two Column Layout -->
-        <div class="two-column">
-            <!-- Current Sprint Tasks -->
-            <div class="panel">
-                <div class="panel-header">
-                    <h2>Current Sprint Tasks</h2>
-                    <span class="week" id="currentWeek">Week 39 (Sep 27, 2025)</span>
-                </div>
-                <div class="panel-body" id="sprintTasks">
-                    <div class="empty-state">Loading tasks...</div>
-                </div>
-            </div>
-
-            <!-- Podcast Funnel Pipeline -->
-            <div class="panel">
-                <div class="panel-header">
-                    <h2>Podcast Funnel Pipeline</h2>
-                    <span class="week">Live Data</span>
-                </div>
-                <div class="panel-body" id="pipelineFunnel">
-                    <div class="empty-state">Loading pipeline...</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Advisor Reporting Dashboard -->
-        <div class="advisor-section">
-            <h2>Advisor Reporting Dashboard</h2>
-            
-            <div class="advisor-grid">
-                <!-- Weekly Progress Summary -->
-                <div class="summary-box">
-                    <h3>Weekly Progress Summary</h3>
-                    <div class="summary-item">
-                        <span class="summary-label">Sprint Tasks Completed:</span>
-                        <span class="summary-value" id="summaryTasksCompleted">0/0 (0%)</span>
-                    </div>
-                    <div class="summary-item">
-                        <span class="summary-label">Podcast Calls This Week:</span>
-                        <span class="summary-value" id="summaryPodcastCalls">0 calls</span>
-                    </div>
-                    <div class="summary-item">
-                        <span class="summary-label">Qualified for Discovery:</span>
-                        <span class="summary-value" id="summaryQualified">0 prospects</span>
-                    </div>
-                    <div class="summary-item">
-                        <span class="summary-label">Pipeline Movement:</span>
-                        <span class="summary-value" id="summaryPipeline">0 prospects advanced</span>
-                    </div>
-                    <div class="summary-item">
-                        <span class="summary-label">Revenue This Month:</span>
-                        <span class="summary-value" id="summaryRevenue">$0</span>
-                    </div>
-                </div>
-
-                <!-- Podcast Funnel Metrics -->
-                <div class="metrics-box">
-                    <h3>Podcast Funnel Metrics</h3>
-                    <div class="big-metric green" id="totalCalls">0</div>
-                    <div class="metric-sublabel">Total Calls</div>
-                    
-                    <div class="big-metric green" id="qualificationRate">0%</div>
-                    <div class="metric-sublabel">Qualification Rate</div>
-                    
-                    <div class="big-metric green" id="avgScore">0</div>
-                    <div class="metric-sublabel">Avg Score</div>
-                </div>
-
-                <!-- Generate Reports -->
-                <div>
-                    <h3>Generate Reports</h3>
-                    <div class="report-buttons">
-                        <button class="report-btn blue" onclick="generateReport('weekly')">📊 Weekly Progress Report</button>
-                        <button class="report-btn green" onclick="generateReport('funnel')">📈 Podcast Funnel Analysis</button>
-                        <button class="report-btn orange" onclick="generateReport('pipeline')">💼 Pipeline & Forecasting</button>
-                        <button class="report-btn blue" onclick="generateReport('tasks')">✅ Task Completion Summary</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Key Blockers & Challenges -->
-            <div class="blockers-box">
-                <h3>Key Blockers & Challenges:</h3>
-                <ul id="blockersList">
-                    <li>Loading blockers...</li>
-                </ul>
-            </div>
-
-            <div style="text-align: right; margin-top: 1.5rem; color: #7f8c8d; font-size: 0.9rem;">
-                Last Updated: <span id="lastUpdated">-</span> | API Status: <span id="apiStatus" style="color: #27ae60;">All Systems Connected</span>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        const API_URL = 'https://growthmanagerpro-backend.vercel.app';
-
-        function getWeekNumber() {
-            const now = new Date();
-            const start = new Date(now.getFullYear(), 0, 1);
-            const diff = now - start;
-            const oneWeek = 1000 * 60 * 60 * 24 * 7;
-            return Math.ceil(diff / oneWeek);
-        }
-
-        function formatDate(date) {
-            return new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-        }
-
-        async function loadDashboard() {
-            const status = document.getElementById('status');
-            status.className = 'status loading';
-            status.textContent = 'Loading Dashboard...';
-
-            try {
-                const response = await fetch(`${API_URL}/api/dashboard`);
-                
-                if (!response.ok) {
-                    throw new Error(`API returned ${response.status}`);
-                }
-
-                const result = await response.json();
-                
-                if (!result.success) {
-                    throw new Error(result.error || 'API returned error');
-                }
-
-                const data = result.data;
-                
-                // Update top metrics
-                document.getElementById('tasksFinished').textContent = data.sprints.finished;
-                document.getElementById('onTrack').textContent = data.sprints.onTrack;
-                document.getElementById('offTrack').textContent = data.sprints.total - data.sprints.finished - data.sprints.onTrack - data.sprints.blocked;
-                document.getElementById('blocked').textContent = data.sprints.blocked;
-                document.getElementById('podcastCalls').textContent = data.discovery.total;
-                document.getElementById('qualifiedDiscovery').textContent = data.discovery.qualified;
-
-                // Update current week
-                const weekNum = getWeekNumber();
-                const today = formatDate(new Date());
-                document.getElementById('currentWeek').textContent = `Week ${weekNum} (${today})`;
-
-                // Render Sprint Tasks
-                renderSprintTasks(data.sprints.recentTasks);
-
-                // Render Pipeline Funnel
-                renderPipelineFunnel(data.discovery.recentCalls);
-
-                // Update Advisor Summary
-                document.getElementById('summaryTasksCompleted').textContent = 
-                    `${data.sprints.finished}/${data.sprints.total} (${data.sprints.total > 0 ? Math.round((data.sprints.finished/data.sprints.total)*100) : 0}%)`;
-                document.getElementById('summaryPodcastCalls').textContent = `${data.discovery.total} calls`;
-                document.getElementById('summaryQualified').textContent = `${data.discovery.qualified} prospects`;
-                document.getElementById('summaryPipeline').textContent = `${data.summary.pipelineMovement} prospects advanced`;
-                document.getElementById('summaryRevenue').textContent = `$${Math.round(data.summary.totalRevenue).toLocaleString()}`;
-
-                // Update Podcast Funnel Metrics
-                document.getElementById('totalCalls').textContent = data.discovery.total;
-                document.getElementById('qualificationRate').textContent = data.summary.qualificationRate + '%';
-                document.getElementById('avgScore').textContent = data.discovery.avgScore;
-
-                // Update blockers
-                renderBlockers(data);
-
-                // Update footer
-                document.getElementById('lastUpdated').textContent = new Date().toLocaleString();
-                document.getElementById('apiStatus').textContent = 'All Systems Connected';
-
-                status.className = 'status connected';
-                status.textContent = '✓ Live Data Connected';
-                
-            } catch (error) {
-                console.error('Error:', error);
-                status.className = 'status error';
-                status.textContent = 'Connection Error';
-                document.getElementById('apiStatus').textContent = 'Connection Error';
-                document.getElementById('apiStatus').style.color = '#e74c3c';
-            }
-        }
-
-        function renderSprintTasks(tasks) {
-            const container = document.getElementById('sprintTasks');
-            
-            if (!tasks || tasks.length === 0) {
-                container.innerHTML = '<div class="empty-state">No active tasks</div>';
-                return;
-            }
-
-            container.innerHTML = tasks.map(task => {
-                const statusMap = {
-                    'completed': 'finished',
-                    'in_progress': 'on-track',
-                    'todo': task.priority === 'high' ? 'blocked' : 'off-track'
-                };
-                const status = statusMap[task.status] || 'off-track';
-                const statusLabel = task.status === 'completed' ? 'FINISHED' : 
-                                   task.status === 'in_progress' ? 'ON TRACK' : 
-                                   task.priority === 'high' ? 'BLOCKED' : 'OFF TRACK';
-
-                return `
-                    <div class="task-item">
-                        <h3>${task.name}</h3>
-                        <p>${task.description || 'No description'}</p>
-                        <span class="task-status ${status}">${statusLabel}</span>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function renderPipelineFunnel(calls) {
-            const container = document.getElementById('pipelineFunnel');
-            
-            if (!calls || calls.length === 0) {
-                container.innerHTML = '<div class="empty-state">No recent calls</div>';
-                return;
-            }
-
-            container.innerHTML = calls.map(call => `
-                <div class="prospect-item">
-                    <h3>${call.prospect} - ${call.company}</h3>
-                    <p>Score: ${call.score}/10 • ${call.outcome} • ${call.date ? formatDate(call.date) : 'No date'}</p>
-                </div>
-            `).join('');
-        }
-
-        function renderBlockers(data) {
-            const blockersList = document.getElementById('blockersList');
-            const blockers = [];
-
-            // Generate dynamic blockers based on data
-            if (data.sprints.blocked > 0) {
-                blockers.push(`${data.sprints.blocked} high-priority tasks blocked`);
-            }
-            if (data.discovery.total === 0) {
-                blockers.push('No podcast calls scheduled this week');
-            }
-            if (data.campaigns.active === 0) {
-                blockers.push('No active marketing campaigns');
-            }
-            if (data.pipeline.qualified < 3) {
-                blockers.push('Low pipeline - need more qualified prospects');
-            }
-
-            if (blockers.length === 0) {
-                blockers.push('No major blockers - all systems go! ✅');
-            }
-
-            blockersList.innerHTML = blockers.map(b => `<li>${b}</li>`).join('');
-        }
-
-        function generateReport(type) {
-            const reportNames = {
-                'weekly': 'Weekly Progress Report',
-                'funnel': 'Podcast Funnel Analysis',
-                'pipeline': 'Pipeline & Forecasting',
-                'tasks': 'Task Completion Summary'
-            };
-            alert(`Generating ${reportNames[type]}...\n\nThis feature will export a detailed report for your advisor.`);
-        }
-
-        // Load dashboard on page load
-        document.addEventListener('DOMContentLoaded', loadDashboard);
-
-        // Auto-refresh every 5 minutes
-        setInterval(loadDashboard, 300000);
-    </script>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;html lang="en"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;title&gt;Growth Manager Pro - Dashboard&lt;/title&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;style&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>* {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin: 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>box-sizing: border-box;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>body {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: #f5f7fa;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: #333;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.app-container {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>min-height: 100vh;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>/* Beautiful Sidebar Navigation - Your Favorite! */</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.sidebar {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>width: 280px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: white;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-right: 1px solid #e1e5e9;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 2rem 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>position: fixed;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>height: 100vh;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>overflow-y: auto;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>z-index: 1000;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>left: 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>top: 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>transition: transform 0.3s ease;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.sidebar-header {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 0 2rem 2rem 2rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-bottom: 1px solid #e1e5e9;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 2rem;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.sidebar-header h1 {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-size: 1.5rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: #2c3e50;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 0.5rem;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.sidebar-header p {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: #7f8c8d;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-size: 0.9rem;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.nav-section {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 2rem;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.nav-section-title {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 0 2rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-size: 0.8rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-weight: 600;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: #95a5a6;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>text-transform: uppercase;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>letter-spacing: 1px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 1rem;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.nav-item {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>align-items: center;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 0.8rem 2rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: #5a6c7d;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>text-decoration: none;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>transition: all 0.2s ease;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>cursor: pointer;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.nav-item:hover {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: #f8f9fa;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: #2c3e50;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.nav-item.active {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: #3498db;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: white;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-right: 3px solid #2980b9;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.nav-icon {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>width: 20px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>height: 20px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin-right: 1rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-size: 1.2rem;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.nav-text {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>flex: 1;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.nav-subtitle {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-size: 0.8rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>opacity: 0.7;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin-top: 0.2rem;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>/* Main Content with Beautiful Gradient Background */</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.main-content {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>flex: 1;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin-left: 280px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>min-height: 100vh;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 0;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.container {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>max-width: 1400px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin: 0 auto;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 20px;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>/* White Floating Cards */</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.header {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: white;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 2rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 12px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>box-shadow: 0 8px 32px rgba(0,0,0,0.1);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 2rem;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.header h1 {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: #2c3e50;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-size: 2rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 0.5rem;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.header .subtitle {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: #7f8c8d;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-size: 1rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 1rem;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.header .goals {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: #2c3e50;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-size: 0.95rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 1rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: #f8f9fa;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 8px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-left: 4px solid #27ae60;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>/* Dashboard Grid */</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.dashboard-grid {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>display: grid;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));</p>
+<p class="p1"><span class="Apple-converted-space">            </span>gap: 1.5rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 2rem;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.stat-card {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: white;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 1.5rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 12px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>box-shadow: 0 4px 16px rgba(0,0,0,0.1);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>text-align: center;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.stat-number {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-size: 2.5rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-weight: bold;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 0.5rem;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.stat-number.finished { color: #27ae60; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.stat-number.on-track { color: #3498db; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.stat-number.off-track { color: #e74c3c; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.stat-number.blocked { color: #f39c12; }</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.stat-label {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: #7f8c8d;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-size: 0.9rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>text-transform: uppercase;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>letter-spacing: 1px;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>/* Main Grid Layout */</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.main-grid {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>display: grid;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>grid-template-columns: 1fr 1fr;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>gap: 2rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 2rem;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.section {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: white;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 12px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>box-shadow: 0 4px 16px rgba(0,0,0,0.1);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>overflow: hidden;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.section-header {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: #2c3e50;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: white;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 1.5rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>justify-content: space-between;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>align-items: center;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.section-header h2 {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-size: 1.3rem;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.section-content {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 1.5rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>max-height: 500px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>overflow-y: auto;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.task-item, .call-item {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 1rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-bottom: 1px solid #ecf0f1;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>justify-content: space-between;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>align-items: center;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.task-item:last-child, .call-item:last-child {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-bottom: none;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.task-details h4 {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-size: 1rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 0.3rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: #2c3e50;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.task-details p {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: #7f8c8d;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-size: 0.8rem;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.status-badge {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 0.3rem 0.8rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 20px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-size: 0.8rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-weight: bold;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>text-transform: uppercase;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.status-finished { background: #d5f4e6; color: #27ae60; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.status-on-track { background: #dbeafe; color: #3498db; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.status-off-track { background: #fef2f2; color: #e74c3c; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.status-blocked { background: #fef3cd; color: #f39c12; }</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.pipeline-stage {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: #f8f9fa;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 1rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 8px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>overflow: hidden;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.stage-header {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: #34495e;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: white;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 0.8rem 1rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-weight: bold;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.stage-content {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 1rem;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.prospect {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: white;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 0.8rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 0.5rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 6px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-left: 4px solid #3498db;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>box-shadow: 0 2px 4px rgba(0,0,0,0.1);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.prospect:last-child {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 0;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.prospect h5 {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 0.3rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: #2c3e50;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.prospect p {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-size: 0.8rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: #7f8c8d;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>/* Advisor Section */</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.advisor-section {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: white;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 12px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>box-shadow: 0 4px 16px rgba(0,0,0,0.1);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 2rem;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.advisor-grid {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>display: grid;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>grid-template-columns: 1fr 1fr 1fr;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>gap: 2rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>align-items: start;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.kpi-grid {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>display: grid;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>grid-template-columns: repeat(2, 1fr);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>gap: 1rem;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.kpi-card {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: #f8f9fa;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 1.2rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 8px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>text-align: center;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border: 1px solid #e9ecef;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.kpi-value {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-size: 1.5rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-weight: bold;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: #2c3e50;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 0.3rem;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.kpi-label {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-size: 0.75rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: #7f8c8d;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>text-transform: uppercase;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>letter-spacing: 0.5px;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.weekly-summary {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: #f8f9fa;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 1.5rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 8px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 1.5rem;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.summary-item {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>justify-content: space-between;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 0.5rem;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.summary-item:last-child {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 0;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.btn {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: linear-gradient(135deg, #3498db, #2980b9);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: white;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border: none;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 1rem 2rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 8px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-size: 1rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>cursor: pointer;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>transition: transform 0.2s ease;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>text-decoration: none;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>text-align: center;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>display: inline-block;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 0.5rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>width: 100%;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.btn:hover {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>transform: translateY(-2px);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.btn.success {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: linear-gradient(135deg, #27ae60, #2ecc71);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.btn.warning {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: linear-gradient(135deg, #f39c12, #e67e22);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.last-updated {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: #7f8c8d;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-size: 0.8rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>text-align: center;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin-top: 1rem;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>/* Connection Status */</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.connection-status {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>position: fixed;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>top: 20px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>right: 20px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 10px 15px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 6px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-size: 0.8rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-weight: bold;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>z-index: 1100;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.connection-status.connected {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: #d5f4e6;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: #27ae60;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.connection-status.disconnected {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: #fef2f2;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: #e74c3c;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.connection-status.loading {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: #dbeafe;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: #3498db;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>/* Mobile Menu */</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.mobile-menu-toggle {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>display: none;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>position: fixed;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>top: 1rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>left: 1rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>z-index: 1200;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: white;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border: none;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 0.8rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 8px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-size: 1.5rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>cursor: pointer;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>box-shadow: 0 4px 12px rgba(0,0,0,0.15);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>/* Responsive */</p>
+<p class="p1"><span class="Apple-converted-space">        </span>@media (max-width: 768px) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>.mobile-menu-toggle {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>display: block;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>.sidebar {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>transform: translateX(-100%);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>.sidebar.open {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>transform: translateX(0);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>.main-content {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>margin-left: 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>.main-grid {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>grid-template-columns: 1fr;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>.advisor-grid {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>grid-template-columns: 1fr;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>.kpi-grid {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>grid-template-columns: 1fr;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>.container {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>padding: 1rem;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>padding-top: 4rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/style&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p1">&lt;body&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="app-container"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;!-- Connection Status Indicator --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="connectionStatus" class="connection-status loading"&gt;🔄 Loading...&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;!-- Mobile Menu Toggle --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;button class="mobile-menu-toggle" onclick="toggleSidebar()"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>☰</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/button&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;!-- Beautiful Sidebar Navigation --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="sidebar" id="sidebar"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="sidebar-header"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;h1&gt;Growth Manager Pro&lt;/h1&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;p&gt;Client Acquisition System&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="nav-section"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="nav-section-title"&gt;Navigation&lt;/div&gt;</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;a href="dashboard.html" class="nav-item active"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="nav-icon"&gt;📊&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="nav-text"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div&gt;Dashboard&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="nav-subtitle"&gt;Overview &amp; KPIs&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/a&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;a href="contacts.html" class="nav-item"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="nav-icon"&gt;👥&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="nav-text"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div&gt;Contacts&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="nav-subtitle"&gt;Prospect database&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/a&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;a href="podcast-calls.html" class="nav-item"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="nav-icon"&gt;📞&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="nav-text"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div&gt;Podcast Calls&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="nav-subtitle"&gt;Interview tracking&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/a&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;a href="discovery-calls.html" class="nav-item"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="nav-icon"&gt;🎯&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="nav-text"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div&gt;Discovery Calls&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="nav-subtitle"&gt;Qualification calls&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/a&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;a href="sales-calls.html" class="nav-item"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="nav-icon"&gt;📈&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="nav-text"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div&gt;Sales Calls&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="nav-subtitle"&gt;Closing conversations&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/a&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;a href="pipeline.html" class="nav-item"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="nav-icon"&gt;📋&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="nav-text"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div&gt;Pipeline&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="nav-subtitle"&gt;Deal management&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/a&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;a href="deals.html" class="nav-item"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="nav-icon"&gt;📄&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="nav-text"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div&gt;Deals&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="nav-subtitle"&gt;Closed deals&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/a&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;a href="cash-flow.html" class="nav-item"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="nav-icon"&gt;💰&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="nav-text"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div&gt;Cash Flow&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="nav-subtitle"&gt;Financial tracking&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/a&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;a href="campaigns.html" class="nav-item"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="nav-icon"&gt;⚡&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="nav-text"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div&gt;Campaigns&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="nav-subtitle"&gt;Outreach tracking&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/a&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;a href="sprints.html" class="nav-item"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="nav-icon"&gt;📅&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="nav-text"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div&gt;Sprints&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="nav-subtitle"&gt;Task management&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/a&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;a href="expense-tracker.html" class="nav-item"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="nav-icon"&gt;🧮&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="nav-text"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div&gt;Expense Tracker&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="nav-subtitle"&gt;Manage recurring costs&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/a&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;a href="availability.html" class="nav-item"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="nav-icon"&gt;🕐&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="nav-text"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div&gt;Availability&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="nav-subtitle"&gt;Schedule settings&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/a&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;a href="user-management.html" class="nav-item"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="nav-icon"&gt;⚙️&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="nav-text"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div&gt;User Management&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="nav-subtitle"&gt;Manage users &amp; permissions&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/a&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;!-- Main Content with Gradient Background --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="main-content"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="container"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="header"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h1&gt;Growth Manager Pro&lt;/h1&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p class="subtitle"&gt;Business Development Dashboard - Client Acquisition System&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="goals"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;strong&gt;North Star Goal:&lt;/strong&gt; $50k/month | 3-Month Target: $25k/month</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="dashboard-grid"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="stat-card"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="stat-number finished" id="tasks-finished"&gt;0&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="stat-label"&gt;Tasks Finished&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="stat-card"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="stat-number on-track" id="tasks-on-track"&gt;0&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="stat-label"&gt;On Track&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="stat-card"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="stat-number off-track" id="tasks-off-track"&gt;0&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="stat-label"&gt;Off Track&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="stat-card"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="stat-number blocked" id="tasks-blocked"&gt;0&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="stat-label"&gt;Blocked&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="stat-card"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="stat-number" style="color: #9b59b6;" id="podcast-calls"&gt;0&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="stat-label"&gt;Podcast Calls&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="stat-card"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="stat-number" style="color: #e67e22;" id="qualified-discovery"&gt;0&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="stat-label"&gt;Qualified for Discovery&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="main-grid"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="section"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="section-header"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;h2&gt;Current Sprint Tasks&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;span&gt;Week &lt;span id="current-week"&gt;39 (Sep 27, 2025)&lt;/span&gt;&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="section-content" id="sprint-tasks"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div style="text-align: center; padding: 2rem; color: #7f8c8d;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>🔄 Loading sprint tasks...</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="section"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="section-header"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;h2&gt;Podcast Funnel Pipeline&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;span&gt;Live Data&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="section-content" id="pipeline-content"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div style="text-align: center; padding: 2rem; color: #7f8c8d;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>🔄 Loading pipeline data...</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="advisor-section"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h2 style="margin-bottom: 2rem; color: #2c3e50;"&gt;Advisor Reporting Dashboard&lt;/h2&gt;</p>
+<p class="p2"><span class="Apple-converted-space">                    </span></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="advisor-grid"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;h3 style="margin-bottom: 1rem;"&gt;Weekly Progress Summary&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="weekly-summary" id="weekly-summary"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;div class="summary-item"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;span&gt;Sprint Tasks Completed:&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;strong id="tasks-completed-ratio"&gt;0/0 (0%)&lt;/strong&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;div class="summary-item"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;span&gt;Podcast Calls This Week:&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;strong id="weekly-calls"&gt;0 calls&lt;/strong&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;div class="summary-item"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;span&gt;Qualified for Discovery:&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;strong id="weekly-qualified"&gt;0 prospects&lt;/strong&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;div class="summary-item"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;span&gt;Pipeline Movement:&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;strong id="pipeline-movement"&gt;0 prospects advanced&lt;/strong&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;div class="summary-item"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;span&gt;Revenue This Month:&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;strong id="monthly-revenue"&gt;$0&lt;/strong&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p2"><span class="Apple-converted-space">                            </span></p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;h4 style="margin: 1rem 0 0.5rem;"&gt;Key Blockers &amp; Challenges:&lt;/h4&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;ul style="color: #7f8c8d; margin-left: 1.5rem;" id="blockers-list"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;li&gt;Loading...&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/ul&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;h3 style="margin-bottom: 1rem;"&gt;Podcast Funnel Metrics&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="kpi-grid"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;div class="kpi-card"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;div class="kpi-value" style="color: #27ae60;" id="metric-total-calls"&gt;0&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;div class="kpi-label"&gt;Total Calls&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;div class="kpi-card"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;div class="kpi-value" style="color: #27ae60;" id="metric-qualification-rate"&gt;0%&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;div class="kpi-label"&gt;Qualification Rate&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;div class="kpi-card"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;div class="kpi-value" style="color: #f39c12;" id="metric-avg-score"&gt;0&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;div class="kpi-label"&gt;Avg Score&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;div class="kpi-card"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;div class="kpi-value" style="color: #27ae60;" id="metric-ai-analysis"&gt;-&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;div class="kpi-label"&gt;AI Analysis&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;div class="kpi-card"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;div class="kpi-value" style="color: #3498db;" id="metric-ready-discovery"&gt;0&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;div class="kpi-label"&gt;Ready for Discovery&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;div class="kpi-card"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;div class="kpi-value" style="color: #e74c3c;" id="metric-processing"&gt;0&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;div class="kpi-label"&gt;Processing&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;h3 style="margin-bottom: 1rem;"&gt;Generate Reports&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div style="display: flex; flex-direction: column; gap: 0.5rem;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;a href="#" class="btn" onclick="generateReport('weekly')"&gt;📊 Weekly Progress Report&lt;/a&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;a href="#" class="btn success" onclick="generateReport('funnel')"&gt;📈 Podcast Funnel Analysis&lt;/a&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;a href="#" class="btn warning" onclick="generateReport('pipeline')"&gt;🎯 Pipeline &amp; Forecasting&lt;/a&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;a href="#" class="btn" onclick="generateReport('tasks')"&gt;📋 Task Completion Summary&lt;/a&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;a href="#" class="btn success" onclick="generateReport('analysis')"&gt;🔊 Call Recording Analysis&lt;/a&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p2"><span class="Apple-converted-space">                            </span></p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="last-updated"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;strong&gt;Last Updated:&lt;/strong&gt; &lt;span id="last-update-time"&gt;Loading...&lt;/span&gt;&lt;br&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;strong&gt;API Status:&lt;/strong&gt; &lt;span id="api-status"&gt;Connecting...&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>// Live API Configuration - connects to your actual Vercel backend</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const API_BASE = 'https://growthmanagerpro-backend.vercel.app';</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// Global state</p>
+<p class="p1"><span class="Apple-converted-space">        </span>let dashboardData = {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>tasks: [],</p>
+<p class="p1"><span class="Apple-converted-space">            </span>podcastCalls: [],</p>
+<p class="p1"><span class="Apple-converted-space">            </span>discoveryCalls: [],</p>
+<p class="p1"><span class="Apple-converted-space">            </span>pipeline: []</p>
+<p class="p1"><span class="Apple-converted-space">        </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function toggleSidebar() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const sidebar = document.getElementById('sidebar');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>sidebar.classList.toggle('open');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// Close sidebar when clicking outside on mobile</p>
+<p class="p1"><span class="Apple-converted-space">        </span>document.addEventListener('click', function(event) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const sidebar = document.getElementById('sidebar');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const toggle = document.querySelector('.mobile-menu-toggle');</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (window.innerWidth &lt;= 768) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (!sidebar.contains(event.target) &amp;&amp; !toggle.contains(event.target)) {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>sidebar.classList.remove('open');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// Update connection status indicator</p>
+<p class="p1"><span class="Apple-converted-space">        </span>function updateConnectionStatus(status, message) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const statusEl = document.getElementById('connectionStatus');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>statusEl.className = `connection-status ${status}`;</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>switch(status) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>case 'connected':</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>statusEl.textContent = '✓ Live Data Connected';</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>break;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>case 'disconnected':</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>statusEl.textContent = '✗ Connection Failed';</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>break;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>case 'loading':</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>statusEl.textContent = '🔄 Loading Dashboard Data...';</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>break;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// Load all dashboard data from live APIs</p>
+<p class="p1"><span class="Apple-converted-space">        </span>async function loadDashboardData() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>console.log('[Dashboard] Loading REAL data from Supabase API...');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>updateConnectionStatus('loading');</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>let successCount = 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>let totalCalls = 4;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>try {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>// Load Sprint Tasks</p>
+<p class="p1"><span class="Apple-converted-space">                </span>try {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>const tasksResponse = await fetch(`${API_BASE}/api/tasks`);</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>if (tasksResponse.ok) {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>const tasksData = await tasksResponse.json();</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>dashboardData.tasks = tasksData.data?.tasks || tasksData.tasks || [];</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>updateTasksDisplay();</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>successCount++;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                </span>} catch (error) {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>console.error('[Dashboard] Tasks API error:', error);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>// Load Podcast Calls</p>
+<p class="p1"><span class="Apple-converted-space">                </span>try {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>const podcastResponse = await fetch(`${API_BASE}/api/podcast-interviews`);</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>if (podcastResponse.ok) {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>const podcastData = await podcastResponse.json();</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>dashboardData.podcastCalls = podcastData.data?.interviews || podcastData.interviews || [];</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>updatePodcastDisplay();</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>successCount++;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                </span>} catch (error) {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>console.error('[Dashboard] Podcast API error:', error);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>// Load Discovery Calls</p>
+<p class="p1"><span class="Apple-converted-space">                </span>try {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>const discoveryResponse = await fetch(`${API_BASE}/api/discovery-calls`);</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>if (discoveryResponse.ok) {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>const discoveryData = await discoveryResponse.json();</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>dashboardData.discoveryCalls = discoveryData.data?.calls || discoveryData.calls || [];</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>updateDiscoveryDisplay();</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>successCount++;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                </span>} catch (error) {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>console.error('[Dashboard] Discovery API error:', error);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>// Load Pipeline</p>
+<p class="p1"><span class="Apple-converted-space">                </span>try {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>const pipelineResponse = await fetch(`${API_BASE}/api/pipeline`);</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>if (pipelineResponse.ok) {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>const pipelineData = await pipelineResponse.json();</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>dashboardData.pipeline = pipelineData.data?.stages || pipelineData.stages || [];</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>updatePipelineDisplay();</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>successCount++;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                </span>} catch (error) {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>console.error('[Dashboard] Pipeline API error:', error);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>// Update connection status</p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (successCount &gt; 0) {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>updateConnectionStatus('connected');</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>document.getElementById('api-status').innerHTML = '&lt;span style="color: #27ae60;"&gt;All Systems Connected&lt;/span&gt;';</p>
+<p class="p1"><span class="Apple-converted-space">                </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>updateConnectionStatus('disconnected');</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>document.getElementById('api-status').innerHTML = '&lt;span style="color: #e74c3c;"&gt;Connection Failed&lt;/span&gt;';</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>// Update last sync time</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const now = new Date();</p>
+<p class="p1"><span class="Apple-converted-space">                </span>document.getElementById('last-update-time').textContent = now.toLocaleString();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>console.log('[Dashboard] Data load complete:', {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>tasks: dashboardData.tasks.length,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>podcastCalls: dashboardData.podcastCalls.length,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>discoveryCalls: dashboardData.discoveryCalls.length,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>pipeline: dashboardData.pipeline.length,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>successRate: `${successCount}/${totalCalls}`</p>
+<p class="p1"><span class="Apple-converted-space">                </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>} catch (error) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>console.error('[Dashboard] Critical error loading dashboard:', error);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>updateConnectionStatus('disconnected');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>document.getElementById('api-status').innerHTML = '&lt;span style="color: #e74c3c;"&gt;Connection Error&lt;/span&gt;';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// Update Tasks Display</p>
+<p class="p1"><span class="Apple-converted-space">        </span>function updateTasksDisplay() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const tasks = dashboardData.tasks;</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Count by status</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const finished = tasks.filter(t =&gt; t.status === 'completed' || t.status === 'finished').length;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const onTrack = tasks.filter(t =&gt; t.status === 'on-track' || t.status === 'in-progress').length;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const offTrack = tasks.filter(t =&gt; t.status === 'off-track').length;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const blocked = tasks.filter(t =&gt; t.status === 'blocked').length;</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Update stat cards</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('tasks-finished').textContent = finished;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('tasks-on-track').textContent = onTrack;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('tasks-off-track').textContent = offTrack;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('tasks-blocked').textContent = blocked;</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Update tasks completed ratio</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const total = tasks.length;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const percentage = total &gt; 0 ? Math.round((finished / total) * 100) : 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('tasks-completed-ratio').textContent = `${finished}/${total} (${percentage}%)`;</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Render task list</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const tasksContainer = document.getElementById('sprint-tasks');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (tasks.length === 0) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>tasksContainer.innerHTML = '&lt;div style="text-align: center; padding: 2rem; color: #7f8c8d;"&gt;No tasks found&lt;/div&gt;';</p>
+<p class="p1"><span class="Apple-converted-space">                </span>return;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>tasksContainer.innerHTML = tasks.slice(0, 5).map(task =&gt; `</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="task-item"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="task-details"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;h4&gt;${task.title || 'Untitled Task'}&lt;/h4&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;p&gt;${task.description || 'No description'}&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="status-badge status-${task.status}"&gt;${task.status}&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>`).join('');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// Update Podcast Display</p>
+<p class="p1"><span class="Apple-converted-space">        </span>function updatePodcastDisplay() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const calls = dashboardData.podcastCalls;</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Update podcast calls count</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('podcast-calls').textContent = calls.length;</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Count qualified (score &gt;= 35)</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const qualified = calls.filter(c =&gt; (c.qualificationScore || c.score || 0) &gt;= 35).length;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('qualified-discovery').textContent = qualified;</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Update metrics</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('metric-total-calls').textContent = calls.length;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('weekly-calls').textContent = `${calls.length} calls`;</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>const qualificationRate = calls.length &gt; 0 ? Math.round((qualified / calls.length) * 100) : 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('metric-qualification-rate').textContent = `${qualificationRate}%`;</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>const avgScore = calls.length &gt; 0<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>? (calls.reduce((sum, c) =&gt; sum + (c.qualificationScore || c.score || 0), 0) / calls.length).toFixed(1)</p>
+<p class="p1"><span class="Apple-converted-space">                </span>: '0.0';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('metric-avg-score').textContent = avgScore;</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('metric-ai-analysis').textContent = '✓';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('metric-ready-discovery').textContent = qualified;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// Update Discovery Display</p>
+<p class="p1"><span class="Apple-converted-space">        </span>function updateDiscoveryDisplay() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const calls = dashboardData.discoveryCalls;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('weekly-qualified').textContent = `${calls.length} prospects`;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// Update Pipeline Display</p>
+<p class="p1"><span class="Apple-converted-space">        </span>function updatePipelineDisplay() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const pipeline = dashboardData.pipeline;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const pipelineContainer = document.getElementById('pipeline-content');</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (!pipeline || pipeline.length === 0) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>pipelineContainer.innerHTML = '&lt;div style="text-align: center; padding: 2rem; color: #7f8c8d;"&gt;No pipeline data&lt;/div&gt;';</p>
+<p class="p1"><span class="Apple-converted-space">                </span>return;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>pipelineContainer.innerHTML = pipeline.map(stage =&gt; `</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="pipeline-stage"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="stage-header"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>${stage.name || 'Stage'} (${(stage.prospects || []).length})</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="stage-content"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>${(stage.prospects || []).slice(0, 3).map(prospect =&gt; `</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="prospect"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;h5&gt;${prospect.name || 'Unknown'}&lt;/h5&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;p&gt;${prospect.company || ''} ${prospect.notes ? '• ' + prospect.notes : ''}&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>`).join('') || '&lt;p style="color: #7f8c8d; font-size: 0.9rem;"&gt;No prospects in this stage&lt;/p&gt;'}</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>`).join('');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// Report generation functions</p>
+<p class="p1"><span class="Apple-converted-space">        </span>function generateReport(type) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const reports = {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>weekly: 'Weekly Progress Report',</p>
+<p class="p1"><span class="Apple-converted-space">                </span>funnel: 'Podcast Funnel Analysis',</p>
+<p class="p1"><span class="Apple-converted-space">                </span>pipeline: 'Pipeline &amp; Forecasting',</p>
+<p class="p1"><span class="Apple-converted-space">                </span>tasks: 'Task Completion Summary',</p>
+<p class="p1"><span class="Apple-converted-space">                </span>analysis: 'Call Recording Analysis'</p>
+<p class="p1"><span class="Apple-converted-space">            </span>};</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>alert(`${reports[type]} generation coming soon! This will create a detailed ${type} report based on your live data.`);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// Initialize dashboard on page load</p>
+<p class="p1"><span class="Apple-converted-space">        </span>window.addEventListener('DOMContentLoaded', function() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>console.log('[Dashboard] Growth Manager Pro v3.0 - Initializing...');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>loadDashboardData();</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Auto-refresh every 5 minutes</p>
+<p class="p1"><span class="Apple-converted-space">            </span>setInterval(loadDashboardData, 5 * 60 * 1000);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>console.log('[Dashboard] Growth Manager Pro v3.0 - Live Data Integration Active');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
 </body>
 </html>
