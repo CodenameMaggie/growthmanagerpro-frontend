@@ -576,7 +576,7 @@
                     <span class="nav-icon">📊</span>
                     <span>Dashboard</span>
                 </a>
-                <a href="contacts.html" class="nav-item">
+                <a href="contacts.html" class="nav-item active">
                     <span class="nav-icon">👥</span>
                     <span>Contacts</span>
                 </a>
@@ -608,7 +608,7 @@
                     <span class="nav-icon">🤝</span>
                     <span>Deals</span>
                 </a>
-                <a href="cash-flow.html" class="nav-item active">
+                <a href="cash-flow.html" class="nav-item">
                     <span class="nav-icon">💰</span>
                     <span>Cash Flow</span>
                 </a>
@@ -624,6 +624,10 @@
                     <span class="nav-icon">⚡</span>
                     <span>Sprints</span>
                 </a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Management</div>
                 <a href="expense-tracker.html" class="nav-item">
                     <span class="nav-icon">💳</span>
                     <span>Expense Tracker</span>
@@ -652,6 +656,9 @@
                         <p class="subtitle">Prospect Database • Instantly.ai & Zoom Integration</p>
                     </div>
                     <div class="header-right">
+                        <button class="btn" style="background: linear-gradient(135deg, #9b59b6, #8e44ad);" onclick="syncFromInstantly()" id="syncBtn">
+                            🔄 Sync from Instantly
+                        </button>
                         <button class="btn success" onclick="openAddModal()">+ Add Contact</button>
                         <button class="btn secondary" onclick="exportContacts()">📥 Export CSV</button>
                     </div>
@@ -1082,6 +1089,48 @@
             } catch (error) {
                 console.error('Error saving contact:', error);
                 alert('Error saving contact. Please try again.');
+            }
+        }
+
+        // Sync contacts from Instantly.ai
+        async function syncFromInstantly() {
+            const syncBtn = document.getElementById('syncBtn');
+            const originalText = syncBtn.innerHTML;
+            
+            try {
+                // Show loading state
+                syncBtn.disabled = true;
+                syncBtn.innerHTML = '⏳ Syncing...';
+                syncBtn.style.opacity = '0.7';
+                
+                console.log('[Contacts] Starting Instantly sync...');
+                
+                const response = await fetch(`${API_BASE}/api/instantly-sync`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert(`✅ Success! Synced ${result.data.synced} contacts from Instantly.ai\n\nTotal leads: ${result.data.total_leads}\nErrors: ${result.data.errors}`);
+                    console.log('[Contacts] ✅ Sync successful:', result.data);
+                    
+                    // Reload contacts to show newly synced data
+                    loadContacts();
+                } else {
+                    throw new Error(result.message || result.error || 'Sync failed');
+                }
+            } catch (error) {
+                console.error('[Contacts] ❌ Sync error:', error);
+                alert('❌ Failed to sync from Instantly: ' + error.message + '\n\nMake sure your INSTANTLY_API_KEY is set in Vercel environment variables.');
+            } finally {
+                // Reset button state
+                syncBtn.disabled = false;
+                syncBtn.innerHTML = originalText;
+                syncBtn.style.opacity = '1';
             }
         }
 
