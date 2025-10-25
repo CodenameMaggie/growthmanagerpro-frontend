@@ -4,438 +4,763 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Growth Manager Pro - Campaigns</title>
-    <script src="/auth.js"></script>
-    <script src="/nav.js"></script>  <!-- ADD THIS LINE -->
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f7fa; }
-        
-        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
-        
-        .header { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
-        .header h1 { color: #2c3e50; font-size: 2rem; }
-        .header .subtitle { color: #7f8c8d; }
-        
-        .btn { background: #3498db; color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 6px; cursor: pointer; font-size: 0.9rem; }
-        .btn:hover { background: #2980b9; }
-        .btn.success { background: #27ae60; }
-        .btn.success:hover { background: #229954; }
-        .btn.danger { background: #e74c3c; }
-        .btn.danger:hover { background: #c0392b; }
-        .btn.secondary { background: #95a5a6; }
-        .btn.secondary:hover { background: #7f8c8d; }
-        
-        .status { position: fixed; top: 20px; right: 20px; padding: 10px 15px; border-radius: 6px; font-size: 0.9rem; font-weight: 600; z-index: 1000; }
-        .status.loading { background: #fff3cd; color: #856404; }
-        .status.connected { background: #d4edda; color: #155724; }
-        .status.error { background: #f8d7da; color: #721c24; }
-        
-        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
-        .stat-card { background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center; }
-        .stat-number { font-size: 2rem; font-weight: bold; margin-bottom: 0.5rem; }
-        .stat-label { color: #7f8c8d; font-size: 0.9rem; text-transform: uppercase; }
-        
-        .filters { background: white; padding: 1rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 2rem; display: flex; gap: 1rem; flex-wrap: wrap; }
-        .filter-group { display: flex; align-items: center; gap: 0.5rem; }
-        .filter-group label { font-size: 0.9rem; color: #2c3e50; font-weight: 500; }
-        .filter-select, .search-input { padding: 0.5rem 0.8rem; border: 1px solid #e1e5e9; border-radius: 6px; font-size: 0.9rem; outline: none; }
-        .search-input { min-width: 250px; }
-        
-        .data-container { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); overflow: hidden; }
-        .data-header { background: #9b59b6; color: white; padding: 1.5rem; }
-        
-        table { width: 100%; border-collapse: collapse; }
-        th { background: #8e44ad; color: white; padding: 1rem; text-align: left; font-weight: 600; }
-        td { padding: 1rem; border-bottom: 1px solid #ecf0f1; }
-        tr:hover { background: #f8f9fa; }
-        
-        .badge { padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: bold; text-transform: uppercase; }
-        .badge.active { background: #d1fae5; color: #065f46; }
-        .badge.paused { background: #fef3c7; color: #92400e; }
-        .badge.completed { background: #dbeafe; color: #1e40af; }
-        .badge.email { background: #e0e7ff; color: #3730a3; }
-        .badge.social { background: #fce7f3; color: #9f1239; }
-        .badge.outreach { background: #fef3c7; color: #92400e; }
-        
-        .actions { display: flex; gap: 0.5rem; }
-        .action-btn { padding: 0.4rem 0.8rem; border: none; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
-        .action-btn.edit { background: #3498db; color: white; }
-        .action-btn.delete { background: #e74c3c; color: white; }
-        
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center; }
-        .modal.show { display: flex; }
-        .modal-content { background: white; padding: 2rem; border-radius: 12px; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto; }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
-        .modal-header h2 { color: #2c3e50; }
-        .close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #7f8c8d; }
-        
-        .form-group { margin-bottom: 1rem; }
-        .form-group label { display: block; margin-bottom: 0.5rem; color: #2c3e50; font-weight: 500; }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.8rem; border: 1px solid #e1e5e9; border-radius: 6px; font-size: 0.9rem; }
-        .form-group textarea { min-height: 100px; resize: vertical; }
-        
-        .form-actions { display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem; }
-        
-        .empty-state { text-align: center; padding: 3rem; color: #7f8c8d; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 280px;
+            background: white;
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-header {
+            padding: 0 2rem 2rem 2rem;
+            border-bottom: 2px solid #e1e5e9;
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-header h1 {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-header p {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        .nav-section {
+            margin-bottom: 2rem;
+        }
+
+        .nav-section-title {
+            padding: 0 2rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #95a5a6;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 2rem;
+            color: #5a6c7d;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .nav-item:hover {
+            background: #f8f9fa;
+            color: #2c3e50;
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            font-weight: 600;
+        }
+
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: #2980b9;
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 1rem;
+            font-size: 1.2rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+        }
+
+        /* Page Header */
+        .page-header {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .page-header h2 {
+            font-size: 2rem;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            color: #7f8c8d;
+            font-size: 1rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+            color: #2c3e50;
+        }
+
+        .stat-change {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+        }
+
+        /* Button Styles */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #3498db;
+            border: 2px solid #3498db;
+        }
+
+        .btn-secondary:hover {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+        }
+
+        /* Table Card */
+        .table-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .table-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 2px solid #e1e5e9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-header h3 {
+            font-size: 1.25rem;
+            color: #2c3e50;
+        }
+
+        /* Campaign Cards Grid */
+        .campaigns-grid {
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .campaign-card {
+            background: #f8f9fa;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .campaign-card:hover {
+            border-color: #3498db;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
+        }
+
+        .campaign-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .campaign-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 0.25rem;
+        }
+
+        .campaign-dates {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-block;
+            padding: 0.4rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-paused {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-completed {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        /* Campaign Metrics */
+        .campaign-metrics {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .metric {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #e1e5e9;
+        }
+
+        .metric-label {
+            font-size: 0.75rem;
+            color: #7f8c8d;
+            margin-bottom: 0.4rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .metric-subtext {
+            font-size: 0.75rem;
+            color: #95a5a6;
+            margin-top: 0.25rem;
+        }
+
+        .campaign-actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e1e5e9;
+        }
+
+        .campaign-actions .btn {
+            flex: 1;
+        }
+
+        /* Loading & Empty States */
+        .loading {
+            text-align: center;
+            padding: 4rem;
+            color: #7f8c8d;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #e1e5e9;
+            border-top-color: #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1.5rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #7f8c8d;
+        }
+
+        .empty-state h3 {
+            font-size: 1.3rem;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.3;
+        }
+
+        /* Connection Status */
+        .connection-status {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 30px;
+            background: white;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            z-index: 999;
+        }
+
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #95a5a6;
+        }
+
+        .status-indicator.status-connected {
+            background: #27ae60;
+            animation: pulse 2s infinite;
+        }
+
+        .status-indicator.status-error {
+            background: #e74c3c;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Instantly Badge */
+        .instantly-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.3rem 0.8rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
     </style>
 </head>
 <body>
-    <div class="status loading" id="status">Loading...</div>
-    
-    <div class="container">
-        <div class="header">
-            <div>
-                <h1>Marketing Campaigns</h1>
-                <p class="subtitle">Track your outreach & lead generation</p>
+    <div class="app-container">
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>Growth Manager Pro</h1>
+                <p>Client Acquisition System</p>
             </div>
-            <div style="display: flex; gap: 0.5rem;">
-                <button class="btn success" onclick="openAddModal()">+ Add Campaign</button>
-                <button class="btn" onclick="loadData()">Refresh</button>
-            </div>
-        </div>
+            
+            <nav>
+                <div class="nav-section">
+                    <div class="nav-section-title">Overview</div>
+                    <a href="dashboard.html" class="nav-item">
+                        <span class="nav-icon">📊</span>
+                        Dashboard
+                    </a>
+                    <a href="contacts.html" class="nav-item">
+                        <span class="nav-icon">👥</span>
+                        Contacts
+                    </a>
+                </div>
 
-        <div class="filters">
-            <div class="filter-group">
-                <label>Search:</label>
-                <input type="text" class="search-input" placeholder="Search campaigns..." id="searchInput" onkeyup="filterData()">
-            </div>
-            <div class="filter-group">
-                <label>Status:</label>
-                <select class="filter-select" id="statusFilter" onchange="filterData()">
-                    <option value="">All</option>
-                    <option value="active">Active</option>
-                    <option value="paused">Paused</option>
-                    <option value="completed">Completed</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <label>Type:</label>
-                <select class="filter-select" id="typeFilter" onchange="filterData()">
-                    <option value="">All</option>
-                    <option value="email">Email</option>
-                    <option value="social">Social</option>
-                    <option value="outreach">Outreach</option>
-                </select>
-            </div>
-        </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Client Acquisition</div>
+                    <a href="podcast-calls.html" class="nav-item">
+                        <span class="nav-icon">🎙️</span>
+                        Podcast Calls
+                    </a>
+                    <a href="discovery-calls.html" class="nav-item">
+                        <span class="nav-icon">🔍</span>
+                        Discovery Calls
+                    </a>
+                    <a href="sales-calls.html" class="nav-item">
+                        <span class="nav-icon">💼</span>
+                        Sales Calls
+                    </a>
+                    <a href="pipeline.html" class="nav-item">
+                        <span class="nav-icon">📈</span>
+                        Pipeline
+                    </a>
+                    <a href="deals.html" class="nav-item">
+                        <span class="nav-icon">🤝</span>
+                        Deals
+                    </a>
+                </div>
 
-        <div class="stats">
-            <div class="stat-card">
-                <div class="stat-number" style="color: #9b59b6;" id="total">0</div>
-                <div class="stat-label">Total Campaigns</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" style="color: #27ae60;" id="active">0</div>
-                <div class="stat-label">Active</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" style="color: #3498db;" id="leads">0</div>
-                <div class="stat-label">Total Leads</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" style="color: #e67e22;" id="responses">0</div>
-                <div class="stat-label">Responses</div>
-            </div>
-        </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Operations</div>
+                    <a href="cash-flow.html" class="nav-item">
+                        <span class="nav-icon">💰</span>
+                        Cash Flow
+                    </a>
+                    <a href="campaigns.html" class="nav-item active">
+                        <span class="nav-icon">📧</span>
+                        Campaigns
+                    </a>
+                    <a href="sprints.html" class="nav-item">
+                        <span class="nav-icon">⚡</span>
+                        Sprints
+                    </a>
+                    <a href="expense-tracker.html" class="nav-item">
+                        <span class="nav-icon">🧾</span>
+                        Expense Tracker
+                    </a>
+                </div>
 
-        <div class="data-container">
-            <div class="data-header">
-                <h2>All Campaigns (<span id="count">0</span>)</h2>
+                <div class="nav-section">
+                    <div class="nav-section-title">Settings</div>
+                    <a href="availability.html" class="nav-item">
+                        <span class="nav-icon">📅</span>
+                        Availability
+                    </a>
+                    <a href="user-management.html" class="nav-item">
+                        <span class="nav-icon">⚙️</span>
+                        User Management
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Page Header -->
+            <header class="page-header">
+                <h2>📧 Email Campaigns</h2>
+                <p>Manage and track your Instantly email campaigns</p>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="syncCampaigns()">🔄 Sync Campaigns</button>
+                </div>
+            </header>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">📊 Active Campaigns</div>
+                    <div class="stat-value" id="active-campaigns">-</div>
+                    <div class="stat-change" id="active-change">Loading...</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-label">📤 Total Sent</div>
+                    <div class="stat-value" id="total-sent">-</div>
+                    <div class="stat-change" id="sent-change">Loading...</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-label">📬 Open Rate</div>
+                    <div class="stat-value" id="open-rate">-</div>
+                    <div class="stat-change" id="open-change">Loading...</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-label">💬 Reply Rate</div>
+                    <div class="stat-value" id="reply-rate">-</div>
+                    <div class="stat-change" id="reply-change">Loading...</div>
+                </div>
             </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Campaign Name</th>
-                        <th>Type</th>
-                        <th>Status</th>
-                        <th>Leads</th>
-                        <th>Responses</th>
-                        <th>Start Date</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="tbody">
-                    <tr><td colspan="7" style="text-align: center; padding: 2rem;">Loading...</td></tr>
-                </tbody>
-            </table>
-        </div>
+
+            <!-- Campaigns Table Card -->
+            <div class="table-card">
+                <div class="table-header">
+                    <h3>Your Campaigns <span class="instantly-badge">⚡ Instantly</span></h3>
+                </div>
+
+                <div id="campaigns-container">
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                        <p>Loading campaigns from Instantly...</p>
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
 
-    <div class="modal" id="campaignModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="modalTitle">Add Campaign</h2>
-                <button class="close-btn" onclick="closeModal()">&times;</button>
-            </div>
-            <form id="campaignForm" onsubmit="saveCampaign(event)">
-                <input type="hidden" id="campaignId">
-                
-                <div class="form-group">
-                    <label>Campaign Name *</label>
-                    <input type="text" id="campaignName" required>
-                </div>
-                
-                <div class="form-group">
-                    <label>Type</label>
-                    <select id="campaignType">
-                        <option value="email">Email</option>
-                        <option value="social">Social</option>
-                        <option value="outreach">Outreach</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label>Status</label>
-                    <select id="campaignStatus">
-                        <option value="active">Active</option>
-                        <option value="paused">Paused</option>
-                        <option value="completed">Completed</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label>Start Date</label>
-                    <input type="date" id="startDate">
-                </div>
-                
-                <div class="form-group">
-                    <label>End Date</label>
-                    <input type="date" id="endDate">
-                </div>
-                
-                <div class="form-group">
-                    <label>Leads Generated</label>
-                    <input type="number" id="leadsGenerated" min="0" value="0">
-                </div>
-                
-                <div class="form-group">
-                    <label>Responses</label>
-                    <input type="number" id="responses" min="0" value="0">
-                </div>
-                
-                <div class="form-group">
-                    <label>Notes</label>
-                    <textarea id="notes"></textarea>
-                </div>
-                
-                <div class="form-actions">
-                    <button type="button" class="btn secondary" onclick="closeModal()">Cancel</button>
-                    <button type="submit" class="btn success">Save</button>
-                </div>
-            </form>
+        <!-- Connection Status -->
+        <div class="connection-status" id="connection-status">
+            <div class="status-indicator" id="status-indicator"></div>
+            <span id="status-text">Connecting to Instantly...</span>
         </div>
     </div>
 
     <script>
-        const API_URL = 'https://growthmanagerpro-backend.vercel.app';
-        let data = [];
-        let filteredData = [];
+        const API_URL = 'https://growthmanagerpro-backend.vercel.app/api';
+        let campaigns = [];
 
-        async function loadData() {
-            const status = document.getElementById('status');
-            status.className = 'status loading';
-            status.textContent = 'Loading...';
-
+        // Load campaigns on page load
+        async function loadCampaigns() {
             try {
-                const response = await fetch(`${API_URL}/api/campaigns`);
+                const response = await fetch(`${API_URL}/campaigns`);
+                if (!response.ok) throw new Error('Failed to fetch campaigns');
                 
-                if (!response.ok) {
-                    throw new Error(`API returned ${response.status}`);
-                }
-
-                const result = await response.json();
+                const data = await response.json();
+                campaigns = data.campaigns || [];
                 
-                if (!result.success) {
-                    throw new Error(result.error || 'API returned error');
-                }
-
-                data = result.data.campaigns;
-                filteredData = [...data];
-                updateStats(result.data.stats);
-                renderTable();
-                
-                status.className = 'status connected';
-                status.textContent = 'Connected';
-                
+                updateConnectionStatus(true);
+                displayCampaigns();
+                updateStats();
             } catch (error) {
-                console.error('Error:', error);
-                status.className = 'status error';
-                status.textContent = 'Error';
-                document.getElementById('tbody').innerHTML = `
-                    <tr><td colspan="7" style="text-align: center; padding: 2rem; color: #e74c3c;">
-                        Error: ${error.message}<br>
-                        <button class="btn" onclick="loadData()" style="margin-top: 1rem;">Retry</button>
-                    </td></tr>
-                `;
+                console.error('Error loading campaigns:', error);
+                updateConnectionStatus(false);
+                showError();
             }
         }
 
-        function updateStats(stats) {
-            document.getElementById('total').textContent = stats.totalCampaigns;
-            document.getElementById('active').textContent = stats.activeCampaigns;
-            document.getElementById('leads').textContent = stats.totalLeads;
-            document.getElementById('responses').textContent = stats.totalResponses;
-            document.getElementById('count').textContent = filteredData.length;
-        }
-
-        function renderTable() {
-            const tbody = document.getElementById('tbody');
+        function displayCampaigns() {
+            const container = document.getElementById('campaigns-container');
             
-            if (filteredData.length === 0) {
-                tbody.innerHTML = `
-                    <tr><td colspan="7">
-                        <div class="empty-state">
-                            <h3>No campaigns yet</h3>
-                            <p>Click "Add Campaign" to create your first campaign</p>
-                        </div>
-                    </td></tr>
+            if (campaigns.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📧</div>
+                        <h3>No campaigns found</h3>
+                        <p>Click "Sync Campaigns" to pull your latest campaigns from Instantly</p>
+                    </div>
                 `;
                 return;
             }
 
-            tbody.innerHTML = filteredData.map(item => `
-                <tr>
-                    <td><strong>${item.campaignName}</strong></td>
-                    <td><span class="badge ${item.campaignType}">${item.campaignType}</span></td>
-                    <td><span class="badge ${item.campaignStatus}">${item.campaignStatus}</span></td>
-                    <td>${item.leadsGenerated || 0}</td>
-                    <td>${item.responses || 0}</td>
-                    <td>${item.startDate ? new Date(item.startDate).toLocaleDateString() : 'TBD'}</td>
-                    <td>
-                        <div class="actions">
-                            <button class="action-btn edit" onclick='editCampaign(${JSON.stringify(item)})'>Edit</button>
-                            <button class="action-btn delete" onclick="deleteCampaign('${item.id}', '${item.campaignName}')">Delete</button>
+            const campaignsHTML = campaigns.map(campaign => {
+                const openRate = campaign.emails_sent > 0 
+                    ? ((campaign.emails_opened / campaign.emails_sent) * 100).toFixed(1)
+                    : 0;
+                
+                const replyRate = campaign.emails_sent > 0 
+                    ? ((campaign.emails_replied / campaign.emails_sent) * 100).toFixed(1)
+                    : 0;
+
+                const statusClass = campaign.status === 'active' ? 'status-active' 
+                    : campaign.status === 'paused' ? 'status-paused' 
+                    : 'status-completed';
+
+                return `
+                    <div class="campaign-card">
+                        <div class="campaign-header">
+                            <div>
+                                <div class="campaign-name">${campaign.name}</div>
+                                <div class="campaign-dates">
+                                    Started: ${new Date(campaign.created_at).toLocaleDateString()}
+                                </div>
+                            </div>
+                            <div class="status-badge ${statusClass}">
+                                ${campaign.status}
+                            </div>
                         </div>
-                    </td>
-                </tr>
-            `).join('');
+
+                        <div class="campaign-metrics">
+                            <div class="metric">
+                                <div class="metric-label">Sent</div>
+                                <div class="metric-value">${campaign.emails_sent || 0}</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-label">Opened</div>
+                                <div class="metric-value">${campaign.emails_opened || 0}</div>
+                                <div class="metric-subtext">${openRate}%</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-label">Clicked</div>
+                                <div class="metric-value">${campaign.emails_clicked || 0}</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-label">Replied</div>
+                                <div class="metric-value">${campaign.emails_replied || 0}</div>
+                                <div class="metric-subtext">${replyRate}%</div>
+                            </div>
+                        </div>
+
+                        <div class="campaign-actions">
+                            <button class="btn btn-small btn-secondary" onclick="viewCampaign('${campaign.id}')">
+                                👁️ View Details
+                            </button>
+                            <button class="btn btn-small btn-primary" onclick="window.open('https://app.instantly.ai', '_blank')">
+                                🚀 Open in Instantly
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = `<div class="campaigns-grid">${campaignsHTML}</div>`;
         }
 
-        function filterData() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const statusFilter = document.getElementById('statusFilter').value;
-            const typeFilter = document.getElementById('typeFilter').value;
+        function updateStats() {
+            // Calculate aggregate stats
+            const activeCampaigns = campaigns.filter(c => c.status === 'active').length;
+            const totalSent = campaigns.reduce((sum, c) => sum + (c.emails_sent || 0), 0);
+            const totalOpened = campaigns.reduce((sum, c) => sum + (c.emails_opened || 0), 0);
+            const totalReplied = campaigns.reduce((sum, c) => sum + (c.emails_replied || 0), 0);
 
-            filteredData = data.filter(item => {
-                const matchesSearch = !searchTerm || 
-                    item.campaignName.toLowerCase().includes(searchTerm);
+            const openRate = totalSent > 0 ? ((totalOpened / totalSent) * 100).toFixed(1) : 0;
+            const replyRate = totalSent > 0 ? ((totalReplied / totalSent) * 100).toFixed(1) : 0;
 
-                const matchesStatus = !statusFilter || item.campaignStatus === statusFilter;
-                const matchesType = !typeFilter || item.campaignType === typeFilter;
+            // Update stat cards
+            document.getElementById('active-campaigns').textContent = activeCampaigns;
+            document.getElementById('active-change').textContent = `${campaigns.length} total campaigns`;
+            document.getElementById('active-change').className = 'stat-change';
 
-                return matchesSearch && matchesStatus && matchesType;
-            });
+            document.getElementById('total-sent').textContent = totalSent.toLocaleString();
+            document.getElementById('sent-change').textContent = `${totalOpened.toLocaleString()} opened`;
+            document.getElementById('sent-change').className = 'stat-change';
 
-            document.getElementById('count').textContent = filteredData.length;
-            renderTable();
+            document.getElementById('open-rate').textContent = `${openRate}%`;
+            document.getElementById('open-change').textContent = `${totalOpened.toLocaleString()} total opens`;
+
+            document.getElementById('reply-rate').textContent = `${replyRate}%`;
+            document.getElementById('reply-change').textContent = `${totalReplied.toLocaleString()} total replies`;
         }
 
-        function openAddModal() {
-            document.getElementById('modalTitle').textContent = 'Add Campaign';
-            document.getElementById('campaignForm').reset();
-            document.getElementById('campaignId').value = '';
-            document.getElementById('leadsGenerated').value = '0';
-            document.getElementById('responses').value = '0';
-            document.getElementById('campaignModal').classList.add('show');
-        }
-
-        function editCampaign(campaign) {
-            document.getElementById('modalTitle').textContent = 'Edit Campaign';
-            document.getElementById('campaignId').value = campaign.id;
-            document.getElementById('campaignName').value = campaign.campaignName;
-            document.getElementById('campaignType').value = campaign.campaignType || 'email';
-            document.getElementById('campaignStatus').value = campaign.campaignStatus || 'active';
-            document.getElementById('leadsGenerated').value = campaign.leadsGenerated || 0;
-            document.getElementById('responses').value = campaign.responses || 0;
-            document.getElementById('notes').value = campaign.notes || '';
+        function updateConnectionStatus(connected) {
+            const indicator = document.getElementById('status-indicator');
+            const text = document.getElementById('status-text');
             
-            if (campaign.startDate) {
-                const date = new Date(campaign.startDate);
-                document.getElementById('startDate').value = date.toISOString().split('T')[0];
+            if (connected) {
+                indicator.className = 'status-indicator status-connected';
+                text.textContent = 'Connected to Instantly ⚡';
+            } else {
+                indicator.className = 'status-indicator status-error';
+                text.textContent = 'Connection Error - Retrying...';
             }
-            if (campaign.endDate) {
-                const date = new Date(campaign.endDate);
-                document.getElementById('endDate').value = date.toISOString().split('T')[0];
-            }
+        }
+
+        function showError() {
+            const container = document.getElementById('campaigns-container');
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon">⚠️</div>
+                    <h3>Unable to load campaigns</h3>
+                    <p>There was an error connecting to Instantly. Please check your API connection.</p>
+                    <button class="btn btn-primary" onclick="loadCampaigns()" style="margin-top: 20px;">
+                        🔄 Retry
+                    </button>
+                </div>
+            `;
+        }
+
+        async function syncCampaigns() {
+            const container = document.getElementById('campaigns-container');
+            container.innerHTML = `
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <p>Syncing with Instantly...</p>
+                </div>
+            `;
             
-            document.getElementById('campaignModal').classList.add('show');
+            // Force refresh from Instantly
+            await loadCampaigns();
         }
 
-        function closeModal() {
-            document.getElementById('campaignModal').classList.remove('show');
-        }
-
-        async function saveCampaign(event) {
-            event.preventDefault();
-            
-            const id = document.getElementById('campaignId').value;
-            const campaignData = {
-                campaignName: document.getElementById('campaignName').value,
-                campaignType: document.getElementById('campaignType').value,
-                campaignStatus: document.getElementById('campaignStatus').value,
-                startDate: document.getElementById('startDate').value || null,
-                endDate: document.getElementById('endDate').value || null,
-                leadsGenerated: parseInt(document.getElementById('leadsGenerated').value) || 0,
-                responses: parseInt(document.getElementById('responses').value) || 0,
-                notes: document.getElementById('notes').value
-            };
-
-            try {
-                const isEdit = !!id;
-                if (isEdit) {
-                    campaignData.id = id;
-                }
-
-                const response = await fetch(`${API_URL}/api/campaigns`, {
-                    method: isEdit ? 'PUT' : 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(campaignData)
-                });
-
-                const result = await response.json();
-
-                if (!result.success) {
-                    throw new Error(result.error || 'Failed to save');
-                }
-
-                alert(isEdit ? 'Campaign updated successfully!' : 'Campaign added successfully!');
-                closeModal();
-                loadData();
-
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Error: ' + error.message);
+        function viewCampaign(campaignId) {
+            const campaign = campaigns.find(c => c.id === campaignId);
+            if (campaign) {
+                alert(`Campaign: ${campaign.name}\n\nFull campaign analytics coming soon!\n\nFor now, click "Open in Instantly" to view detailed metrics.`);
             }
         }
 
-        async function deleteCampaign(id, name) {
-            if (!confirm(`Are you sure you want to delete "${name}"?`)) {
-                return;
-            }
+        // Auto-refresh every 5 minutes
+        setInterval(() => {
+            loadCampaigns();
+        }, 5 * 60 * 1000);
 
-            try {
-                const response = await fetch(`${API_URL}/api/campaigns`, {
-                    method: 'DELETE',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id })
-                });
-
-                const result = await response.json();
-
-                if (!result.success) {
-                    throw new Error(result.error || 'Failed to delete');
-                }
-
-                alert('Campaign deleted successfully!');
-                loadData();
-
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Error: ' + error.message);
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', loadData);
+        // Initial load
+        loadCampaigns();
     </script>
 </body>
 </html>

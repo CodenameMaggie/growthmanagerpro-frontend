@@ -3,532 +3,823 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Podcast Calls - Growth Manager Pro</title>
-    <script src="/auth.js"></script>
-    <script src="/nav.js"></script>
+    <title>Growth Manager Pro - Podcast Calls</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f7fa; }
-        
-        .container { max-width: 1400px; margin: 0 auto; padding: 2rem; }
-        
-        .header { margin-bottom: 2rem; }
-        .header h1 { color: #2c3e50; font-size: 2rem; margin-bottom: 0.5rem; }
-        .header p { color: #7f8c8d; }
-        
-        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
-        .metric-card { background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center; }
-        .metric-number { font-size: 2.5rem; font-weight: bold; margin-bottom: 0.5rem; }
-        .metric-number.green { color: #27ae60; }
-        .metric-number.orange { color: #e67e22; }
-        .metric-number.red { color: #e74c3c; }
-        .metric-label { color: #7f8c8d; font-size: 0.9rem; }
-        
-        .action-bar { display: flex; gap: 1rem; margin-bottom: 2rem; }
-        .btn { padding: 0.8rem 1.5rem; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.95rem; }
-        .btn-primary { background: #27ae60; color: white; }
-        .btn-secondary { background: #3498db; color: white; }
-        .btn:hover { opacity: 0.9; }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        
-        .calls-section { background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        .calls-section h2 { color: #2c3e50; margin-bottom: 1.5rem; font-size: 1.5rem; }
-        
-        .call-item { display: flex; flex-direction: column; gap: 1rem; padding: 1.5rem; border: 1px solid #e1e5e9; border-radius: 8px; margin-bottom: 1rem; transition: box-shadow 0.2s; }
-        .call-item:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        
-        .call-header { display: flex; align-items: center; gap: 1.5rem; }
-        .call-avatar { width: 60px; height: 60px; background: #27ae60; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; flex-shrink: 0; }
-        
-        .call-info { flex: 1; }
-        .call-info h3 { color: #2c3e50; margin-bottom: 0.3rem; }
-        .call-info p { color: #7f8c8d; font-size: 0.9rem; }
-        
-        .call-status { padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600; }
-        .call-status.completed { background: #d4edda; color: #155724; }
-        
-        .ai-scores { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 8px; }
-        .score-item { text-align: center; }
-        .score-value { font-size: 2rem; font-weight: bold; margin-bottom: 0.3rem; }
-        .score-value.high { color: #27ae60; }
-        .score-value.medium { color: #f39c12; }
-        .score-value.low { color: #e74c3c; }
-        .score-label { font-size: 0.85rem; color: #7f8c8d; }
-        .score-divider { font-size: 1.5rem; color: #bdc3c7; }
-        
-        .no-analysis { padding: 1rem; background: #fff3cd; border-radius: 8px; color: #856404; text-align: center; font-size: 0.9rem; }
-        
-        .call-actions { display: flex; gap: 0.8rem; flex-wrap: wrap; }
-        .call-btn { padding: 0.6rem 1rem; border: 1px solid #e1e5e9; background: white; border-radius: 6px; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; }
-        .call-btn:hover { background: #f8f9fa; }
-        .call-btn.ai-btn { background: #9b59b6; color: white; border-color: #9b59b6; }
-        .call-btn.ai-btn:hover { background: #8e44ad; }
-        
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
-        .modal.show { display: flex; }
-        .modal-content { background: white; border-radius: 12px; padding: 2rem; max-width: 800px; width: 90%; max-height: 80vh; overflow-y: auto; }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
-        .modal-header h2 { color: #2c3e50; }
-        .close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #7f8c8d; }
-        
-        .analysis-section { margin-bottom: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 8px; }
-        .analysis-section h3 { color: #2c3e50; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; font-size: 1.2rem; }
-        .analysis-subsection { margin-bottom: 1rem; padding: 1rem; background: white; border-radius: 6px; }
-        .analysis-subsection h4 { color: #34495e; margin-bottom: 0.5rem; font-size: 1rem; }
-        .analysis-feedback { color: #555; line-height: 1.6; margin-bottom: 0.8rem; }
-        .analysis-examples { list-style: none; margin-top: 0.5rem; }
-        .analysis-examples li { padding: 0.6rem; background: #e8f4f8; margin-bottom: 0.4rem; border-radius: 4px; font-style: italic; color: #2c3e50; }
-        
-        .overall-summary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; border-radius: 8px; margin-bottom: 2rem; }
-        .overall-summary h3 { margin-bottom: 1rem; font-size: 1.5rem; }
-        .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
-        .summary-item { text-align: center; padding: 1rem; background: rgba(255,255,255,0.1); border-radius: 6px; }
-        .summary-score { font-size: 2.5rem; font-weight: bold; margin-bottom: 0.3rem; }
-        .summary-label { font-size: 0.9rem; opacity: 0.9; }
-        
-        .key-points { list-style: none; }
-        .key-points li { padding: 0.8rem; background: white; margin-bottom: 0.5rem; border-radius: 6px; position: relative; padding-left: 2rem; }
-        .key-points li:before { content: "✓"; position: absolute; left: 0.8rem; font-weight: bold; color: #27ae60; }
-        
-        .form-group { margin-bottom: 1.5rem; }
-        .form-group label { display: block; margin-bottom: 0.5rem; color: #2c3e50; font-weight: 600; }
-        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 0.8rem; border: 1px solid #e1e5e9; border-radius: 6px; font-size: 1rem; }
-        .form-group textarea { min-height: 100px; resize: vertical; }
-        
-        .empty-state { text-align: center; padding: 3rem; color: #7f8c8d; }
-        
-        .loading { text-align: center; padding: 2rem; color: #7f8c8d; }
-        .spinner { display: inline-block; width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 280px;
+            background: white;
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-header {
+            padding: 0 2rem 2rem 2rem;
+            border-bottom: 2px solid #e1e5e9;
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-header h1 {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-header p {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        .nav-section {
+            margin-bottom: 2rem;
+        }
+
+        .nav-section-title {
+            padding: 0 2rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #95a5a6;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 2rem;
+            color: #5a6c7d;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .nav-item:hover {
+            background: #f8f9fa;
+            color: #2c3e50;
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            font-weight: 600;
+        }
+
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: #2980b9;
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 1rem;
+            font-size: 1.2rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+        }
+
+        /* Page Header */
+        .page-header {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .page-header h2 {
+            font-size: 2rem;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            color: #7f8c8d;
+            font-size: 1rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-change {
+            font-size: 0.85rem;
+            color: #27ae60;
+        }
+
+        /* Table Styles */
+        .table-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 2px solid #e1e5e9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-header h3 {
+            font-size: 1.25rem;
+            color: #2c3e50;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #f8f9fa;
+        }
+
+        th {
+            padding: 1rem;
+            text-align: left;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #5a6c7d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 1rem;
+            border-top: 1px solid #e1e5e9;
+            font-size: 0.95rem;
+        }
+
+        tbody tr {
+            transition: background 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-block;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-scheduled {
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+
+        .status-completed {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-analyzed {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .status-cancelled {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Score Badges */
+        .score-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        .score-excellent {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .score-good {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .score-fair {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .score-poor {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .score-pending {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        /* Automation Badge */
+        .automation-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.3rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+        }
+
+        .btn-secondary {
+            background: #e1e5e9;
+            color: #5a6c7d;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e0;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+        }
+
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+        }
+
+        /* Connection Status */
+        .connection-status {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 1rem 1.5rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            z-index: 1000;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .status-connected {
+            background: #27ae60;
+        }
+
+        .status-error {
+            background: #e74c3c;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: #7f8c8d;
+        }
+
+        .loading-spinner {
+            border: 3px solid #e1e5e9;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Score Details */
+        .score-details {
+            display: flex;
+            gap: 0.75rem;
+            font-size: 0.8rem;
+        }
+
+        .score-item {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .score-item-label {
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+
+        .score-item-value {
+            font-weight: 700;
+            color: #2c3e50;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>🎙️ Podcast Calls</h1>
-            <p>Track and analyze your podcast interviews with AI-powered insights</p>
-        </div>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h1>Growth Manager Pro</h1>
+                <p>Client Acquisition System</p>
+            </div>
 
-        <!-- Metrics -->
-        <div class="metrics-grid">
-            <div class="metric-card">
-                <div class="metric-number green" id="activeCompleted">0</div>
-                <div class="metric-label">Completed Interviews</div>
+            <div class="nav-section">
+                <div class="nav-section-title">Main</div>
+                <a href="dashboard.html" class="nav-item">
+                    <span class="nav-icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="contacts.html" class="nav-item">
+                    <span class="nav-icon">👥</span>
+                    <span>Contacts</span>
+                </a>
             </div>
-            <div class="metric-card">
-                <div class="metric-number orange" id="convertedToDiscovery">0</div>
-                <div class="metric-label">Converted to Discovery</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-number" id="avgScore">0</div>
-                <div class="metric-label">Average AI Score</div>
-            </div>
-        </div>
 
-        <!-- Action Bar -->
-        <div class="action-bar">
-            <button class="btn btn-primary" onclick="openAddCallModal()">+ Add Podcast Call</button>
-            <button class="btn btn-secondary" onclick="loadCalls()">🔄 Refresh</button>
-        </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Acquisition</div>
+                <a href="podcast-calls.html" class="nav-item active">
+                    <span class="nav-icon">🎙️</span>
+                    <span>Podcast Calls</span>
+                </a>
+                <a href="discovery-calls.html" class="nav-item">
+                    <span class="nav-icon">🔍</span>
+                    <span>Discovery Calls</span>
+                </a>
+                <a href="sales-calls.html" class="nav-item">
+                    <span class="nav-icon">💼</span>
+                    <span>Sales Calls</span>
+                </a>
+            </div>
 
-        <!-- Calls List -->
-        <div class="calls-section">
-            <h2>Active Podcast Calls</h2>
-            <div id="callsList">
-                <div class="empty-state">Loading podcast calls...</div>
+            <div class="nav-section">
+                <div class="nav-section-title">Pipeline</div>
+                <a href="pipeline.html" class="nav-item">
+                    <span class="nav-icon">📈</span>
+                    <span>Pipeline</span>
+                </a>
+                <a href="deals.html" class="nav-item">
+                    <span class="nav-icon">🤝</span>
+                    <span>Deals</span>
+                </a>
+                <a href="cash-flow.html" class="nav-item">
+                    <span class="nav-icon">💰</span>
+                    <span>Cash Flow</span>
+                </a>
             </div>
-        </div>
-    </div>
 
-    <!-- AI Analysis Modal -->
-    <div class="modal" id="aiAnalysisModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>🤖 Comprehensive AI Analysis</h2>
-                <button class="close-btn" onclick="closeModal('aiAnalysisModal')">&times;</button>
+            <div class="nav-section">
+                <div class="nav-section-title">Operations</div>
+                <a href="campaigns.html" class="nav-item">
+                    <span class="nav-icon">📧</span>
+                    <span>Campaigns</span>
+                </a>
+                <a href="sprints.html" class="nav-item">
+                    <span class="nav-icon">⚡</span>
+                    <span>Sprints</span>
+                </a>
+                <a href="expense-tracker.html" class="nav-item">
+                    <span class="nav-icon">💳</span>
+                    <span>Expense Tracker</span>
+                </a>
+                <a href="availability.html" class="nav-item">
+                    <span class="nav-icon">📅</span>
+                    <span>Availability</span>
+                </a>
             </div>
-            <div id="analysisContent">
-                <div class="loading">
-                    <div class="spinner"></div>
-                    <p style="margin-top: 1rem;">Analyzing interview with AI...</p>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Add Call Modal -->
-    <div class="modal" id="addCallModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Add Podcast Call</h2>
-                <button class="close-btn" onclick="closeModal('addCallModal')">&times;</button>
+            <div class="nav-section">
+                <div class="nav-section-title">Settings</div>
+                <a href="user-management.html" class="nav-item">
+                    <span class="nav-icon">⚙️</span>
+                    <span>User Management</span>
+                </a>
             </div>
-            <form onsubmit="addCall(event)">
-                <div class="form-group">
-                    <label>Guest Name *</label>
-                    <input type="text" id="guestName" required>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h2>🎙️ Podcast Interviews</h2>
+                <p>AI-Powered Guest Analysis & Qualification</p>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="scheduleInterview()">+ Schedule Interview</button>
+                    <button class="btn btn-secondary" onclick="refreshData()">🔄 Refresh</button>
                 </div>
-                <div class="form-group">
-                    <label>Guest Email</label>
-                    <input type="email" id="guestEmail">
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Interviews</div>
+                    <div class="stat-value" style="color: #3498db;" id="total-interviews">0</div>
                 </div>
-                <div class="form-group">
-                    <label>Company</label>
-                    <input type="text" id="company">
+                <div class="stat-card">
+                    <div class="stat-label">Scheduled</div>
+                    <div class="stat-value" style="color: #f39c12;" id="scheduled-interviews">0</div>
                 </div>
-                <div class="form-group">
-                    <label>Topic</label>
-                    <input type="text" id="topic">
+                <div class="stat-card">
+                    <div class="stat-label">Analyzed</div>
+                    <div class="stat-value" style="color: #2980b9;" id="analyzed-interviews">0</div>
                 </div>
-                <div class="form-group">
-                    <label>Scheduled Date</label>
-                    <input type="datetime-local" id="scheduledDate">
+                <div class="stat-card">
+                    <div class="stat-label">Qualified (35+)</div>
+                    <div class="stat-value" style="color: #27ae60;" id="qualified-guests">0</div>
                 </div>
-                <div class="form-group">
-                    <label>Status</label>
-                    <select id="callStatus">
-                        <option value="scheduled">Scheduled</option>
-                        <option value="completed">Completed</option>
-                        <option value="cancelled">Cancelled</option>
-                    </select>
+                <div class="stat-card">
+                    <div class="stat-label">Average Score</div>
+                    <div class="stat-value" style="color: #9b59b6;" id="average-score">0</div>
+                    <div class="stat-change">out of 50 points</div>
                 </div>
-                <div class="form-group">
-                    <label>Notes</label>
-                    <textarea id="callNotes"></textarea>
+                <div class="stat-card">
+                    <div class="stat-label">Auto-Progressed</div>
+                    <div class="stat-value" style="color: #27ae60;" id="auto-progressed">0</div>
+                    <div class="stat-change">→ Discovery Calls</div>
                 </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%;">Add Call</button>
-            </form>
+            </div>
+
+            <!-- Interviews Table -->
+            <div class="table-card">
+                <div class="table-header">
+                    <h3>Recent Interviews (<span id="interview-count">0</span>)</h3>
+                </div>
+                <div class="table-container">
+                    <table id="interviews-table">
+                        <thead>
+                            <tr>
+                                <th>Guest</th>
+                                <th>Company</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>AI Score</th>
+                                <th>Automation</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="interviews-body">
+                            <tr>
+                                <td colspan="7" class="loading">
+                                    <div class="loading-spinner"></div>
+                                    <p>Loading interviews...</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+
+        <!-- Connection Status -->
+        <div class="connection-status" id="connection-status">
+            <div class="status-indicator status-connected" id="status-indicator"></div>
+            <span id="status-text">Connected</span>
         </div>
     </div>
 
     <script>
-        const API_URL = 'https://growth-manager-pro.vercel.app';
-        let currentCallId = null;
+        const API_BASE = 'https://growthmanagerpro-backend.vercel.app';
+        let interviewsData = [];
 
-        async function loadCalls() {
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('[Podcast Calls] Initializing...');
+            console.log('[Podcast Calls] API Base:', API_BASE);
+            loadInterviews();
+            
+            // Auto-refresh every 5 minutes
+            setInterval(loadInterviews, 300000);
+        });
+
+        // Load interviews from API
+        async function loadInterviews() {
             try {
-                const response = await fetch(`${API_URL}/api/podcast-interviews-with-ai`);
+                updateConnectionStatus('connecting');
+                
+                const response = await fetch(`${API_BASE}/api/podcast-interviews`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
                 const result = await response.json();
                 
-                if (!result.success) throw new Error(result.error);
-                
-                const calls = result.data.interviews || [];
-                
-                // Update metrics
-                document.getElementById('activeCompleted').textContent = 
-                    calls.filter(c => c.interview_status === 'completed').length;
-                document.getElementById('convertedToDiscovery').textContent = 
-                    calls.filter(c => c.discovery_call_id).length;
-                
-                // Calculate average score
-                const scoresExist = calls.filter(c => c.overall_score && c.overall_score > 0);
-                const avgScore = scoresExist.length > 0 
-                    ? (scoresExist.reduce((sum, c) => sum + c.overall_score, 0) / scoresExist.length).toFixed(1)
-                    : 0;
-                document.getElementById('avgScore').textContent = avgScore;
-                document.getElementById('avgScore').className = 
-                    avgScore >= 35 ? 'metric-number green' : avgScore >= 25 ? 'metric-number orange' : 'metric-number red';
-                
-                // Render calls
-                renderCalls(calls);
+                if (result.success && result.data) {
+                    interviewsData = result.data.interviews || [];
+                    updateStats(result.data.stats);
+                    renderInterviewsTable();
+                    updateConnectionStatus('connected');
+                    console.log('[Podcast Calls] ✅ Loaded', interviewsData.length, 'interviews');
+                } else {
+                    throw new Error('Invalid response format');
+                }
+
             } catch (error) {
-                console.error('Error:', error);
-                document.getElementById('callsList').innerHTML = 
-                    '<div class="empty-state">Error loading calls. Please try again.</div>';
+                console.error('[Podcast Calls] ❌ Error loading interviews:', error);
+                updateConnectionStatus('error', error.message);
+                renderErrorState(error.message);
             }
         }
 
-        function renderCalls(calls) {
-            const container = document.getElementById('callsList');
+        // Update statistics
+        function updateStats(stats) {
+            if (!stats) return;
             
-            if (calls.length === 0) {
-                container.innerHTML = '<div class="empty-state">No podcast calls yet. Add your first one!</div>';
+            document.getElementById('total-interviews').textContent = stats.totalInterviews || 0;
+            document.getElementById('scheduled-interviews').textContent = stats.scheduledInterviews || 0;
+            document.getElementById('analyzed-interviews').textContent = stats.analyzedInterviews || 0;
+            document.getElementById('qualified-guests').textContent = stats.qualifiedGuests || 0;
+            document.getElementById('average-score').textContent = stats.averageScore || '0';
+            document.getElementById('auto-progressed').textContent = stats.autoProgressedToDiscovery || 0;
+        }
+
+        // Render interviews table
+        function renderInterviewsTable() {
+            const tbody = document.getElementById('interviews-body');
+            document.getElementById('interview-count').textContent = interviewsData.length;
+
+            if (interviewsData.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 3rem; color: #7f8c8d;">
+                            <p style="font-size: 1.1rem; margin-bottom: 0.5rem;">📭 No interviews yet</p>
+                            <p>Schedule your first podcast interview to get started!</p>
+                        </td>
+                    </tr>
+                `;
                 return;
             }
-            
-            container.innerHTML = calls.map(call => {
-                const hasTranscript = call.transcript_text && call.transcript_text.length > 0;
-                const hasAnalysis = call.overall_score && call.overall_score > 0;
-                const overallScore = call.overall_score || 0;
-                const introScore = call.intro_score || 0;
-                const questionsScore = call.questions_flow_score || 0;
-                const closeScore = call.close_next_steps_score || 0;
-                
-                const scoreClass = overallScore >= 35 ? 'high' : overallScore >= 25 ? 'medium' : 'low';
-                
-                return `
-                <div class="call-item">
-                    <div class="call-header">
-                        <div class="call-avatar">🎙️</div>
-                        <div class="call-info">
-                            <h3>${call.guest_name || 'Unknown Guest'}${call.company_organization ? ` - ${call.company_organization}` : ''}</h3>
-                            <p>${call.topic || 'No topic set'} • ${call.scheduled_date ? new Date(call.scheduled_date).toLocaleDateString() : 'No date'}</p>
-                            ${call.discovery_call_id ? '<p style="color: #27ae60; font-weight: 600;">✓ Moved to Discovery</p>' : ''}
-                        </div>
-                        <span class="call-status completed">${call.interview_status || 'Scheduled'}</span>
-                    </div>
-                    
-                    ${hasAnalysis ? `
-                    <div class="ai-scores">
-                        <div class="score-item">
-                            <div class="score-value ${scoreClass}">${introScore.toFixed(1)}</div>
-                            <div class="score-label">Intro</div>
-                        </div>
-                        <div class="score-item">
-                            <div class="score-value ${scoreClass}">${questionsScore.toFixed(1)}</div>
-                            <div class="score-label">Questions & Flow</div>
-                        </div>
-                        <div class="score-item">
-                            <div class="score-value ${scoreClass}">${closeScore.toFixed(1)}</div>
-                            <div class="score-label">Close & Next Steps</div>
-                        </div>
-                        <div class="score-item">
-                            <div class="score-divider">|</div>
-                        </div>
-                        <div class="score-item">
-                            <div class="score-value ${scoreClass}">${overallScore.toFixed(1)}</div>
-                            <div class="score-label">Overall Score</div>
-                        </div>
-                    </div>
-                    ` : hasTranscript ? `
-                    <div class="no-analysis">
-                        ⚠️ Transcript available but not analyzed yet. Click "Analyze with AI" to generate insights.
-                    </div>
-                    ` : `
-                    <div class="no-analysis">
-                        📝 Waiting for Zoom transcript to be processed...
-                    </div>
-                    `}
-                    
-                    <div class="call-actions">
-                        ${hasTranscript ? `
-                            <button class="call-btn ai-btn" onclick="analyzeWithAI('${call.id}')" ${!hasTranscript ? 'disabled' : ''}>
-                                🤖 ${hasAnalysis ? 'Re-Analyze' : 'Analyze with AI'}
-                            </button>
-                        ` : ''}
-                        ${hasAnalysis ? `
-                            <button class="call-btn" onclick="viewAnalysis('${call.id}')">
-                                👁️ View Full Analysis
-                            </button>
-                        ` : ''}
-                        ${call.zoom_recording_url ? `
-                            <button class="call-btn" onclick="window.open('${call.zoom_recording_url}', '_blank')">
-                                🎥 View Recording
-                            </button>
-                        ` : ''}
-                    </div>
-                </div>
-                `;
-            }).join('');
+
+            tbody.innerHTML = interviewsData.map(interview => `
+                <tr>
+                    <td>
+                        <strong>${interview.guestName || 'Unknown'}</strong><br>
+                        <small style="color: #7f8c8d;">${interview.guestEmail || ''}</small>
+                    </td>
+                    <td>${interview.company || '—'}</td>
+                    <td>${interview.scheduledDate ? new Date(interview.scheduledDate).toLocaleDateString() : '—'}</td>
+                    <td>
+                        <span class="status-badge status-${interview.status || 'scheduled'}">
+                            ${interview.status || 'scheduled'}
+                        </span>
+                    </td>
+                    <td>
+                        ${renderScoreDisplay(interview)}
+                    </td>
+                    <td>
+                        ${renderAutomationStatus(interview)}
+                    </td>
+                    <td>
+                        <button class="btn btn-small btn-secondary" onclick="viewInterview('${interview.id}')">
+                            View
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
         }
 
-        async function analyzeWithAI(callId) {
-            const btn = event.target;
-            btn.disabled = true;
-            btn.textContent = '⏳ Analyzing...';
-            
-            try {
-                const response = await fetch(`${API_URL}/api/ai-analyze-podcast`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ interviewId: callId })
-                });
-                
-                const result = await response.json();
-                
-                if (!result.success) {
-                    throw new Error(result.error || 'Analysis failed');
-                }
-                
-                alert(`✅ Analysis Complete!\n\nOverall Score: ${result.overall_score}/50\n${result.discovery_call_created ? '🎯 Discovery call automatically created!' : ''}`);
-                
-                // Reload to show updated scores
-                await loadCalls();
-                
-            } catch (error) {
-                console.error('Error:', error);
-                alert('❌ Analysis failed: ' + error.message);
-            } finally {
-                btn.disabled = false;
-                btn.textContent = '🤖 Analyze with AI';
+        // Render score display
+        function renderScoreDisplay(interview) {
+            if (!interview.overallScore) {
+                return `<span class="score-badge score-pending">Pending Analysis</span>`;
             }
-        }
 
-        async function viewAnalysis(callId) {
-            document.getElementById('aiAnalysisModal').classList.add('show');
-            document.getElementById('analysisContent').innerHTML = '<div class="loading"><div class="spinner"></div><p style="margin-top: 1rem;">Loading analysis...</p></div>';
-            
-            try {
-                const response = await fetch(`${API_URL}/api/podcast-interviews-with-ai`);
-                const result = await response.json();
-                const call = result.data.interviews.find(c => c.id === callId);
-                
-                if (!call || !call.ai_analysis) {
-                    throw new Error('Analysis not found');
-                }
-                
-                displayAnalysis(call);
-                
-            } catch (error) {
-                console.error('Error:', error);
-                document.getElementById('analysisContent').innerHTML = 
-                    `<div class="empty-state">Error loading analysis: ${error.message}</div>`;
+            const score = interview.overallScore;
+            let scoreClass = 'score-poor';
+            let emoji = '❌';
+
+            if (score >= 40) {
+                scoreClass = 'score-excellent';
+                emoji = '🌟';
+            } else if (score >= 35) {
+                scoreClass = 'score-good';
+                emoji = '✅';
+            } else if (score >= 25) {
+                scoreClass = 'score-fair';
+                emoji = '⚠️';
             }
-        }
 
-        function displayAnalysis(call) {
-            const analysis = call.ai_analysis;
-            
-            const html = `
-                <div class="overall-summary">
-                    <h3>📊 Overall Assessment</h3>
-                    <div class="summary-grid">
-                        <div class="summary-item">
-                            <div class="summary-score">${call.intro_score?.toFixed(1) || 0}/10</div>
-                            <div class="summary-label">Intro</div>
-                        </div>
-                        <div class="summary-item">
-                            <div class="summary-score">${call.questions_flow_score?.toFixed(1) || 0}/10</div>
-                            <div class="summary-label">Questions & Flow</div>
-                        </div>
-                        <div class="summary-item">
-                            <div class="summary-score">${call.close_next_steps_score?.toFixed(1) || 0}/10</div>
-                            <div class="summary-label">Close & Next Steps</div>
-                        </div>
-                        <div class="summary-item">
-                            <div class="summary-score">${call.overall_score?.toFixed(1) || 0}/50</div>
-                            <div class="summary-label">Overall Score</div>
-                        </div>
-                    </div>
-                    ${call.discovery_call_ready ? '<p style="margin-top: 1rem; text-align: center;">✅ Qualified for Discovery Call</p>' : ''}
-                </div>
-
-                ${analysis.intro ? `
-                <div class="analysis-section">
-                    <h3>🎯 Intro Analysis (${analysis.intro.total_score}/10)</h3>
-                    
-                    ${renderSubsection('Rapport & Energy', analysis.intro.rapport_energy)}
-                    ${renderSubsection('Credibility', analysis.intro.credibility)}
-                    ${renderSubsection('Frame & Context', analysis.intro.frame_context)}
-                    ${renderSubsection('Hook', analysis.intro.hook)}
-                </div>
-                ` : ''}
-
-                ${analysis.questions_flow ? `
-                <div class="analysis-section">
-                    <h3>❓ Questions & Flow Analysis (${analysis.questions_flow.total_score}/10)</h3>
-                    
-                    ${renderSubsection('Question Quality', analysis.questions_flow.question_quality)}
-                    ${renderSubsection('Deep Diving', analysis.questions_flow.deep_diving)}
-                    ${renderSubsection('Pacing', analysis.questions_flow.pacing)}
-                    ${renderSubsection('Transitions', analysis.questions_flow.transitions)}
-                    ${renderSubsection('Guest Management', analysis.questions_flow.guest_management)}
-                    ${renderSubsection('Audience Awareness', analysis.questions_flow.audience_awareness)}
-                </div>
-                ` : ''}
-
-                ${analysis.close_next_steps ? `
-                <div class="analysis-section">
-                    <h3>🏁 Close & Next Steps Analysis (${analysis.close_next_steps.total_score}/10)</h3>
-                    
-                    ${renderSubsection('Summary', analysis.close_next_steps.summary)}
-                    ${renderSubsection('Guest Promotion', analysis.close_next_steps.guest_promotion)}
-                    ${renderSubsection('Call to Action', analysis.close_next_steps.call_to_action)}
-                    ${renderSubsection('Professional Closing', analysis.close_next_steps.professional_closing)}
-                </div>
-                ` : ''}
-
-                ${analysis.key_strengths ? `
-                <div class="analysis-section">
-                    <h3>✨ Key Strengths</h3>
-                    <ul class="key-points">
-                        ${analysis.key_strengths.map(s => `<li>${s}</li>`).join('')}
-                    </ul>
-                </div>
-                ` : ''}
-
-                ${analysis.areas_for_improvement ? `
-                <div class="analysis-section">
-                    <h3>📈 Areas for Improvement</h3>
-                    <ul class="key-points">
-                        ${analysis.areas_for_improvement.map(a => `<li>${a}</li>`).join('')}
-                    </ul>
-                </div>
-                ` : ''}
-
-                ${analysis.next_steps ? `
-                <div class="analysis-section">
-                    <h3>🎯 Recommended Next Steps</h3>
-                    <p class="analysis-feedback">${analysis.next_steps}</p>
-                </div>
-                ` : ''}
-            `;
-            
-            document.getElementById('analysisContent').innerHTML = html;
-        }
-
-        function renderSubsection(title, data) {
-            if (!data) return '';
-            
             return `
-                <div class="analysis-subsection">
-                    <h4>${title} (${data.score}/10)</h4>
-                    ${data.feedback ? `<p class="analysis-feedback">${data.feedback}</p>` : ''}
-                    ${data.examples && data.examples.length > 0 ? `
-                        <ul class="analysis-examples">
-                            ${data.examples.map(ex => `<li>"${ex}"</li>`).join('')}
-                        </ul>
-                    ` : ''}
-                    ${data.script_example ? `<p class="analysis-feedback"><strong>Suggested Script:</strong> "${data.script_example}"</p>` : ''}
+                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <span class="score-badge ${scoreClass}">
+                        ${emoji} ${score}/50
+                    </span>
+                    <div class="score-details">
+                        <span class="score-item">
+                            <span class="score-item-label">Intro:</span>
+                            <span class="score-item-value">${interview.introScore || 0}</span>
+                        </span>
+                        <span class="score-item">
+                            <span class="score-item-label">Flow:</span>
+                            <span class="score-item-value">${interview.questionsFlowScore || 0}</span>
+                        </span>
+                        <span class="score-item">
+                            <span class="score-item-label">Close:</span>
+                            <span class="score-item-value">${interview.closeNextStepsScore || 0}</span>
+                        </span>
+                    </div>
                 </div>
             `;
         }
 
-        function openAddCallModal() {
-            document.getElementById('addCallModal').classList.add('show');
+        // Render automation status
+        function renderAutomationStatus(interview) {
+            if (interview.discoveryCallCreated) {
+                return `
+                    <span class="automation-badge">
+                        ✅ Discovery Created
+                    </span>
+                `;
+            }
+
+            if (interview.qualifiedForDiscovery && interview.overallScore >= 35) {
+                return `
+                    <span class="score-badge score-good">
+                        ✓ Qualified
+                    </span>
+                `;
+            }
+
+            return '<span style="color: #95a5a6; font-size: 0.9rem;">—</span>';
         }
 
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('show');
+        // Render error state
+        function renderErrorState(message) {
+            const tbody = document.getElementById('interviews-body');
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="7" style="text-align: center; padding: 3rem;">
+                        <p style="color: #e74c3c; font-size: 1.1rem; margin-bottom: 0.5rem;">⚠️ Connection Error</p>
+                        <p style="color: #7f8c8d; margin-bottom: 1rem;">Could not connect to: ${API_BASE}/api/podcast-interviews</p>
+                        <p style="color: #7f8c8d; font-size: 0.9rem;">${message}</p>
+                        <button class="btn btn-primary" onclick="loadInterviews()" style="margin-top: 1rem;">
+                            🔄 Retry Connection
+                        </button>
+                    </td>
+                </tr>
+            `;
         }
 
-        async function addCall(event) {
-            event.preventDefault();
-            
-            const data = {
-                guest_name: document.getElementById('guestName').value,
-                guest_email: document.getElementById('guestEmail').value,
-                company_organization: document.getElementById('company').value,
-                topic: document.getElementById('topic').value,
-                scheduled_date: document.getElementById('scheduledDate').value,
-                interview_status: document.getElementById('callStatus').value,
-                notes: document.getElementById('callNotes').value
-            };
-            
-            try {
-                const response = await fetch(`${API_URL}/api/podcast-interviews-with-ai`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-                
-                const result = await response.json();
-                
-                if (!result.success) throw new Error(result.error);
-                
-                alert('✅ Podcast call added successfully!');
-                closeModal('addCallModal');
-                document.querySelector('#addCallModal form').reset();
-                loadCalls();
-                
-            } catch (error) {
-                console.error('Error:', error);
-                alert('❌ Failed to add call: ' + error.message);
+        // Update connection status indicator
+        function updateConnectionStatus(status, message = '') {
+            const indicator = document.getElementById('status-indicator');
+            const statusText = document.getElementById('status-text');
+
+            if (status === 'connected') {
+                indicator.className = 'status-indicator status-connected';
+                statusText.textContent = 'Live Connected';
+            } else if (status === 'error') {
+                indicator.className = 'status-indicator status-error';
+                statusText.textContent = message || 'Connection Error';
+            } else if (status === 'connecting') {
+                indicator.className = 'status-indicator';
+                indicator.style.background = '#f39c12';
+                statusText.textContent = 'Connecting...';
             }
         }
 
-        // Load calls on page load
-        window.addEventListener('DOMContentLoaded', loadCalls);
+        // Actions
+        function scheduleInterview() {
+            alert('Schedule Interview feature coming soon!');
+            // TODO: Open modal to schedule new interview
+        }
+
+        function viewInterview(id) {
+            const interview = interviewsData.find(i => i.id === id);
+            if (interview) {
+                console.log('Viewing interview:', interview);
+                alert(`Interview Details:\n\nGuest: ${interview.guestName}\nCompany: ${interview.company || 'N/A'}\nScore: ${interview.overallScore || 'Not analyzed'}/50`);
+                // TODO: Open detailed view modal
+            }
+        }
+
+        function refreshData() {
+            console.log('[Podcast Calls] Manual refresh triggered');
+            loadInterviews();
+        }
+
+        // Log system info
+        console.log('[Podcast Calls] System initialized');
+        console.log('[Podcast Calls] API Endpoint:', API_BASE);
     </script>
 </body>
 </html>

@@ -4,419 +4,1225 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Growth Manager Pro - Sprints</title>
-    <script src="/auth.js"></script>
-    <script src="/nav.js"></script>  <!-- ADD THIS LINE -->
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f7fa; }
-        
-        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
-        
-        .header { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
-        .header h1 { color: #2c3e50; font-size: 2rem; }
-        .header .subtitle { color: #7f8c8d; }
-        
-        .btn { background: #3498db; color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 6px; cursor: pointer; font-size: 0.9rem; }
-        .btn:hover { background: #2980b9; }
-        .btn.success { background: #27ae60; }
-        .btn.success:hover { background: #229954; }
-        .btn.danger { background: #e74c3c; }
-        .btn.danger:hover { background: #c0392b; }
-        .btn.secondary { background: #95a5a6; }
-        .btn.secondary:hover { background: #7f8c8d; }
-        
-        .status { position: fixed; top: 20px; right: 20px; padding: 10px 15px; border-radius: 6px; font-size: 0.9rem; font-weight: 600; z-index: 1000; }
-        .status.loading { background: #fff3cd; color: #856404; }
-        .status.connected { background: #d4edda; color: #155724; }
-        .status.error { background: #f8d7da; color: #721c24; }
-        
-        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
-        .stat-card { background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center; }
-        .stat-number { font-size: 2rem; font-weight: bold; margin-bottom: 0.5rem; }
-        .stat-label { color: #7f8c8d; font-size: 0.9rem; text-transform: uppercase; }
-        
-        .filters { background: white; padding: 1rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 2rem; display: flex; gap: 1rem; flex-wrap: wrap; }
-        .filter-group { display: flex; align-items: center; gap: 0.5rem; }
-        .filter-group label { font-size: 0.9rem; color: #2c3e50; font-weight: 500; }
-        .filter-select, .search-input { padding: 0.5rem 0.8rem; border: 1px solid #e1e5e9; border-radius: 6px; font-size: 0.9rem; outline: none; }
-        .search-input { min-width: 250px; }
-        
-        .data-container { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); overflow: hidden; }
-        .data-header { background: #e67e22; color: white; padding: 1.5rem; }
-        
-        table { width: 100%; border-collapse: collapse; }
-        th { background: #d35400; color: white; padding: 1rem; text-align: left; font-weight: 600; }
-        td { padding: 1rem; border-bottom: 1px solid #ecf0f1; }
-        tr:hover { background: #f8f9fa; }
-        
-        .badge { padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: bold; text-transform: uppercase; }
-        .badge.todo { background: #fee2e2; color: #991b1b; }
-        .badge.in_progress { background: #fef3c7; color: #92400e; }
-        .badge.completed { background: #d1fae5; color: #065f46; }
-        .badge.high { background: #fee2e2; color: #991b1b; }
-        .badge.medium { background: #fef3c7; color: #92400e; }
-        .badge.low { background: #dbeafe; color: #1e40af; }
-        
-        .actions { display: flex; gap: 0.5rem; }
-        .action-btn { padding: 0.4rem 0.8rem; border: none; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
-        .action-btn.edit { background: #3498db; color: white; }
-        .action-btn.delete { background: #e74c3c; color: white; }
-        
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center; }
-        .modal.show { display: flex; }
-        .modal-content { background: white; padding: 2rem; border-radius: 12px; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto; }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
-        .modal-header h2 { color: #2c3e50; }
-        .close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #7f8c8d; }
-        
-        .form-group { margin-bottom: 1rem; }
-        .form-group label { display: block; margin-bottom: 0.5rem; color: #2c3e50; font-weight: 500; }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.8rem; border: 1px solid #e1e5e9; border-radius: 6px; font-size: 0.9rem; }
-        .form-group textarea { min-height: 100px; resize: vertical; }
-        
-        .form-actions { display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem; }
-        
-        .empty-state { text-align: center; padding: 3rem; color: #7f8c8d; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 280px;
+            background: white;
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-header {
+            padding: 0 2rem 2rem 2rem;
+            border-bottom: 2px solid #e1e5e9;
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-header h1 {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-header p {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        .nav-section {
+            margin-bottom: 2rem;
+        }
+
+        .nav-section-title {
+            padding: 0 2rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #95a5a6;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 2rem;
+            color: #5a6c7d;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .nav-item:hover {
+            background: #f8f9fa;
+            color: #2c3e50;
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            font-weight: 600;
+        }
+
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: #2980b9;
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 1rem;
+            font-size: 1.2rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+        }
+
+        /* Page Header */
+        .page-header {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .page-header h2 {
+            font-size: 2rem;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            color: #7f8c8d;
+            font-size: 1rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        /* Button Styles */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #27ae60, #229954);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #3498db;
+            border: 2px solid #3498db;
+        }
+
+        .btn-secondary:hover {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+            color: #2c3e50;
+        }
+
+        .stat-change {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+        }
+
+        /* Two Column Layout */
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Card Styles */
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 2px solid #e1e5e9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-header h3 {
+            font-size: 1.25rem;
+            color: #2c3e50;
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        /* Tasks Section */
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .task-item {
+            background: #f8f9fa;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            padding: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .task-item:hover {
+            border-color: #3498db;
+            transform: translateX(4px);
+        }
+
+        .task-item.blocked {
+            border-color: #e74c3c;
+            background: #fff5f5;
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+
+        .task-title {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 1rem;
+        }
+
+        .task-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.85rem;
+            color: #7f8c8d;
+            align-items: center;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-todo {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .status-in-progress {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-done {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-blocked {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Communication Feed */
+        .communication-feed {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .message {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .message-avatar.advisor {
+            background: linear-gradient(135deg, #e67e22, #d35400);
+        }
+
+        .message-content {
+            flex: 1;
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .message-author {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .message-time {
+            font-size: 0.8rem;
+            color: #7f8c8d;
+        }
+
+        .message-text {
+            color: #2c3e50;
+            line-height: 1.5;
+        }
+
+        .message-input-container {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid #e1e5e9;
+        }
+
+        .message-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+        }
+
+        .message-input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        /* File Sharing */
+        .file-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            background: #f8f9fa;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .file-item:hover {
+            border-color: #3498db;
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .file-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .file-details h4 {
+            color: #2c3e50;
+            margin-bottom: 0.25rem;
+        }
+
+        .file-details p {
+            color: #7f8c8d;
+            font-size: 0.85rem;
+        }
+
+        .file-upload-area {
+            border: 2px dashed #e1e5e9;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 1.5rem;
+        }
+
+        .file-upload-area:hover {
+            border-color: #3498db;
+            background: #f8f9fa;
+        }
+
+        .file-upload-area input {
+            display: none;
+        }
+
+        /* Blockers Section */
+        .blocker-item {
+            background: #fff5f5;
+            border: 2px solid #e74c3c;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .blocker-title {
+            font-weight: 600;
+            color: #e74c3c;
+            margin-bottom: 0.5rem;
+        }
+
+        .blocker-description {
+            color: #2c3e50;
+            font-size: 0.95rem;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #7f8c8d;
+        }
+
+        .empty-state h3 {
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Connection Status */
+        .connection-status {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 30px;
+            background: white;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            z-index: 999;
+        }
+
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #95a5a6;
+        }
+
+        .status-indicator.status-connected {
+            background: #27ae60;
+            animation: pulse 2s infinite;
+        }
+
+        .status-indicator.status-error {
+            background: #e74c3c;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #e1e5e9;
+            border-top-color: #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="status loading" id="status">Loading...</div>
-    
-    <div class="container">
-        <div class="header">
-            <div>
-                <h1>Sprint Tasks</h1>
-                <p class="subtitle">Task management & productivity tracking</p>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>Growth Manager Pro</h1>
+                <p>Client Acquisition System</p>
             </div>
-            <div style="display: flex; gap: 0.5rem;">
-                <button class="btn success" onclick="openAddModal()">+ Add Task</button>
-                <button class="btn" onclick="loadData()">Refresh</button>
-            </div>
-        </div>
+            
+            <nav>
+                <div class="nav-section">
+                    <div class="nav-section-title">Overview</div>
+                    <a href="dashboard.html" class="nav-item">
+                        <span class="nav-icon">📊</span>
+                        Dashboard
+                    </a>
+                    <a href="contacts.html" class="nav-item">
+                        <span class="nav-icon">👥</span>
+                        Contacts
+                    </a>
+                </div>
 
-        <div class="filters">
-            <div class="filter-group">
-                <label>Search:</label>
-                <input type="text" class="search-input" placeholder="Search tasks..." id="searchInput" onkeyup="filterData()">
-            </div>
-            <div class="filter-group">
-                <label>Status:</label>
-                <select class="filter-select" id="statusFilter" onchange="filterData()">
-                    <option value="">All</option>
-                    <option value="todo">To Do</option>
-                    <option value="in_progress">In Progress</option>
-                    <option value="completed">Completed</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <label>Priority:</label>
-                <select class="filter-select" id="priorityFilter" onchange="filterData()">
-                    <option value="">All</option>
-                    <option value="high">High</option>
-                    <option value="medium">Medium</option>
-                    <option value="low">Low</option>
-                </select>
-            </div>
-        </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Client Acquisition</div>
+                    <a href="podcast-calls.html" class="nav-item">
+                        <span class="nav-icon">🎙️</span>
+                        Podcast Calls
+                    </a>
+                    <a href="discovery-calls.html" class="nav-item">
+                        <span class="nav-icon">🔍</span>
+                        Discovery Calls
+                    </a>
+                    <a href="sales-calls.html" class="nav-item">
+                        <span class="nav-icon">💼</span>
+                        Sales Calls
+                    </a>
+                    <a href="pipeline.html" class="nav-item">
+                        <span class="nav-icon">📈</span>
+                        Pipeline
+                    </a>
+                    <a href="deals.html" class="nav-item">
+                        <span class="nav-icon">🤝</span>
+                        Deals
+                    </a>
+                </div>
 
-        <div class="stats">
-            <div class="stat-card">
-                <div class="stat-number" style="color: #e67e22;" id="total">0</div>
-                <div class="stat-label">Total Tasks</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" style="color: #e74c3c;" id="todo">0</div>
-                <div class="stat-label">To Do</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" style="color: #f39c12;" id="inProgress">0</div>
-                <div class="stat-label">In Progress</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" style="color: #27ae60;" id="completed">0</div>
-                <div class="stat-label">Completed</div>
-            </div>
-        </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Operations</div>
+                    <a href="cash-flow.html" class="nav-item">
+                        <span class="nav-icon">💰</span>
+                        Cash Flow
+                    </a>
+                    <a href="campaigns.html" class="nav-item">
+                        <span class="nav-icon">📧</span>
+                        Campaigns
+                    </a>
+                    <a href="sprints.html" class="nav-item active">
+                        <span class="nav-icon">⚡</span>
+                        Sprints
+                    </a>
+                    <a href="expense-tracker.html" class="nav-item">
+                        <span class="nav-icon">🧾</span>
+                        Expense Tracker
+                    </a>
+                </div>
 
-        <div class="data-container">
-            <div class="data-header">
-                <h2>All Tasks (<span id="count">0</span>)</h2>
-            </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Task</th>
-                        <th>Status</th>
-                        <th>Priority</th>
-                        <th>Assigned To</th>
-                        <th>Due Date</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="tbody">
-                    <tr><td colspan="6" style="text-align: center; padding: 2rem;">Loading...</td></tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Settings</div>
+                    <a href="availability.html" class="nav-item">
+                        <span class="nav-icon">📅</span>
+                        Availability
+                    </a>
+                    <a href="user-management.html" class="nav-item">
+                        <span class="nav-icon">⚙️</span>
+                        User Management
+                    </a>
+                </div>
+            </nav>
+        </aside>
 
-    <div class="modal" id="taskModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="modalTitle">Add Task</h2>
-                <button class="close-btn" onclick="closeModal()">&times;</button>
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Page Header -->
+            <header class="page-header">
+                <h2>⚡ Weekly Sprint Tracker</h2>
+                <p>Collaborative workspace with your advisor</p>
+                <div class="header-actions">
+                    <button class="btn btn-success" onclick="addTask()">+ Add Task</button>
+                    <button class="btn btn-primary" onclick="refreshData()">🔄 Refresh</button>
+                </div>
+            </header>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">🎙️ Podcast Calls</div>
+                    <div class="stat-value" id="podcast-calls">-</div>
+                    <div class="stat-change">This week</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-label">🔍 Discovery Calls</div>
+                    <div class="stat-value" id="discovery-calls">-</div>
+                    <div class="stat-change">This week</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-label">📊 Leads Generated</div>
+                    <div class="stat-value" id="leads-generated">-</div>
+                    <div class="stat-change">This week</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-label">✅ Tasks Complete</div>
+                    <div class="stat-value" id="tasks-complete">-</div>
+                    <div class="stat-change" id="tasks-total">of - total</div>
+                </div>
             </div>
-            <form id="taskForm" onsubmit="saveTask(event)">
-                <input type="hidden" id="taskId">
-                
-                <div class="form-group">
-                    <label>Task Name *</label>
-                    <input type="text" id="taskName" required>
+
+            <!-- Two Column Layout -->
+            <div class="two-column">
+                <!-- Tasks Column -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>📋 This Week's Tasks</h3>
+                        <span id="task-count">Loading...</span>
+                    </div>
+                    <div class="card-body">
+                        <div id="task-list" class="task-list">
+                            <div class="loading-spinner"></div>
+                        </div>
+                    </div>
                 </div>
-                
-                <div class="form-group">
-                    <label>Status</label>
-                    <select id="taskStatus">
-                        <option value="todo">To Do</option>
-                        <option value="in_progress">In Progress</option>
-                        <option value="completed">Completed</option>
-                    </select>
+
+                <!-- Communication Column -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>💬 Notes & Communication</h3>
+                    </div>
+                    <div class="card-body">
+                        <div id="communication-feed" class="communication-feed">
+                            <div class="loading-spinner"></div>
+                        </div>
+                        
+                        <div class="message-input-container">
+                            <textarea 
+                                id="message-input" 
+                                class="message-input" 
+                                placeholder="Add a note or message to your advisor..."></textarea>
+                            <button class="btn btn-primary btn-small" onclick="sendMessage()" style="margin-top: 1rem;">
+                                📤 Send Message
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                
-                <div class="form-group">
-                    <label>Priority</label>
-                    <select id="priority">
-                        <option value="low">Low</option>
-                        <option value="medium">Medium</option>
-                        <option value="high">High</option>
-                    </select>
+            </div>
+
+            <!-- Blockers Section -->
+            <div class="card" style="margin-bottom: 2rem;">
+                <div class="card-header">
+                    <h3>🚨 Blockers & Stuck Items</h3>
+                    <button class="btn btn-secondary btn-small" onclick="addBlocker()">+ Add Blocker</button>
                 </div>
-                
-                <div class="form-group">
-                    <label>Assigned To</label>
-                    <input type="text" id="assignedTo" placeholder="e.g., Your Name">
+                <div class="card-body">
+                    <div id="blockers-list">
+                        <div class="loading-spinner"></div>
+                    </div>
                 </div>
-                
-                <div class="form-group">
-                    <label>Due Date</label>
-                    <input type="date" id="dueDate">
+            </div>
+
+            <!-- File Sharing Section -->
+            <div class="card">
+                <div class="card-header">
+                    <h3>📎 Shared Files</h3>
                 </div>
-                
-                <div class="form-group">
-                    <label>Notes</label>
-                    <textarea id="notes"></textarea>
+                <div class="card-body">
+                    <div class="file-upload-area" onclick="document.getElementById('file-input').click()">
+                        <input type="file" id="file-input" onchange="uploadFile()" multiple>
+                        <p style="font-size: 1.1rem; color: #2c3e50; margin-bottom: 0.5rem;">📁 Click to upload files</p>
+                        <p style="font-size: 0.9rem; color: #7f8c8d;">or drag and drop</p>
+                    </div>
+                    
+                    <div id="file-list" class="file-list">
+                        <div class="loading-spinner"></div>
+                    </div>
                 </div>
-                
-                <div class="form-actions">
-                    <button type="button" class="btn secondary" onclick="closeModal()">Cancel</button>
-                    <button type="submit" class="btn success">Save</button>
-                </div>
-            </form>
+            </div>
+        </main>
+
+        <!-- Connection Status -->
+        <div class="connection-status" id="connection-status">
+            <div class="status-indicator" id="status-indicator"></div>
+            <span id="status-text">Connecting...</span>
         </div>
     </div>
 
     <script>
         const API_URL = 'https://growthmanagerpro-backend.vercel.app';
-        let data = [];
-        let filteredData = [];
+        let tasksData = [];
+        let messagesData = [];
+        let blockersData = [];
+        let filesData = [];
 
-        async function loadData() {
-            const status = document.getElementById('status');
-            status.className = 'status loading';
-            status.textContent = 'Loading...';
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('[Sprints] Initializing...');
+            loadAllData();
+            
+            // Auto-refresh every 2 minutes
+            setInterval(loadAllData, 120000);
+        });
 
+        async function loadAllData() {
             try {
-                const response = await fetch(`${API_URL}/api/sprints`);
+                updateConnectionStatus('connecting');
                 
-                if (!response.ok) {
-                    throw new Error(`API returned ${response.status}`);
-                }
-
-                const result = await response.json();
+                await Promise.all([
+                    loadTasks(),
+                    loadMessages(),
+                    loadBlockers(),
+                    loadFiles(),
+                    loadStats()
+                ]);
                 
-                if (!result.success) {
-                    throw new Error(result.error || 'API returned error');
-                }
-
-                data = result.data.tasks;
-                filteredData = [...data];
-                updateStats(result.data.stats);
-                renderTable();
-                
-                status.className = 'status connected';
-                status.textContent = 'Connected';
-                
+                updateConnectionStatus('connected');
             } catch (error) {
-                console.error('Error:', error);
-                status.className = 'status error';
-                status.textContent = 'Error';
-                document.getElementById('tbody').innerHTML = `
-                    <tr><td colspan="6" style="text-align: center; padding: 2rem; color: #e74c3c;">
-                        Error: ${error.message}<br>
-                        <button class="btn" onclick="loadData()" style="margin-top: 1rem;">Retry</button>
-                    </td></tr>
-                `;
+                console.error('[Sprints] Error loading data:', error);
+                updateConnectionStatus('error');
             }
         }
 
-        function updateStats(stats) {
-            document.getElementById('total').textContent = stats.totalTasks;
-            document.getElementById('todo').textContent = stats.todoTasks;
-            document.getElementById('inProgress').textContent = stats.inProgressTasks;
-            document.getElementById('completed').textContent = stats.completedTasks;
-            document.getElementById('count').textContent = filteredData.length;
+        async function loadTasks() {
+            try {
+                const response = await fetch(`${API_URL}/api/sprints/tasks`);
+                if (!response.ok) throw new Error('Failed to load tasks');
+                
+                const result = await response.json();
+                tasksData = result.tasks || [];
+                renderTasks();
+            } catch (error) {
+                console.error('[Sprints] Error loading tasks:', error);
+                renderTasksError();
+            }
         }
 
-        function renderTable() {
-            const tbody = document.getElementById('tbody');
+        function renderTasks() {
+            const container = document.getElementById('task-list');
+            const taskCount = document.getElementById('task-count');
             
-            if (filteredData.length === 0) {
-                tbody.innerHTML = `
-                    <tr><td colspan="6">
-                        <div class="empty-state">
-                            <h3>No tasks yet</h3>
-                            <p>Click "Add Task" to create your first task</p>
+            if (tasksData.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No tasks yet</h3>
+                        <p>Click "Add Task" to create your first task</p>
+                    </div>
+                `;
+                taskCount.textContent = '0 tasks';
+                return;
+            }
+
+            const completedCount = tasksData.filter(t => t.status === 'done').length;
+            taskCount.textContent = `${completedCount}/${tasksData.length} complete`;
+
+            container.innerHTML = tasksData.map(task => {
+                const statusClass = `status-${task.status || 'todo'}`;
+                const isBlocked = task.status === 'blocked';
+                
+                return `
+                    <div class="task-item ${isBlocked ? 'blocked' : ''}">
+                        <div class="task-header">
+                            <div class="task-title">${task.title}</div>
+                            <span class="status-badge ${statusClass}">${task.status || 'To Do'}</span>
                         </div>
-                    </td></tr>
+                        <div class="task-meta">
+                            <span>👤 ${task.assigned_to || 'Unassigned'}</span>
+                            ${task.due_date ? `<span>📅 ${new Date(task.due_date).toLocaleDateString()}</span>` : ''}
+                        </div>
+                        ${task.notes ? `<p style="margin-top: 0.75rem; color: #7f8c8d; font-size: 0.9rem;">${task.notes}</p>` : ''}
+                        <div class="task-actions">
+                            <button class="btn btn-small btn-primary" onclick="updateTaskStatus('${task.id}', 'done')">
+                                ✅ Mark Done
+                            </button>
+                            <button class="btn btn-small btn-secondary" onclick="editTask('${task.id}')">
+                                ✏️ Edit
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderTasksError() {
+            document.getElementById('task-list').innerHTML = `
+                <div class="empty-state">
+                    <h3>⚠️ Unable to load tasks</h3>
+                    <button class="btn btn-primary" onclick="loadTasks()">Retry</button>
+                </div>
+            `;
+        }
+
+        async function loadMessages() {
+            try {
+                const response = await fetch(`${API_URL}/api/sprints/messages`);
+                if (!response.ok) throw new Error('Failed to load messages');
+                
+                const result = await response.json();
+                messagesData = result.messages || [];
+                renderMessages();
+            } catch (error) {
+                console.error('[Sprints] Error loading messages:', error);
+                renderMessagesError();
+            }
+        }
+
+        function renderMessages() {
+            const container = document.getElementById('communication-feed');
+            
+            if (messagesData.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <p>No messages yet. Start the conversation!</p>
+                    </div>
                 `;
                 return;
             }
 
-            tbody.innerHTML = filteredData.map(item => `
-                <tr>
-                    <td><strong>${item.taskName}</strong></td>
-                    <td><span class="badge ${item.taskStatus}">${item.taskStatus.replace('_', ' ')}</span></td>
-                    <td><span class="badge ${item.priority}">${item.priority}</span></td>
-                    <td>${item.assignedTo || 'Unassigned'}</td>
-                    <td>${item.dueDate ? new Date(item.dueDate).toLocaleDateString() : 'No due date'}</td>
-                    <td>
-                        <div class="actions">
-                            <button class="action-btn edit" onclick='editTask(${JSON.stringify(item)})'>Edit</button>
-                            <button class="action-btn delete" onclick="deleteTask('${item.id}', '${item.taskName}')">Delete</button>
+            container.innerHTML = messagesData.map(msg => {
+                const isAdvisor = msg.author === 'advisor';
+                const initials = msg.author === 'advisor' ? 'AD' : 'MF';
+                
+                return `
+                    <div class="message">
+                        <div class="message-avatar ${isAdvisor ? 'advisor' : ''}">${initials}</div>
+                        <div class="message-content">
+                            <div class="message-header">
+                                <span class="message-author">${isAdvisor ? 'Advisor' : 'Maggie'}</span>
+                                <span class="message-time">${formatDate(msg.created_at)}</span>
+                            </div>
+                            <div class="message-text">${msg.message}</div>
                         </div>
-                    </td>
-                </tr>
+                    </div>
+                `;
+            }).join('');
+
+            // Scroll to bottom
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function renderMessagesError() {
+            document.getElementById('communication-feed').innerHTML = `
+                <div class="empty-state">
+                    <h3>⚠️ Unable to load messages</h3>
+                    <button class="btn btn-primary" onclick="loadMessages()">Retry</button>
+                </div>
+            `;
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('message-input');
+            const message = input.value.trim();
+            
+            if (!message) {
+                alert('Please enter a message');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/api/sprints/messages`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        message,
+                        author: 'maggie'
+                    })
+                });
+
+                if (!response.ok) throw new Error('Failed to send message');
+
+                input.value = '';
+                await loadMessages();
+            } catch (error) {
+                console.error('[Sprints] Error sending message:', error);
+                alert('Failed to send message. Please try again.');
+            }
+        }
+
+        async function loadBlockers() {
+            try {
+                const response = await fetch(`${API_URL}/api/sprints/blockers`);
+                if (!response.ok) throw new Error('Failed to load blockers');
+                
+                const result = await response.json();
+                blockersData = result.blockers || [];
+                renderBlockers();
+            } catch (error) {
+                console.error('[Sprints] Error loading blockers:', error);
+                renderBlockersError();
+            }
+        }
+
+        function renderBlockers() {
+            const container = document.getElementById('blockers-list');
+            
+            if (blockersData.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <p>🎉 No blockers! Everything is on track.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = blockersData.map(blocker => `
+                <div class="blocker-item">
+                    <div class="blocker-title">🚨 ${blocker.title}</div>
+                    <div class="blocker-description">${blocker.description}</div>
+                    <button class="btn btn-small btn-success" onclick="resolveBlocker('${blocker.id}')" style="margin-top: 0.75rem;">
+                        ✅ Mark Resolved
+                    </button>
+                </div>
             `).join('');
         }
 
-        function filterData() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const statusFilter = document.getElementById('statusFilter').value;
-            const priorityFilter = document.getElementById('priorityFilter').value;
-
-            filteredData = data.filter(item => {
-                const matchesSearch = !searchTerm || 
-                    item.taskName.toLowerCase().includes(searchTerm) ||
-                    (item.assignedTo && item.assignedTo.toLowerCase().includes(searchTerm));
-
-                const matchesStatus = !statusFilter || item.taskStatus === statusFilter;
-                const matchesPriority = !priorityFilter || item.priority === priorityFilter;
-
-                return matchesSearch && matchesStatus && matchesPriority;
-            });
-
-            document.getElementById('count').textContent = filteredData.length;
-            renderTable();
+        function renderBlockersError() {
+            document.getElementById('blockers-list').innerHTML = `
+                <div class="empty-state">
+                    <h3>⚠️ Unable to load blockers</h3>
+                    <button class="btn btn-primary" onclick="loadBlockers()">Retry</button>
+                </div>
+            `;
         }
 
-        function openAddModal() {
-            document.getElementById('modalTitle').textContent = 'Add Task';
-            document.getElementById('taskForm').reset();
-            document.getElementById('taskId').value = '';
-            document.getElementById('priority').value = 'medium';
-            document.getElementById('taskModal').classList.add('show');
-        }
-
-        function editTask(task) {
-            document.getElementById('modalTitle').textContent = 'Edit Task';
-            document.getElementById('taskId').value = task.id;
-            document.getElementById('taskName').value = task.taskName;
-            document.getElementById('taskStatus').value = task.taskStatus || 'todo';
-            document.getElementById('priority').value = task.priority || 'medium';
-            document.getElementById('assignedTo').value = task.assignedTo || '';
-            document.getElementById('notes').value = task.notes || '';
-            
-            if (task.dueDate) {
-                const date = new Date(task.dueDate);
-                document.getElementById('dueDate').value = date.toISOString().split('T')[0];
-            }
-            
-            document.getElementById('taskModal').classList.add('show');
-        }
-
-        function closeModal() {
-            document.getElementById('taskModal').classList.remove('show');
-        }
-
-        async function saveTask(event) {
-            event.preventDefault();
-            
-            const id = document.getElementById('taskId').value;
-            const taskData = {
-                taskName: document.getElementById('taskName').value,
-                taskStatus: document.getElementById('taskStatus').value,
-                priority: document.getElementById('priority').value,
-                assignedTo: document.getElementById('assignedTo').value || null,
-                dueDate: document.getElementById('dueDate').value || null,
-                notes: document.getElementById('notes').value
-            };
-
+        async function loadFiles() {
             try {
-                const isEdit = !!id;
-                if (isEdit) {
-                    taskData.id = id;
-                }
-
-                const response = await fetch(`${API_URL}/api/sprints`, {
-                    method: isEdit ? 'PUT' : 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(taskData)
-                });
-
+                const response = await fetch(`${API_URL}/api/sprints/files`);
+                if (!response.ok) throw new Error('Failed to load files');
+                
                 const result = await response.json();
-
-                if (!result.success) {
-                    throw new Error(result.error || 'Failed to save');
-                }
-
-                alert(isEdit ? 'Task updated successfully!' : 'Task added successfully!');
-                closeModal();
-                loadData();
-
+                filesData = result.files || [];
+                renderFiles();
             } catch (error) {
-                console.error('Error:', error);
-                alert('Error: ' + error.message);
+                console.error('[Sprints] Error loading files:', error);
+                renderFilesError();
             }
         }
 
-        async function deleteTask(id, name) {
-            if (!confirm(`Are you sure you want to delete "${name}"?`)) {
+        function renderFiles() {
+            const container = document.getElementById('file-list');
+            
+            if (filesData.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <p>No files shared yet</p>
+                    </div>
+                `;
                 return;
             }
 
+            container.innerHTML = filesData.map(file => `
+                <div class="file-item">
+                    <div class="file-info">
+                        <div class="file-icon">📄</div>
+                        <div class="file-details">
+                            <h4>${file.filename}</h4>
+                            <p>Uploaded ${formatDate(file.created_at)} • ${file.uploaded_by}</p>
+                        </div>
+                    </div>
+                    <button class="btn btn-small btn-secondary" onclick="downloadFile('${file.id}')">
+                        ⬇️ Download
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function renderFilesError() {
+            document.getElementById('file-list').innerHTML = `
+                <div class="empty-state">
+                    <h3>⚠️ Unable to load files</h3>
+                    <button class="btn btn-primary" onclick="loadFiles()">Retry</button>
+                </div>
+            `;
+        }
+
+        async function loadStats() {
             try {
-                const response = await fetch(`${API_URL}/api/sprints`, {
-                    method: 'DELETE',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id })
-                });
-
+                const response = await fetch(`${API_URL}/api/sprints/stats`);
+                if (!response.ok) throw new Error('Failed to load stats');
+                
                 const result = await response.json();
-
-                if (!result.success) {
-                    throw new Error(result.error || 'Failed to delete');
-                }
-
-                alert('Task deleted successfully!');
-                loadData();
-
+                const stats = result.stats || {};
+                
+                document.getElementById('podcast-calls').textContent = stats.podcast_calls || 0;
+                document.getElementById('discovery-calls').textContent = stats.discovery_calls || 0;
+                document.getElementById('leads-generated').textContent = stats.leads_generated || 0;
+                document.getElementById('tasks-complete').textContent = stats.tasks_completed || 0;
+                document.getElementById('tasks-total').textContent = `of ${stats.tasks_total || 0} total`;
             } catch (error) {
-                console.error('Error:', error);
-                alert('Error: ' + error.message);
+                console.error('[Sprints] Error loading stats:', error);
             }
         }
 
-        document.addEventListener('DOMContentLoaded', loadData);
+        // Action Functions
+        async function addTask() {
+            const title = prompt('Task title:');
+            if (!title) return;
+            
+            const assignedTo = prompt('Assigned to (leave blank for yourself):') || 'Maggie';
+            const dueDate = prompt('Due date (YYYY-MM-DD):');
+            
+            try {
+                const response = await fetch(`${API_URL}/api/sprints/tasks`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        title,
+                        assigned_to: assignedTo,
+                        due_date: dueDate || null,
+                        status: 'todo'
+                    })
+                });
+
+                if (!response.ok) throw new Error('Failed to add task');
+
+                await loadTasks();
+                await loadStats();
+            } catch (error) {
+                console.error('[Sprints] Error adding task:', error);
+                alert('Failed to add task. Please try again.');
+            }
+        }
+
+        async function updateTaskStatus(taskId, status) {
+            try {
+                const response = await fetch(`${API_URL}/api/sprints/tasks/${taskId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status })
+                });
+
+                if (!response.ok) throw new Error('Failed to update task');
+
+                await loadTasks();
+                await loadStats();
+            } catch (error) {
+                console.error('[Sprints] Error updating task:', error);
+                alert('Failed to update task. Please try again.');
+            }
+        }
+
+        async function editTask(taskId) {
+            alert('Edit task feature coming soon!');
+        }
+
+        async function addBlocker() {
+            const title = prompt('Blocker title:');
+            if (!title) return;
+            
+            const description = prompt('Describe the blocker:');
+            if (!description) return;
+            
+            try {
+                const response = await fetch(`${API_URL}/api/sprints/blockers`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, description })
+                });
+
+                if (!response.ok) throw new Error('Failed to add blocker');
+
+                await loadBlockers();
+            } catch (error) {
+                console.error('[Sprints] Error adding blocker:', error);
+                alert('Failed to add blocker. Please try again.');
+            }
+        }
+
+        async function resolveBlocker(blockerId) {
+            try {
+                const response = await fetch(`${API_URL}/api/sprints/blockers/${blockerId}`, {
+                    method: 'DELETE'
+                });
+
+                if (!response.ok) throw new Error('Failed to resolve blocker');
+
+                await loadBlockers();
+            } catch (error) {
+                console.error('[Sprints] Error resolving blocker:', error);
+                alert('Failed to resolve blocker. Please try again.');
+            }
+        }
+
+        async function uploadFile() {
+            const input = document.getElementById('file-input');
+            const files = input.files;
+            
+            if (files.length === 0) return;
+
+            alert('File upload feature coming soon! Files will be stored and shared with your advisor.');
+            input.value = '';
+        }
+
+        async function downloadFile(fileId) {
+            alert('Download feature coming soon!');
+        }
+
+        function refreshData() {
+            loadAllData();
+        }
+
+        function updateConnectionStatus(status) {
+            const indicator = document.getElementById('status-indicator');
+            const text = document.getElementById('status-text');
+            
+            if (status === 'connected') {
+                indicator.className = 'status-indicator status-connected';
+                text.textContent = 'Live Connected';
+            } else if (status === 'error') {
+                indicator.className = 'status-indicator status-error';
+                text.textContent = 'Connection Error';
+            } else if (status === 'connecting') {
+                indicator.className = 'status-indicator';
+                indicator.style.background = '#f39c12';
+                text.textContent = 'Connecting...';
+            }
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            const now = new Date();
+            const diff = now - date;
+            const hours = Math.floor(diff / 3600000);
+            
+            if (hours < 1) return 'Just now';
+            if (hours < 24) return `${hours}h ago`;
+            if (hours < 48) return 'Yesterday';
+            
+            return date.toLocaleDateString('en-US', { 
+                month: 'short', 
+                day: 'numeric'
+            });
+        }
+
+        // Log system info
+        console.log('[Sprints] System initialized');
+        console.log('[Sprints] API Endpoint:', API_URL);
     </script>
 </body>
 </html>

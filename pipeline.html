@@ -1,11 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"> 
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Growth Manager Pro - Pipeline</title>
-    <script src="/auth.js"></script>
-    <script src="/nav.js"></script>
     <style>
         * {
             margin: 0;
@@ -15,7 +13,8 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f5f7fa;
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            min-height: 100vh;
             color: #333;
         }
 
@@ -24,10 +23,10 @@
             min-height: 100vh;
         }
 
+        /* Sidebar Styles */
         .sidebar {
             width: 280px;
             background: white;
-            border-right: 1px solid #e1e5e9;
             padding: 2rem 0;
             position: fixed;
             height: 100vh;
@@ -35,12 +34,12 @@
             z-index: 1000;
             left: 0;
             top: 0;
-            transition: transform 0.3s ease;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
         }
 
         .sidebar-header {
             padding: 0 2rem 2rem 2rem;
-            border-bottom: 1px solid #e1e5e9;
+            border-bottom: 2px solid #e1e5e9;
             margin-bottom: 2rem;
         }
 
@@ -61,7 +60,7 @@
 
         .nav-section-title {
             padding: 0 2rem;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 600;
             color: #95a5a6;
             text-transform: uppercase;
@@ -77,6 +76,7 @@
             text-decoration: none;
             transition: all 0.2s ease;
             cursor: pointer;
+            position: relative;
         }
 
         .nav-item:hover {
@@ -85,9 +85,19 @@
         }
 
         .nav-item.active {
-            background: #3498db;
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
             color: white;
-            border-right: 3px solid #2980b9;
+            font-weight: 600;
+        }
+
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: #2980b9;
         }
 
         .nav-icon {
@@ -97,137 +107,40 @@
             font-size: 1.2rem;
         }
 
-        .nav-text {
-            flex: 1;
-        }
-
-        .nav-subtitle {
-            font-size: 0.8rem;
-            opacity: 0.7;
-            margin-top: 0.2rem;
-        }
-
+        /* Main Content */
         .main-content {
             flex: 1;
             margin-left: 280px;
-            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
-            min-height: 100vh;
-            padding: 0;
+            padding: 2rem;
         }
 
-        .mobile-menu-toggle {
-            display: none;
-            position: fixed;
-            top: 1rem;
-            left: 1rem;
-            z-index: 1001;
-            background: #2c3e50;
-            color: white;
-            border: none;
-            padding: 0.5rem;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .header {
+        /* Page Header */
+        .page-header {
             background: white;
             padding: 2rem;
             border-radius: 12px;
             box-shadow: 0 8px 32px rgba(0,0,0,0.1);
             margin-bottom: 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
 
-        .header-left h1 {
+        .page-header h2 {
+            font-size: 2rem;
             color: #2c3e50;
-            font-size: 2.5rem;
             margin-bottom: 0.5rem;
         }
 
-        .header-left .subtitle {
+        .page-header p {
             color: #7f8c8d;
-            font-size: 1.1rem;
+            font-size: 1rem;
         }
 
-        .header-right {
+        .header-actions {
             display: flex;
             gap: 1rem;
-            align-items: center;
+            margin-top: 1.5rem;
         }
 
-        .btn {
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            color: white;
-            border: none;
-            padding: 0.8rem 1.5rem;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: transform 0.2s ease;
-            font-weight: 600;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-        }
-
-        .btn.success {
-            background: linear-gradient(135deg, #27ae60, #2ecc71);
-        }
-
-        .btn.secondary {
-            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
-        }
-
-        .filters-bar {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-            margin-bottom: 2rem;
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .filter-group {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .filter-group label {
-            font-size: 0.9rem;
-            color: #2c3e50;
-            font-weight: 500;
-        }
-
-        .filter-select, .search-input {
-            padding: 0.5rem 0.8rem;
-            border: 1px solid #e1e5e9;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            outline: none;
-            min-width: 150px;
-        }
-
-        .filter-select:focus, .search-input:focus {
-            border-color: #3498db;
-        }
-
-        .search-input {
-            min-width: 250px;
-        }
-
+        /* Stats Grid */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -239,780 +152,683 @@
             background: white;
             padding: 1.5rem;
             border-radius: 12px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-
-        .stat-number {
-            font-size: 2rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
         }
 
         .stat-label {
+            font-size: 0.85rem;
             color: #7f8c8d;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
         }
 
-        .pipeline-container {
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+        }
+
+        /* Pipeline Card */
+        .pipeline-card {
             background: white;
             border-radius: 12px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
             overflow: hidden;
         }
 
         .pipeline-header {
-            background: #2c3e50;
-            color: white;
-            padding: 1.5rem;
+            padding: 1.5rem 2rem;
+            border-bottom: 2px solid #e1e5e9;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .pipeline-header h2 {
-            font-size: 1.5rem;
+        .pipeline-header h3 {
+            font-size: 1.25rem;
+            color: #2c3e50;
         }
 
-        .pipeline-table {
-            width: 100%;
-            border-collapse: collapse;
+        .pipeline-container {
+            padding: 2rem;
         }
 
-        .pipeline-table th {
-            background: #34495e;
-            color: white;
+        .pipeline-stages {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .stage-column {
+            background: #f8f9fa;
+            border-radius: 8px;
             padding: 1rem;
-            text-align: left;
-            font-weight: 600;
+            min-height: 400px;
+        }
+
+        .stage-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #e1e5e9;
+        }
+
+        .stage-title {
             font-size: 0.9rem;
+            font-weight: 600;
+            color: #2c3e50;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
-        .pipeline-table td {
-            padding: 1rem;
-            border-bottom: 1px solid #ecf0f1;
-            vertical-align: middle;
-        }
-
-        .pipeline-table tr:hover {
-            background: #f8f9fa;
-        }
-
-        .deal-info {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .deal-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 1.2rem;
-        }
-
-        .deal-details h4 {
-            color: #2c3e50;
-            margin-bottom: 0.2rem;
-            font-size: 1rem;
-        }
-
-        .deal-details p {
+        .stage-count {
+            font-size: 0.8rem;
             color: #7f8c8d;
-            font-size: 0.8rem;
+            background: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
         }
 
-        .stage-badge {
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-
-        .stage-discovery { background: #e0e7ff; color: #3730a3; }
-        .stage-proposal { background: #fef3c7; color: #92400e; }
-        .stage-negotiation { background: #fecaca; color: #dc2626; }
-        .stage-closed-won { background: #d1fae5; color: #065f46; }
-        .stage-closed-lost { background: #fee2e2; color: #991b1b; }
-
-        .deal-value {
-            font-weight: bold;
+        .stage-value {
+            font-size: 0.75rem;
             color: #27ae60;
-            font-size: 1.1rem;
+            margin-top: 0.25rem;
+            font-weight: 600;
         }
 
-        .probability-container {
-            display: flex;
-            flex-direction: column;
-            gap: 0.3rem;
-            align-items: center;
+        .deal-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-left: 3px solid #3498db;
         }
 
-        .probability-bar {
-            width: 100px;
-            height: 8px;
-            background: #ecf0f1;
-            border-radius: 4px;
-            overflow: hidden;
+        .deal-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
         }
 
-        .probability-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #e74c3c, #f39c12, #27ae60);
-            border-radius: 4px;
-            transition: width 0.3s ease;
+        .deal-name {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
         }
 
-        .probability-text {
+        .deal-company {
             font-size: 0.85rem;
             color: #7f8c8d;
-            font-weight: 600;
+            margin-bottom: 0.75rem;
         }
 
-        .actions {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-
-        .action-btn {
-            padding: 0.5rem 0.8rem;
-            border: none;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: opacity 0.2s ease;
-            font-weight: 600;
-        }
-
-        .action-btn:hover {
-            opacity: 0.8;
-        }
-
-        .action-btn.primary {
-            background: #3498db;
-            color: white;
-        }
-
-        .action-btn.success {
-            background: #27ae60;
-            color: white;
-        }
-
-        .action-btn.warning {
-            background: #f39c12;
-            color: white;
-        }
-
-        .connection-status {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 10px 15px;
-            border-radius: 6px;
-            font-size: 0.8rem;
+        .deal-value {
+            font-size: 1.1rem;
             font-weight: bold;
-            z-index: 1100;
-        }
-
-        .connection-status.connected {
-            background: #d5f4e6;
             color: #27ae60;
+            margin-bottom: 0.75rem;
         }
 
-        .connection-status.disconnected {
-            background: #fef2f2;
-            color: #e74c3c;
-        }
-
-        .connection-status.loading {
-            background: #fef3cd;
-            color: #f39c12;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal.show {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 12px;
-            padding: 2rem;
-            max-width: 600px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
+        .deal-meta {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.5rem;
+            font-size: 0.75rem;
+            color: #95a5a6;
         }
 
-        .modal-header h2 {
-            color: #2c3e50;
+        .deal-days {
+            background: #ecf0f1;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 500;
         }
 
-        .close-btn {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #7f8c8d;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
+        /* Automation Badges */
+        .automation-badge {
+            display: inline-block;
+            padding: 0.3rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
             margin-bottom: 0.5rem;
-            color: #2c3e50;
+        }
+
+        .badge-auto {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .badge-manual {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .badge-podcast {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
             font-weight: 600;
         }
 
-        .form-group input, .form-group textarea, .form-group select {
-            width: 100%;
-            padding: 0.8rem;
-            border: 1px solid #e1e5e9;
-            border-radius: 6px;
-            font-size: 1rem;
+        .btn-primary {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
         }
 
-        .form-group textarea {
-            min-height: 100px;
-            resize: vertical;
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
         }
 
-        .empty-state {
+        .btn-secondary {
+            background: #ecf0f1;
+            color: #5a6c7d;
+        }
+
+        .btn-secondary:hover {
+            background: #d5dbdb;
+        }
+
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+        }
+
+        /* Connection Status */
+        .connection-status {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            z-index: 999;
+        }
+
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #95a5a6;
+        }
+
+        .status-indicator.status-connected {
+            background: #27ae60;
+            animation: pulse 2s infinite;
+        }
+
+        .status-indicator.status-error {
+            background: #e74c3c;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Loading */
+        .loading {
             text-align: center;
             padding: 3rem;
             color: #7f8c8d;
         }
 
+        .loading-spinner {
+            border: 3px solid #ecf0f1;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Empty State */
+        .empty-stage {
+            text-align: center;
+            padding: 2rem 1rem;
+            color: #95a5a6;
+            font-size: 0.85rem;
+        }
+
+        /* Responsive */
         @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
             .main-content {
                 margin-left: 0;
             }
 
-            .header {
-                flex-direction: column;
-                gap: 1rem;
-                text-align: center;
-            }
-
-            .filters-bar {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .stats-grid {
+            .pipeline-stages {
                 grid-template-columns: 1fr;
-            }
-
-            .pipeline-table {
-                font-size: 0.8rem;
-            }
-
-            .pipeline-table th,
-            .pipeline-table td {
-                padding: 0.5rem;
             }
         }
     </style>
 </head>
 <body>
-    <div id="connectionStatus" class="connection-status loading">🔄 Loading Pipeline Data...</div>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h1>Growth Manager Pro</h1>
+                <p>Business Growth Platform</p>
+            </div>
 
-    <div class="main-content">
-        <div class="container">
-            <div class="header">
-                <div class="header-left">
-                    <h1>📋 Live Sales Pipeline</h1>
-                    <p class="subtitle">Real-time data from Supabase • Deal progression tracking</p>
-                </div>
-                <div class="header-right">
-                    <button class="btn success" onclick="openAddModal()">+ Add Deal</button>
-                    <button class="btn secondary" onclick="exportPipeline()">📋 Export</button>
-                    <button class="btn" onclick="syncData()">🔄 Sync Data</button>
+            <div class="nav-section">
+                <div class="nav-section-title">Overview</div>
+                <a href="dashboard.html" class="nav-item">
+                    <span class="nav-icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="contacts.html" class="nav-item">
+                    <span class="nav-icon">👥</span>
+                    <span>Contacts</span>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Lead Generation</div>
+                <a href="podcast-calls.html" class="nav-item">
+                    <span class="nav-icon">🎙️</span>
+                    <span>Podcast Calls</span>
+                </a>
+                <a href="discovery-calls.html" class="nav-item">
+                    <span class="nav-icon">🔍</span>
+                    <span>Discovery Calls</span>
+                </a>
+                <a href="sales-calls.html" class="nav-item">
+                    <span class="nav-icon">💼</span>
+                    <span>Sales Calls</span>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Sales & Revenue</div>
+                <a href="pipeline.html" class="nav-item active">
+                    <span class="nav-icon">📈</span>
+                    <span>Pipeline</span>
+                </a>
+                <a href="deals.html" class="nav-item">
+                    <span class="nav-icon">🤝</span>
+                    <span>Deals</span>
+                </a>
+                <a href="cash-flow.html" class="nav-item">
+                    <span class="nav-icon">💰</span>
+                    <span>Cash Flow</span>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Marketing</div>
+                <a href="campaigns.html" class="nav-item">
+                    <span class="nav-icon">📧</span>
+                    <span>Campaigns</span>
+                </a>
+                <a href="sprints.html" class="nav-item">
+                    <span class="nav-icon">🚀</span>
+                    <span>Sprints</span>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Management</div>
+                <a href="expense-tracker.html" class="nav-item">
+                    <span class="nav-icon">💳</span>
+                    <span>Expense Tracker</span>
+                </a>
+                <a href="availability.html" class="nav-item">
+                    <span class="nav-icon">📅</span>
+                    <span>Availability</span>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Settings</div>
+                <a href="user-management.html" class="nav-item">
+                    <span class="nav-icon">⚙️</span>
+                    <span>User Management</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h2>📈 Sales Pipeline</h2>
+                <p>Visual Deal Flow & Stage Management</p>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="addDeal()">+ Add Deal</button>
+                    <button class="btn btn-secondary" onclick="refreshData()">🔄 Refresh</button>
                 </div>
             </div>
 
-            <div class="filters-bar">
-                <div class="filter-group">
-                    <label>Search:</label>
-                    <input type="text" class="search-input" placeholder="Search deals..." id="searchInput" onkeyup="filterDeals()">
-                </div>
-                <div class="filter-group">
-                    <label>Stage:</label>
-                    <select class="filter-select" id="stageFilter" onchange="filterDeals()">
-                        <option value="">All Stages</option>
-                        <option value="discovery">Discovery</option>
-                        <option value="proposal">Proposal</option>
-                        <option value="negotiation">Negotiation</option>
-                        <option value="closed-won">Closed Won</option>
-                        <option value="closed-lost">Closed Lost</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>Value:</label>
-                    <select class="filter-select" id="valueFilter" onchange="filterDeals()">
-                        <option value="">All Values</option>
-                        <option value="small">Small (&lt; $10K)</option>
-                        <option value="medium">Medium ($10K - $50K)</option>
-                        <option value="large">Large (&gt; $50K)</option>
-                    </select>
-                </div>
-            </div>
-
+            <!-- Stats Grid -->
             <div class="stats-grid">
                 <div class="stat-card">
-                    <div class="stat-number" style="color: #3498db;" id="total-deals">0</div>
-                    <div class="stat-label">Total Deals</div>
+                    <div class="stat-label">Total Pipeline Value</div>
+                    <div class="stat-value" style="color: #27ae60;" id="total-value">$0</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number" style="color: #9b59b6;" id="pipeline-value">$0</div>
-                    <div class="stat-label">Pipeline Value</div>
+                    <div class="stat-label">Active Deals</div>
+                    <div class="stat-value" style="color: #3498db;" id="active-deals">0</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number" style="color: #27ae60;" id="weighted-value">$0</div>
-                    <div class="stat-label">Weighted Value</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number" style="color: #f39c12;" id="avg-deal-size">$0</div>
                     <div class="stat-label">Average Deal Size</div>
+                    <div class="stat-value" style="color: #9b59b6;" id="avg-deal-size">$0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Win Rate</div>
+                    <div class="stat-value" style="color: #f39c12;" id="win-rate">0%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Automation Rate</div>
+                    <div class="stat-value" style="color: #2e7d32;" id="automation-rate">0%</div>
+                    <div style="font-size: 0.75rem; color: #7f8c8d; margin-top: 0.25rem;">
+                        <span id="auto-count">0</span> auto / <span id="manual-count">0</span> manual
+                    </div>
                 </div>
             </div>
 
-            <div class="pipeline-container">
+            <!-- Pipeline View -->
+            <div class="pipeline-card">
                 <div class="pipeline-header">
-                    <h2>Live Pipeline from Supabase (<span id="deal-count">0</span>)</h2>
-                    <span id="last-sync">Connecting to database...</span>
+                    <h3>Deal Pipeline (<span id="pipeline-count">0</span> deals)</h3>
                 </div>
-                
-                <table class="pipeline-table">
-                    <thead>
-                        <tr>
-                            <th>Deal</th>
-                            <th>Company</th>
-                            <th>Value</th>
-                            <th>Stage</th>
-                            <th>Probability</th>
-                            <th>Expected Close</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="pipeline-table-body">
-                        <tr>
-                            <td colspan="7" style="text-align: center; padding: 2rem;">
-                                🔄 Loading live pipeline data...
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="pipeline-container">
+                    <div class="pipeline-stages" id="pipeline-stages">
+                        <div class="loading">
+                            <div class="loading-spinner"></div>
+                            <p>Loading pipeline...</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
+        </main>
 
-    <!-- Add/Edit Deal Modal -->
-    <div class="modal" id="dealModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="modalTitle">Add Deal</h2>
-                <button class="close-btn" onclick="closeModal()">&times;</button>
-            </div>
-            <form onsubmit="saveDeal(event)">
-                <input type="hidden" id="dealId">
-                
-                <div class="form-group">
-                    <label>Deal Name *</label>
-                    <input type="text" id="dealName" required>
-                </div>
-                
-                <div class="form-group">
-                    <label>Contact Name *</label>
-                    <input type="text" id="contactName" required>
-                </div>
-                
-                <div class="form-group">
-                    <label>Company</label>
-                    <input type="text" id="company">
-                </div>
-                
-                <div class="form-group">
-                    <label>Deal Value ($)</label>
-                    <input type="number" id="value" min="0" step="100" value="0">
-                </div>
-                
-                <div class="form-group">
-                    <label>Stage</label>
-                    <select id="stage">
-                        <option value="discovery">Discovery</option>
-                        <option value="proposal">Proposal</option>
-                        <option value="negotiation">Negotiation</option>
-                        <option value="closed-won">Closed Won</option>
-                        <option value="closed-lost">Closed Lost</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label>Probability (%)</label>
-                    <input type="number" id="probability" min="0" max="100" value="50">
-                </div>
-                
-                <div class="form-group">
-                    <label>Expected Close Date</label>
-                    <input type="date" id="expectedClose">
-                </div>
-                
-                <div class="form-group">
-                    <label>Notes</label>
-                    <textarea id="notes"></textarea>
-                </div>
-                
-                <button type="submit" class="btn success" style="width: 100%;">Save Deal</button>
-            </form>
+        <!-- Connection Status -->
+        <div class="connection-status" id="connection-status">
+            <div class="status-indicator" id="status-indicator"></div>
+            <span id="status-text">Connecting...</span>
         </div>
     </div>
 
     <script>
         const API_BASE = 'https://growthmanagerpro-backend.vercel.app';
-        let dealsData = [];
-        let filteredDeals = [];
-        let lastDataUpdate = null;
+        let pipelineData = [];
+        let contactsData = [];
 
-        function updateConnectionStatus(status) {
-            const statusEl = document.getElementById('connectionStatus');
-            statusEl.className = `connection-status ${status}`;
-            
-            switch(status) {
-                case 'connected':
-                    statusEl.textContent = '✓ Live Supabase Connected';
-                    break;
-                case 'disconnected':
-                    statusEl.textContent = '✗ Connection Failed';
-                    break;
-                case 'loading':
-                    statusEl.textContent = '🔄 Loading Pipeline Data...';
-                    break;
-            }
-        }
+        const STAGES = [
+            { id: 'lead', name: 'Lead', color: '#95a5a6' },
+            { id: 'qualified', name: 'Qualified', color: '#3498db' },
+            { id: 'proposal', name: 'Proposal', color: '#9b59b6' },
+            { id: 'negotiation', name: 'Negotiation', color: '#f39c12' },
+            { id: 'closed', name: 'Closed/Won', color: '#27ae60' }
+        ];
 
-        async function loadDealsData() {
-            console.log('[Pipeline] Loading data from Supabase...');
-            updateConnectionStatus('loading');
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('[Pipeline] Initializing...');
+            console.log('[Pipeline] API Base:', API_BASE);
+            loadPipeline();
             
+            // Auto-refresh every 5 minutes
+            setInterval(loadPipeline, 300000);
+        });
+
+        // Load pipeline from API
+        async function loadPipeline() {
             try {
+                updateConnectionStatus('connecting');
+                
                 const response = await fetch(`${API_BASE}/api/pipeline`);
                 
                 if (!response.ok) {
-                    throw new Error(`API returned ${response.status}`);
+                    throw new Error(`HTTP ${response.status}`);
                 }
 
-                const data = await response.json();
+                const result = await response.json();
                 
-                if (!data.success) {
-                    throw new Error('Invalid API response');
+                if (result.success && result.data) {
+                    pipelineData = result.data.deals || [];
+                    updateStats(result.data.stats);
+                    renderPipeline();
+                    updateConnectionStatus('connected');
+                    console.log('[Pipeline] ✅ Loaded', pipelineData.length, 'deals');
+                } else {
+                    throw new Error('Invalid response format');
                 }
 
-                dealsData = data.data.deals || [];
-                updateDisplay(data.data.stats);
-                updateConnectionStatus('connected');
-                lastDataUpdate = new Date();
-                document.getElementById('last-sync').innerHTML = `
-                    <strong>Last sync:</strong> ${lastDataUpdate.toLocaleTimeString()} 
-                    <span style="color: #d5f4e6;">• Live</span>
-                `;
-                
             } catch (error) {
-                console.error('[Pipeline] Error:', error);
-                updateConnectionStatus('disconnected');
-                const tbody = document.getElementById('pipeline-table-body');
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="7" style="text-align: center; padding: 3rem; color: #e74c3c;">
-                            <h3>⚠️ Unable to Load Data</h3>
-                            <p>Error: ${error.message}</p>
-                            <button class="btn" onclick="loadDealsData()" style="margin-top: 1rem;">
-                                🔄 Retry
+                console.error('[Pipeline] ❌ Error loading pipeline:', error);
+                updateConnectionStatus('error', error.message);
+                renderErrorState(error.message);
+            }
+        }
+
+        // Update statistics
+        function updateStats(stats) {
+            if (!stats) {
+                // Calculate from data if stats not provided
+                stats = calculateStats();
+            }
+            
+            document.getElementById('total-value').textContent = `$${(stats.totalValue || 0).toLocaleString()}`;
+            document.getElementById('active-deals').textContent = stats.activeDeals || 0;
+            document.getElementById('avg-deal-size').textContent = `$${(stats.avgDealSize || 0).toLocaleString()}`;
+            document.getElementById('win-rate').textContent = `${(stats.winRate || 0).toFixed(0)}%`;
+            
+            // Automation stats
+            const autoCount = stats.autoCreatedCount || 0;
+            const manualCount = stats.manualCount || 0;
+            const totalDeals = autoCount + manualCount;
+            const automationRate = totalDeals > 0 ? (autoCount / totalDeals * 100) : 0;
+            
+            document.getElementById('automation-rate').textContent = `${automationRate.toFixed(0)}%`;
+            document.getElementById('auto-count').textContent = autoCount;
+            document.getElementById('manual-count').textContent = manualCount;
+        }
+
+        // Calculate stats from data
+        function calculateStats() {
+            const totalValue = pipelineData.reduce((sum, deal) => sum + (parseFloat(deal.value) || 0), 0);
+            const activeDeals = pipelineData.filter(d => d.stage !== 'lost').length;
+            const avgDealSize = activeDeals > 0 ? totalValue / activeDeals : 0;
+            
+            const closedDeals = pipelineData.filter(d => d.stage === 'closed').length;
+            const advancedDeals = pipelineData.filter(d => 
+                ['proposal', 'negotiation', 'closed', 'lost'].includes(d.stage)
+            ).length;
+            const winRate = advancedDeals > 0 ? (closedDeals / advancedDeals * 100) : 0;
+
+            // Automation metrics
+            const autoCreatedCount = pipelineData.filter(d => d.auto_created === true).length;
+            const manualCount = pipelineData.filter(d => !d.auto_created).length;
+            const fromPodcast = pipelineData.filter(d => d.source_type === 'sales_call').length;
+
+            return { 
+                totalValue, 
+                activeDeals, 
+                avgDealSize, 
+                winRate,
+                autoCreatedCount,
+                manualCount,
+                fromPodcast
+            };
+        }
+
+        // Render pipeline
+        function renderPipeline() {
+            const container = document.getElementById('pipeline-stages');
+            document.getElementById('pipeline-count').textContent = pipelineData.length;
+
+            if (pipelineData.length === 0) {
+                container.innerHTML = `
+                    <div style="grid-column: 1 / -1;">
+                        <div style="text-align: center; padding: 3rem; color: #7f8c8d;">
+                            <p style="font-size: 1.1rem; margin-bottom: 0.5rem;">📊 No deals in pipeline</p>
+                            <p>Add your first deal to start tracking!</p>
+                            <button class="btn btn-primary" onclick="addDeal()" style="margin-top: 1.5rem;">
+                                + Add Deal
                             </button>
-                        </td>
-                    </tr>
-                `;
-            }
-        }
-
-        function updateDisplay(stats) {
-            filteredDeals = [...dealsData];
-            
-            // Calculate stats
-            if (stats) {
-                document.getElementById('total-deals').textContent = stats.totalDeals || 0;
-                document.getElementById('pipeline-value').textContent = `$${(stats.pipelineValue || 0).toLocaleString()}`;
-                document.getElementById('weighted-value').textContent = `$${(stats.weightedValue || 0).toLocaleString()}`;
-                document.getElementById('avg-deal-size').textContent = `$${(stats.avgDealSize || 0).toLocaleString()}`;
-            } else {
-                const totalDeals = dealsData.length;
-                const pipelineValue = dealsData.reduce((sum, d) => sum + (parseFloat(d.value) || 0), 0);
-                const weightedValue = dealsData.reduce((sum, d) => {
-                    const value = parseFloat(d.value) || 0;
-                    const prob = parseFloat(d.probability) || 0;
-                    return sum + (value * prob / 100);
-                }, 0);
-                const avgDealSize = totalDeals > 0 ? pipelineValue / totalDeals : 0;
-                
-                document.getElementById('total-deals').textContent = totalDeals;
-                document.getElementById('pipeline-value').textContent = `$${pipelineValue.toLocaleString()}`;
-                document.getElementById('weighted-value').textContent = `$${Math.round(weightedValue).toLocaleString()}`;
-                document.getElementById('avg-deal-size').textContent = `$${Math.round(avgDealSize).toLocaleString()}`;
-            }
-            
-            document.getElementById('deal-count').textContent = dealsData.length;
-            renderTable();
-        }
-
-        function renderTable() {
-            const tbody = document.getElementById('pipeline-table-body');
-            
-            if (filteredDeals.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="7">
-                            <div class="empty-state">
-                                <h3>No deals in pipeline</h3>
-                                <p>Click "Add Deal" to create your first deal</p>
-                            </div>
-                        </td>
-                    </tr>
+                        </div>
+                    </div>
                 `;
                 return;
             }
 
-            tbody.innerHTML = filteredDeals.map(deal => `
-                <tr>
-                    <td>
-                        <div class="deal-info">
-                            <div class="deal-avatar">${deal.contactName ? deal.contactName.charAt(0).toUpperCase() : '?'}</div>
-                            <div class="deal-details">
-                                <h4>${deal.dealName || 'Untitled'}</h4>
-                                <p>${deal.contactName || 'No contact'}</p>
+            container.innerHTML = STAGES.map(stage => {
+                const stageDeals = pipelineData.filter(deal => deal.stage === stage.id);
+                const stageValue = stageDeals.reduce((sum, deal) => sum + (parseFloat(deal.value) || 0), 0);
+                
+                return `
+                    <div class="stage-column">
+                        <div class="stage-header">
+                            <div>
+                                <div class="stage-title" style="color: ${stage.color}">${stage.name}</div>
+                                <div class="stage-value">$${stageValue.toLocaleString()}</div>
                             </div>
+                            <div class="stage-count">${stageDeals.length}</div>
                         </div>
-                    </td>
-                    <td><strong>${deal.company || 'N/A'}</strong></td>
-                    <td><span class="deal-value">$${(parseFloat(deal.value) || 0).toLocaleString()}</span></td>
-                    <td>
-                        <span class="stage-badge stage-${deal.stage}">${deal.stage ? deal.stage.replace('-', ' ') : 'discovery'}</span>
-                    </td>
-                    <td>
-                        <div class="probability-container">
-                            <div class="probability-bar">
-                                <div class="probability-fill" style="width: ${deal.probability || 0}%"></div>
-                            </div>
-                            <span class="probability-text">${deal.probability || 0}%</span>
+                        <div class="stage-deals">
+                            ${stageDeals.length === 0 ? 
+                                '<div class="empty-stage">No deals in this stage</div>' : 
+                                stageDeals.map(deal => renderDealCard(deal, stage.color)).join('')
+                            }
                         </div>
-                    </td>
-                    <td>${deal.expectedClose ? formatDate(deal.expectedClose) : 'Not set'}</td>
-                    <td>
-                        <div class="actions">
-                            <button class="action-btn primary" onclick='viewDeal(${JSON.stringify(deal).replace(/'/g, "&apos;")})'>👁️ View</button>
-                            <button class="action-btn success" onclick="updateStage('${deal.id}')">🔄 Update</button>
-                            <button class="action-btn warning" onclick='editDeal(${JSON.stringify(deal).replace(/'/g, "&apos;")})'>✏️ Edit</button>
-                        </div>
-                    </td>
-                </tr>
-            `).join('');
+                    </div>
+                `;
+            }).join('');
         }
 
+        // Render deal card
+        function renderDealCard(deal, stageColor) {
+            const daysInStage = deal.createdAt ? 
+                Math.floor((new Date() - new Date(deal.createdAt)) / (1000 * 60 * 60 * 24)) : 0;
+            
+            // Determine automation badge
+            let badge = '';
+            if (deal.auto_created) {
+                if (deal.source_type === 'sales_call') {
+                    badge = '<span class="automation-badge badge-podcast">🎙️ From Podcast</span>';
+                } else {
+                    badge = '<span class="automation-badge badge-auto">🤖 Auto-Created</span>';
+                }
+            } else {
+                badge = '<span class="automation-badge badge-manual">👤 Manual</span>';
+            }
+            
+            return `
+                <div class="deal-card" onclick="viewDeal('${deal.id}')" style="border-left-color: ${stageColor}">
+                    ${badge}
+                    <div class="deal-name">${deal.name || 'Untitled Deal'}</div>
+                    <div class="deal-company">${deal.company || 'No company'}</div>
+                    <div class="deal-value">$${(deal.value || 0).toLocaleString()}</div>
+                    <div class="deal-meta">
+                        <span>${deal.expectedCloseDate ? formatDate(deal.expectedCloseDate) : 'No date set'}</span>
+                        <span class="deal-days">${daysInStage}d</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Render error state
+        function renderErrorState(message) {
+            const container = document.getElementById('pipeline-stages');
+            container.innerHTML = `
+                <div style="grid-column: 1 / -1;">
+                    <div style="text-align: center; padding: 3rem;">
+                        <p style="color: #e74c3c; font-size: 1.1rem; margin-bottom: 0.5rem;">⚠️ Connection Error</p>
+                        <p style="color: #7f8c8d; margin-bottom: 1rem;">Could not connect to: ${API_BASE}/api/pipeline</p>
+                        <p style="color: #7f8c8d; font-size: 0.9rem;">${message}</p>
+                        <button class="btn btn-primary" onclick="loadPipeline()" style="margin-top: 1rem;">
+                            🔄 Retry Connection
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Update connection status indicator
+        function updateConnectionStatus(status, message = '') {
+            const indicator = document.getElementById('status-indicator');
+            const statusText = document.getElementById('status-text');
+
+            if (status === 'connected') {
+                indicator.className = 'status-indicator status-connected';
+                statusText.textContent = 'Live Connected';
+            } else if (status === 'error') {
+                indicator.className = 'status-indicator status-error';
+                statusText.textContent = message || 'Connection Error';
+            } else if (status === 'connecting') {
+                indicator.className = 'status-indicator';
+                indicator.style.background = '#f39c12';
+                statusText.textContent = 'Connecting...';
+            }
+        }
+
+        // Actions
+        function addDeal() {
+            alert('Add Deal feature coming soon!');
+            // TODO: Open modal to add new deal
+        }
+
+        function viewDeal(id) {
+            const deal = pipelineData.find(d => d.id === id);
+            if (deal) {
+                console.log('Viewing deal:', deal);
+                alert(`Deal Details:\n\nName: ${deal.name}\nValue: $${(deal.value || 0).toLocaleString()}\nStage: ${deal.stage}\n\nFull deal management coming soon!`);
+                // TODO: Open detailed view modal
+            }
+        }
+
+        function refreshData() {
+            console.log('[Pipeline] Manual refresh triggered');
+            loadPipeline();
+        }
+
+        // Utility functions
         function formatDate(dateString) {
+            if (!dateString) return '';
             const date = new Date(dateString);
             return date.toLocaleDateString('en-US', { 
                 month: 'short', 
                 day: 'numeric',
-                year: date.getFullYear() !== new Date().getFullYear() ? 'numeric' : undefined
+                year: 'numeric'
             });
         }
 
-        function filterDeals() {
-            const search = document.getElementById('searchInput').value.toLowerCase();
-            const stage = document.getElementById('stageFilter').value;
-            const valueFilter = document.getElementById('valueFilter').value;
-
-            filteredDeals = dealsData.filter(deal => {
-                // Search filter
-                const matchSearch = !search || 
-                    (deal.dealName && deal.dealName.toLowerCase().includes(search)) ||
-                    (deal.contactName && deal.contactName.toLowerCase().includes(search)) ||
-                    (deal.company && deal.company.toLowerCase().includes(search));
-
-                // Stage filter
-                const matchStage = !stage || deal.stage === stage;
-                
-                // Value filter
-                let matchValue = true;
-                if (valueFilter) {
-                    const value = parseFloat(deal.value) || 0;
-                    switch(valueFilter) {
-                        case 'small':
-                            matchValue = value < 10000;
-                            break;
-                        case 'medium':
-                            matchValue = value >= 10000 && value <= 50000;
-                            break;
-                        case 'large':
-                            matchValue = value > 50000;
-                            break;
-                    }
-                }
-
-                return matchSearch && matchStage && matchValue;
-            });
-
-            document.getElementById('deal-count').textContent = filteredDeals.length;
-            renderTable();
-        }
-
-        function openAddModal() {
-            document.getElementById('modalTitle').textContent = 'Add Deal';
-            document.getElementById('dealId').value = '';
-            document.getElementById('dealName').value = '';
-            document.getElementById('contactName').value = '';
-            document.getElementById('company').value = '';
-            document.getElementById('value').value = '0';
-            document.getElementById('stage').value = 'discovery';
-            document.getElementById('probability').value = '50';
-            document.getElementById('expectedClose').value = '';
-            document.getElementById('notes').value = '';
-            document.getElementById('dealModal').classList.add('show');
-        }
-
-        function viewDeal(deal) {
-            alert(`Deal Details:\n\nDeal: ${deal.dealName || 'Untitled'}\nContact: ${deal.contactName || 'N/A'}\nCompany: ${deal.company || 'N/A'}\nValue: $${(parseFloat(deal.value) || 0).toLocaleString()}\nStage: ${deal.stage || 'discovery'}\nProbability: ${deal.probability || 0}%\nExpected Close: ${deal.expectedClose ? new Date(deal.expectedClose).toLocaleDateString() : 'Not set'}\nNotes: ${deal.notes || 'No notes'}`);
-        }
-
-        function editDeal(deal) {
-            document.getElementById('modalTitle').textContent = 'Edit Deal';
-            document.getElementById('dealId').value = deal.id;
-            document.getElementById('dealName').value = deal.dealName || '';
-            document.getElementById('contactName').value = deal.contactName || '';
-            document.getElementById('company').value = deal.company || '';
-            document.getElementById('value').value = deal.value || 0;
-            document.getElementById('stage').value = deal.stage || 'discovery';
-            document.getElementById('probability').value = deal.probability || 50;
-            document.getElementById('expectedClose').value = deal.expectedClose ? deal.expectedClose.split('T')[0] : '';
-            document.getElementById('notes').value = deal.notes || '';
-            document.getElementById('dealModal').classList.add('show');
-        }
-
-        function closeModal() {
-            document.getElementById('dealModal').classList.remove('show');
-        }
-
-        function updateStage(id) {
-            const deal = dealsData.find(d => d.id === id);
-            if (deal) {
-                alert(`Update Stage: ${deal.dealName}\n\nThis would move the deal to the next stage.`);
-            }
-        }
-
-        async function saveDeal(event) {
-            event.preventDefault();
-            
-            const id = document.getElementById('dealId').value;
-            const dealData = {
-                dealName: document.getElementById('dealName').value,
-                contactName: document.getElementById('contactName').value,
-                company: document.getElementById('company').value,
-                value: parseFloat(document.getElementById('value').value) || 0,
-                stage: document.getElementById('stage').value,
-                probability: parseInt(document.getElementById('probability').value) || 50,
-                expectedClose: document.getElementById('expectedClose').value || null,
-                notes: document.getElementById('notes').value
-            };
-
-            try {
-                const isEdit = !!id;
-                const url = isEdit ? `${API_BASE}/api/pipeline/${id}` : `${API_BASE}/api/pipeline`;
-                const method = isEdit ? 'PUT' : 'POST';
-
-                const response = await fetch(url, {
-                    method: method,
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(isEdit ? { id, ...dealData } : dealData)
-                });
-
-                const result = await response.json();
-
-                if (!result.success) {
-                    throw new Error(result.error || 'Failed to save');
-                }
-
-                alert(isEdit ? 'Deal updated successfully!' : 'Deal added successfully!');
-                closeModal();
-                loadDealsData();
-
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Error: ' + error.message);
-            }
-        }
-
-        function exportPipeline() {
-            if (dealsData.length === 0) {
-                alert('No deals to export. Load data first.');
-                return;
-            }
-            
-            const csv = [
-                'Deal Name,Contact,Company,Value,Stage,Probability,Expected Close,Notes',
-                ...dealsData.map(d => `"${d.dealName || ''}","${d.contactName || ''}","${d.company || ''}",${d.value || 0},"${d.stage || ''}",${d.probability || 0},"${d.expectedClose || ''}","${(d.notes || '').replace(/"/g, '""')}"`)
-            ].join('\n');
-            
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `pipeline-${new Date().toISOString().split('T')[0]}.csv`;
-            a.click();
-            URL.revokeObjectURL(url);
-        }
-
-        function syncData() {
-            loadDealsData();
-        }
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', loadDealsData);
-        
-        // Auto-refresh every 60 seconds
-        setInterval(loadDealsData, 60000);
+        // Log system info
+        console.log('[Pipeline] System initialized');
+        console.log('[Pipeline] API Endpoint:', API_BASE);
     </script>
 </body>
 </html>
