@@ -726,11 +726,11 @@
                         <span class="nav-icon">📊</span>
                         <span>Dashboard</span>
                     </a>
-                    <a href="#" class="nav-item">
+                    <a href="javascript:void(0)" class="nav-item" onclick="scrollToSection('discussion')">
                         <span class="nav-icon">💬</span>
                         <span>Discussion</span>
                     </a>
-                    <a href="#" class="nav-item">
+                    <a href="javascript:void(0)" class="nav-item" onclick="scrollToSection('files')">
                         <span class="nav-icon">📁</span>
                         <span>Files</span>
                     </a>
@@ -879,7 +879,7 @@
             </div>
 
             <!-- Full Width: Discussion/Notes -->
-            <div class="full-width">
+            <div class="full-width" id="discussion">
                 <div class="card">
                     <div class="card-header">
                         <h3>
@@ -913,7 +913,7 @@
             </div>
 
             <!-- Full Width: Shared Files -->
-            <div class="full-width">
+            <div class="full-width" id="files">
                 <div class="card">
                     <div class="card-header">
                         <h3>
@@ -1424,6 +1424,14 @@
 
         console.log('[Advisor Dashboard] System initialized');
         console.log('[Advisor Dashboard] API Endpoint:', API_URL);
+
+        // Smooth scroll to section
+        function scrollToSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
     </script>
 </body>
 </html>
