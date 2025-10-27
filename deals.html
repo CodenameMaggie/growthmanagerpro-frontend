@@ -417,7 +417,153 @@
         }
     </style>
 </head>
-<body>
+    <!-- ENGAGEMENT MODAL -->
+<div id="engagementModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>🎉 Close Deal & Start Engagement</h2>
+            <button class="close-btn" onclick="closeEngagementModal()">&times;</button>
+        </div>
+        
+        <div class="modal-body">
+            <p>Select the engagement tier and start date to automatically generate all tasks.</p>
+            
+            <div class="form-group">
+                <label for="engagementTier">Engagement Tier</label>
+                <select id="engagementTier" class="form-control">
+                    <option value="">Select tier...</option>
+                    <option value="Strategic Foundations">Strategic Foundations ($25K-$50K, 90 days)</option>
+                    <option value="Growth Architecture">Growth Architecture ($150K-$300K, 12 months)</option>
+                    <option value="Strategic Alliance">Strategic Alliance ($250K+, Ongoing)</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="engagementStartDate">Start Date</label>
+                <input type="date" id="engagementStartDate" class="form-control" />
+            </div>
+            
+            <div class="engagement-preview" id="engagementPreview" style="display: none;">
+                <h3>What will be generated:</h3>
+                <p id="previewText"></p>
+            </div>
+        </div>
+        
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeEngagementModal()">Cancel</button>
+            <button class="btn btn-primary" onclick="generateEngagement()">Generate Tasks & Close Deal</button>
+        </div>
+    </div>
+</div>
+
+<style>
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 8px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-footer {
+    padding: 1.5rem;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.engagement-preview {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: #f7fafc;
+    border-radius: 4px;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #64748b;
+}
+
+.close-btn:hover {
+    color: #334155;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background: #3498db;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #2980b9;
+}
+
+.btn-secondary {
+    background: #e2e8f0;
+    color: #334155;
+}
+
+.btn-secondary:hover {
+    background: #cbd5e1;
+}
+</style>
+    <body>
     <div class="app-container">
         <!-- Sidebar -->
        <div class="sidebar" id="sidebar">
@@ -828,5 +974,151 @@
         console.log('[Deals] System initialized');
         console.log('[Deals] API Endpoint:', API_BASE);
     </script>
+        <!-- ENGAGEMENT MODAL -->
+<div id="engagementModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>🎉 Close Deal & Start Engagement</h2>
+            <button class="close-btn" onclick="closeEngagementModal()">&times;</button>
+        </div>
+        
+        <div class="modal-body">
+            <p>Select the engagement tier and start date to automatically generate all tasks.</p>
+            
+            <div class="form-group">
+                <label for="engagementTier">Engagement Tier</label>
+                <select id="engagementTier" class="form-control">
+                    <option value="">Select tier...</option>
+                    <option value="Strategic Foundations">Strategic Foundations ($25K-$50K, 90 days)</option>
+                    <option value="Growth Architecture">Growth Architecture ($150K-$300K, 12 months)</option>
+                    <option value="Strategic Alliance">Strategic Alliance ($250K+, Ongoing)</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="engagementStartDate">Start Date</label>
+                <input type="date" id="engagementStartDate" class="form-control" />
+            </div>
+            
+            <div class="engagement-preview" id="engagementPreview" style="display: none;">
+                <h3>What will be generated:</h3>
+                <p id="previewText"></p>
+            </div>
+        </div>
+        
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeEngagementModal()">Cancel</button>
+            <button class="btn btn-primary" onclick="generateEngagement()">Generate Tasks & Close Deal</button>
+        </div>
+    </div>
+</div>
+
+<style>
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 8px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-footer {
+    padding: 1.5rem;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.engagement-preview {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: #f7fafc;
+    border-radius: 4px;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #64748b;
+}
+
+.close-btn:hover {
+    color: #334155;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background: #3498db;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #2980b9;
+}
+
+.btn-secondary {
+    background: #e2e8f0;
+    color: #334155;
+}
+
+.btn-secondary:hover {
+    background: #cbd5e1;
+}
+</style>
 </body>
 </html>
