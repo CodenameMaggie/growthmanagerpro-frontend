@@ -850,11 +850,14 @@
                         </td>
                         <td>${statusBadge}</td>
                         <td>${deal.renewalDate ? formatDate(deal.renewalDate) : '—'}</td>
-                        <td>
-                            <button class="btn btn-small btn-secondary" onclick="viewDeal('${deal.id}')">
-                                View
-                            </button>
-                        </td>
+                       <td>
+    <button class="btn btn-small btn-secondary" onclick="viewDeal('${deal.id}')">
+        View
+    </button>
+    <button class="btn btn-small btn-primary" onclick="markAsClient('${deal.id}')" style="margin-left: 0.5rem;">
+        Mark as Client
+    </button>
+</td>
                     </tr>
                 `;
             }).join('');
@@ -973,7 +976,95 @@
         // Log system info
         console.log('[Deals] System initialized');
         console.log('[Deals] API Endpoint:', API_BASE);
-    </script>
+        
+         // ==================== ENGAGEMENT SYSTEM ====================
+        let currentDealForEngagement = null;
+
+        const engagementTemplates = {
+            'Strategic Foundations': { weeks: 12, taskCount: 36 },
+            'Growth Architecture': { weeks: 52, taskCount: 150 },
+            'Strategic Alliance': { weeks: 52, taskCount: 150 }
+        };
+
+        function openEngagementModal(dealId) {
+            currentDealForEngagement = dealId;
+            document.getElementById('engagementModal').style.display = 'flex';
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('engagementStartDate').value = today;
+        }
+
+        function closeEngagementModal() {
+            document.getElementById('engagementModal').style.display = 'none';
+            currentDealForEngagement = null;
+            document.getElementById('engagementPreview').style.display = 'none';
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('engagementTier').addEventListener('change', function() {
+                const tier = this.value;
+                const preview = document.getElementById('engagementPreview');
+                const previewText = document.getElementById('previewText');
+                
+                if (tier && engagementTemplates[tier]) {
+                    const template = engagementTemplates[tier];
+                    preview.style.display = 'block';
+                    previewText.innerHTML = `<strong>${template.taskCount} tasks</strong> will be created across <strong>${template.weeks} weeks</strong>.<br>Tasks will appear on your sprints page week by week.`;
+                } else {
+                    preview.style.display = 'none';
+                }
+            });
+        });
+
+        async function generateEngagement() {
+            const tier = document.getElementById('engagementTier').value;
+            const startDate = document.getElementById('engagementStartDate').value;
+            
+            if (!tier || !startDate) {
+                alert('Please select engagement tier and start date');
+                return;
+            }
+            
+            if (!currentDealForEngagement) {
+                alert('No deal selected');
+                return;
+            }
+            
+            try {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.disabled = true;
+                btn.textContent = 'Generating...';
+                
+                const response = await fetch(`${API_BASE}/api/engagement?type=generate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        dealId: currentDealForEngagement,
+                        tierName: tier,
+                        startDate: startDate
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert(`Success! Generated ${result.data.tasksCreated} tasks for ${tier}`);
+                    closeEngagementModal();
+                    location.reload();
+                } else {
+                    throw new Error(result.error || 'Failed to generate tasks');
+                }
+            } catch (error) {
+                console.error('Error generating engagement:', error);
+                alert('Error: ' + error.message);
+                btn.disabled = false;
+                btn.textContent = originalText;
+            }
+        }
+
+        function markAsClient(dealId) {
+            openEngagementModal(dealId);
+        }    </script>
         <!-- ENGAGEMENT MODAL -->
 <div id="engagementModal" class="modal" style="display: none;">
     <div class="modal-content">
