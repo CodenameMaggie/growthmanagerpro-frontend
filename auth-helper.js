@@ -1,8 +1,28 @@
-// auth-helper.js - Add this to every page that requires authentication
-// This integrates with your permissions.js system
+// auth-helper.js - Enhanced authentication helper with Supabase session support
+// This integrates with your permissions.js system AND Supabase Auth
 
 const AuthHelper = {
-  // Get current user from localStorage
+  // Initialize Supabase client (call this once at app startup)
+  supabaseClient: null,
+
+  initSupabase: function(supabaseUrl, supabaseAnonKey) {
+    if (typeof supabase !== 'undefined') {
+      this.supabaseClient = supabase.createClient(supabaseUrl, supabaseAnonKey);
+      
+      // Check for existing session and restore it
+      const storedSession = localStorage.getItem('supabase_session');
+      if (storedSession) {
+        try {
+          const session = JSON.parse(storedSession);
+          this.supabaseClient.auth.setSession(session);
+        } catch (e) {
+          console.error('Failed to restore Supabase session:', e);
+        }
+      }
+    }
+  },
+
+  // Get current user from localStorage (backward compatible)
   getCurrentUser: function() {
     const userData = localStorage.getItem('user');
     if (!userData) return null;
@@ -16,7 +36,24 @@ const AuthHelper = {
     }
   },
 
-  // Check if user is logged in
+  // Get Supabase auth session
+  getSupabaseSession: async function() {
+    if (!this.supabaseClient) return null;
+    
+    try {
+      const { data, error } = await this.supabaseClient.auth.getSession();
+      if (error) {
+        console.error('Error getting Supabase session:', error);
+        return null;
+      }
+      return data.session;
+    } catch (e) {
+      console.error('Failed to get Supabase session:', e);
+      return null;
+    }
+  },
+
+  // Check if user is logged in (checks both localStorage and Supabase)
   isLoggedIn: function() {
     return this.getCurrentUser() !== null;
   },
@@ -56,8 +93,10 @@ const AuthHelper = {
     // Map pages to required permissions
     const pagePermissions = {
       'dashboard.html': 'dashboard.view',
+      'advisor-dashboard.html': 'dashboard.view',
       'contacts.html': 'contacts.view',
       'podcast-calls.html': 'calls.view',
+      'podcast-interviews.html': 'calls.view',
       'discovery-calls.html': 'calls.view',
       'sales-calls.html': 'calls.view',
       'pipeline.html': 'pipeline.view',
@@ -65,9 +104,12 @@ const AuthHelper = {
       'cash-flow.html': 'financials.view',
       'campaigns.html': 'campaigns.view',
       'sprints.html': 'sprints.view',
+      'availability.html': 'sprints.view',
       'expense-tracker.html': 'financials.view',
       'user-management.html': 'users.view',
-      'client-portal.html': 'dashboard.view' // Clients can access their portal
+      'client-portal.html': 'dashboard.view',
+      'analytics.html': 'dashboard.view',
+      'reports.html': 'dashboard.view'
     };
     
     const requiredPermission = pagePermissions[pageName];
@@ -81,15 +123,23 @@ const AuthHelper = {
 
   // Protect a page - call this at the start of page load
   protectPage: function(pageName) {
+    console.log('[Auth] Protecting page:', pageName);
+    
     // First check if logged in
-    if (!this.requireAuth()) return false;
+    if (!this.requireAuth()) {
+      console.log('[Auth] Not logged in, redirecting to login');
+      return false;
+    }
+    
+    const user = this.getCurrentUser();
+    console.log('[Auth] Current user:', user.email, 'Role:', user.role);
     
     // Then check if user can access this specific page
     if (!this.canAccessPage(pageName)) {
+      console.log('[Auth] User does not have permission for:', pageName);
       alert('You do not have permission to access this page.');
       
       // Redirect based on user type
-      const user = this.getCurrentUser();
       if (user.type === 'client') {
         window.location.href = '/client-portal.html';
       } else {
@@ -98,12 +148,26 @@ const AuthHelper = {
       return false;
     }
     
+    console.log('[Auth] Page access granted');
     return true;
   },
 
-  // Logout user
-  logout: function() {
+  // Logout user (clears both localStorage and Supabase session)
+  logout: async function() {
+    // Sign out from Supabase
+    if (this.supabaseClient) {
+      try {
+        await this.supabaseClient.auth.signOut();
+      } catch (e) {
+        console.error('Error signing out from Supabase:', e);
+      }
+    }
+    
+    // Clear local storage
     localStorage.removeItem('user');
+    localStorage.removeItem('supabase_session');
+    
+    // Redirect to login
     window.location.href = '/login.html';
   },
 
@@ -130,6 +194,8 @@ const AuthHelper = {
     const user = this.getCurrentUser();
     if (!user) return;
 
+    console.log('[Auth] Applying permissions for:', user.role);
+
     // Hide elements that require specific permissions
     document.querySelectorAll('[data-requires-permission]').forEach(element => {
       const requiredPermission = element.getAttribute('data-requires-permission');
@@ -151,14 +217,27 @@ const AuthHelper = {
         element.style.display = 'none';
       }
     });
+  },
+
+  // Get authenticated Supabase client for API calls
+  getAuthenticatedClient: function() {
+    return this.supabaseClient;
   }
 };
 
 // Example usage in your HTML pages:
 /*
 
-<!-- Add at the start of your page's <script> section: -->
+<!-- Load Supabase client first (if you want to use Supabase features) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- Then load auth-helper -->
+<script src="auth-helper.js"></script>
+
 <script>
+  // Initialize Supabase (optional, for enhanced features)
+  AuthHelper.initSupabase('YOUR_SUPABASE_URL', 'YOUR_SUPABASE_ANON_KEY');
+  
   // Protect this page - only allow users with proper permissions
   AuthHelper.protectPage('dashboard.html'); // Change to match your page name
   
