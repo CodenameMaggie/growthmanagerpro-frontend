@@ -714,7 +714,16 @@
     </div>
 
     <script>
-        // API Configuration
+        <script src="auth-helper.js"></script>
+<script>
+    (function() {
+        if (!AuthHelper.protectPage('advisor-dashboard.html')) {  // ← NOW CORRECT
+            throw new Error('Unauthorized access');
+        }
+        AuthHelper.applyPermissions();
+    })();
+    
+    // API Configuration
         const API_BASE = 'https://growthmanagerpro-backend.vercel.app';
 
         // Dashboard data store
