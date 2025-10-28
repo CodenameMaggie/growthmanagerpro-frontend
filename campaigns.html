@@ -654,10 +654,10 @@
                 console.log('[Campaigns] Data received:', result);
                 
                 // Update stats
-                updateStats(result.data);
+                updateStats(result.stats);
                 
                 // Display campaigns
-                displayCampaigns(result.data.campaigns || []);
+                displayCampaigns(result.campaigns || []);
                 
                 updateConnectionStatus('connected', '✓ Connected to Instantly');
                 
