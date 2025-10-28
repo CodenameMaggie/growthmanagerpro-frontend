@@ -33,7 +33,7 @@
             position: absolute;
             width: 600px;
             height: 600px;
-            background: rgba(52, 152, 139, 0.1);
+            background: rgba(41, 128, 185, 0.12);
             border-radius: 50%;
             top: -300px;
             right: -200px;
@@ -45,7 +45,7 @@
             position: absolute;
             width: 500px;
             height: 500px;
-            background: rgba(52, 152, 139, 0.08);
+            background: rgba(52, 152, 139, 0.10);
             border-radius: 50%;
             bottom: -250px;
             left: -200px;
@@ -108,11 +108,11 @@
         }
         
         .tagline {
-            color: #34988b;
+            color: #2980b9;
             font-size: 0.95rem;
             font-weight: 600;
             padding: 0.6rem 1.2rem;
-            background: linear-gradient(135deg, #e0f2f1 0%, #b2dfdb 100%);
+            background: linear-gradient(135deg, #e0f2f1 0%, #d6eaf8 100%);
             border-radius: 10px;
             display: inline-block;
             margin-top: 1rem;
@@ -135,8 +135,8 @@
         }
         
         .feature-item:hover {
-            background: linear-gradient(135deg, #e0f2f1 0%, #b2dfdb 100%);
-            border-color: #34988b;
+            background: linear-gradient(135deg, #e0f2f1 0%, #d6eaf8 100%);
+            border-color: #2980b9;
             transform: translateY(-2px);
         }
         
@@ -201,9 +201,9 @@
         
         .form-group input:focus {
             outline: none;
-            border-color: #34988b;
+            border-color: #2980b9;
             background: white;
-            box-shadow: 0 0 0 4px rgba(52, 152, 139, 0.15);
+            box-shadow: 0 0 0 4px rgba(41, 128, 185, 0.15);
         }
         
         .login-btn {
@@ -260,7 +260,7 @@
         }
         
         .welcome-message {
-            background: linear-gradient(135deg, #e0f2f1 0%, #b2dfdb 100%);
+            background: linear-gradient(135deg, #e0f2f1 0%, #d6eaf8 100%);
             border: 1px solid #80cbc4;
             padding: 1.2rem;
             border-radius: 12px;
@@ -276,7 +276,7 @@
         }
         
         .welcome-message p {
-            color: #34988b;
+            color: #2980b9;
             font-size: 0.9rem;
             font-weight: 500;
             line-height: 1.5;
@@ -393,8 +393,8 @@
 
     <script>
         // Initialize Supabase client
-        const SUPABASE_URL = 'YOUR_SUPABASE_URL'; // Will be replaced during deployment
-        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'; // Will be replaced during deployment
+        const SUPABASE_URL = 'https://tatbblgwhmyzovsyhzyb.supabase.co'; // Will be replaced during deployment
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRhdGJibGd3aG15em92c3loenliIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkxOTQ1NDMsImV4cCI6MjA3NDc3MDU0M30.HUBWBd0Wtdl5rD1G8XSqJe8rYnpMaOXnJiuwHTHyZMo'; // Will be replaced during deployment
         const API_URL = 'https://growthmanagerpro-backend.vercel.app';
 
         // Initialize Supabase (will be done in handleLogin)
