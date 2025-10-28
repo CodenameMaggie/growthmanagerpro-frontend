@@ -805,7 +805,16 @@
     </div>
 
     <script>
-        // Live API Configuration
+        <script src="auth-helper.js"></script>
+<script>
+    (function() {
+        if (!AuthHelper.protectPage('advisor-dashboard.html')) {  // ← NOW CORRECT
+            throw new Error('Unauthorized access');
+        }
+        AuthHelper.applyPermissions();
+    })();
+    
+    // Live API Configuration
         const API_BASE = 'https://growthmanagerpro-backend.vercel.app';
         
         // Global state
