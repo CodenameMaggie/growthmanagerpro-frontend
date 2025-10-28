@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Growth Manager Pro - Pipeline</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -32,6 +33,8 @@
             left: 0;
             top: 0;
             box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
         }
         .sidebar-header {
             padding: 0 2rem 2rem 2rem;
@@ -46,6 +49,10 @@
         .sidebar-header p {
             color: #7f8c8d;
             font-size: 0.9rem;
+        }
+        .sidebar-nav {
+            flex: 1;
+            overflow-y: auto;
         }
         .nav-section {
             margin-bottom: 2rem;
@@ -91,6 +98,28 @@
             width: 20px;
             height: 20px;
             margin-right: 1rem;
+            font-size: 1.2rem;
+        }
+        .sidebar-footer {
+            padding: 1.5rem 2rem;
+            border-top: 1px solid #e1e5e9;
+            background: white;
+        }
+        .logout-link {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 0;
+            color: #e74c3c;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        .logout-link:hover {
+            color: #c0392b;
+            padding-left: 0.5rem;
+        }
+        .logout-icon {
+            margin-right: 0.75rem;
             font-size: 1.2rem;
         }
         /* Main Content */
@@ -145,12 +174,17 @@
             font-weight: bold;
             margin-bottom: 0.25rem;
         }
+        .stat-change {
+            font-size: 0.85rem;
+            color: #27ae60;
+        }
         /* Pipeline Card */
         .pipeline-card {
             background: white;
             border-radius: 12px;
             box-shadow: 0 8px 32px rgba(0,0,0,0.1);
             overflow: hidden;
+            margin-bottom: 2rem;
         }
         .pipeline-header {
             padding: 1.5rem 2rem;
@@ -162,6 +196,10 @@
         .pipeline-header h3 {
             font-size: 1.25rem;
             color: #2c3e50;
+        }
+        .pipeline-count {
+            font-size: 0.9rem;
+            color: #7f8c8d;
         }
         .pipeline-container {
             padding: 2rem;
@@ -191,6 +229,9 @@
             color: #2c3e50;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
         .stage-count {
             font-size: 0.8rem;
@@ -198,89 +239,171 @@
             background: white;
             padding: 0.25rem 0.75rem;
             border-radius: 12px;
-        }
-        .stage-value {
-            font-size: 0.75rem;
-            color: #27ae60;
-            margin-top: 0.25rem;
             font-weight: 600;
         }
-        .deal-card {
+        .stage-deals {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        .empty-stage {
+            text-align: center;
+            padding: 2rem 1rem;
+            color: #95a5a6;
+            font-size: 0.9rem;
+        }
+        .contact-card {
             background: white;
             border-radius: 8px;
             padding: 1rem;
-            margin-bottom: 0.75rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border-left: 3px solid;
             cursor: pointer;
             transition: all 0.2s ease;
-            border-left: 3px solid #3498db;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
-        .deal-card:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        .contact-card:hover {
             transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
         }
-        .deal-name {
-            font-size: 0.95rem;
+        .contact-name {
             font-weight: 600;
             color: #2c3e50;
+            margin-bottom: 0.25rem;
+            font-size: 0.95rem;
+        }
+        .contact-company {
+            color: #7f8c8d;
+            font-size: 0.85rem;
             margin-bottom: 0.5rem;
         }
-        .deal-company {
-            font-size: 0.85rem;
-            color: #7f8c8d;
-            margin-bottom: 0.75rem;
+        .contact-email {
+            color: #3498db;
+            font-size: 0.8rem;
+            margin-bottom: 0.5rem;
         }
-        .deal-value {
-            font-size: 1.1rem;
-            font-weight: bold;
-            color: #27ae60;
-            margin-bottom: 0.75rem;
-        }
-        .deal-meta {
+        .contact-meta {
             display: flex;
             justify-content: space-between;
             align-items: center;
             font-size: 0.75rem;
             color: #95a5a6;
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid #e1e5e9;
         }
-        .deal-days {
-            background: #ecf0f1;
-            padding: 0.25rem 0.5rem;
+        .contact-score {
+            background: #27ae60;
+            color: white;
+            padding: 0.2rem 0.5rem;
             border-radius: 4px;
-            font-weight: 500;
-        }
-        /* Automation Badges */
-        .automation-badge {
-            display: inline-block;
-            padding: 0.3rem 0.6rem;
-            border-radius: 12px;
-            font-size: 0.7rem;
             font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
+        }
+        /* Analytics & Reports Sections */
+        .expandable-section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+        .section-toggle {
+            padding: 1.5rem 2rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s ease;
+            border-bottom: 2px solid #e1e5e9;
+        }
+        .section-toggle:hover {
+            background: #f8f9fa;
+        }
+        .section-toggle h3 {
+            font-size: 1.25rem;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .toggle-icon {
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+            color: #3498db;
+        }
+        .toggle-icon.expanded {
+            transform: rotate(180deg);
+        }
+        .section-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        .section-content.expanded {
+            max-height: 2000px;
+        }
+        .section-inner {
+            padding: 2rem;
+        }
+        /* Charts */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        .chart-container {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid #e1e5e9;
+        }
+        .chart-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+        .chart-wrapper {
+            position: relative;
+            height: 300px;
+        }
+        /* Reports */
+        .report-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        .report-card {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid;
+        }
+        .report-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #2c3e50;
             margin-bottom: 0.5rem;
         }
-        .badge-auto {
-            background: #e8f5e9;
-            color: #2e7d32;
+        .report-value {
+            font-size: 1.75rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
         }
-        .badge-manual {
-            background: #e3f2fd;
-            color: #1565c0;
-        }
-        .badge-podcast {
-            background: #f3e5f5;
-            color: #7b1fa2;
+        .report-description {
+            font-size: 0.85rem;
+            color: #7f8c8d;
         }
         /* Buttons */
         .btn {
             padding: 0.75rem 1.5rem;
             border: none;
             border-radius: 8px;
-            font-size: 0.95rem;
+            font-weight: 500;
             cursor: pointer;
             transition: all 0.2s ease;
-            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
         }
         .btn-primary {
             background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
@@ -291,29 +414,20 @@
             box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
         }
         .btn-secondary {
-            background: #ecf0f1;
-            color: #5a6c7d;
+            background: white;
+            color: #3498db;
+            border: 2px solid #3498db;
         }
         .btn-secondary:hover {
-            background: #d5dbdb;
-        }
-        .btn-small {
-            padding: 0.5rem 1rem;
-            font-size: 0.85rem;
+            background: #3498db;
+            color: white;
         }
         /* Connection Status */
         .connection-status {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            background: white;
-            padding: 1rem 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            z-index: 999;
+            gap: 0.5rem;
+            font-size: 0.85rem;
         }
         .status-indicator {
             width: 10px;
@@ -321,220 +435,267 @@
             border-radius: 50%;
             background: #95a5a6;
         }
-        .status-indicator.status-connected {
+        .status-connected {
             background: #27ae60;
-            animation: pulse 2s infinite;
+            box-shadow: 0 0 8px rgba(39, 174, 96, 0.4);
         }
-        .status-indicator.status-error {
+        .status-error {
             background: #e74c3c;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-        /* Loading */
-        .loading {
-            text-align: center;
-            padding: 3rem;
-            color: #7f8c8d;
-        }
-        .loading-spinner {
-            border: 3px solid #ecf0f1;
-            border-top: 3px solid #3498db;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 1rem;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        /* Empty State */
-        .empty-stage {
-            text-align: center;
-            padding: 2rem 1rem;
-            color: #95a5a6;
-            font-size: 0.85rem;
-        }
-        /* Responsive */
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            .main-content {
-                margin-left: 0;
-            }
-            .pipeline-stages {
-                grid-template-columns: 1fr;
-            }
+            box-shadow: 0 0 8px rgba(231, 76, 60, 0.4);
         }
     </style>
 </head>
 <body>
     <div class="app-container">
         <!-- Sidebar -->
-       <div class="sidebar" id="sidebar">
+        <aside class="sidebar">
             <div class="sidebar-header">
                 <h1>Growth Manager Pro</h1>
-                <p>Business Growth Platform</p>
+                <p>Contact Pipeline</p>
             </div>
-            <div class="nav-section">
-                <div class="nav-section-title">Overview</div>
-                <a href="dashboard.html" class="nav-item">
-                    <span class="nav-icon">📊</span>
-                    <span>Dashboard</span>
-                </a>
-                <a href="contacts.html" class="nav-item">
-                    <span class="nav-icon">👥</span>
-                    <span>Contacts</span>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Main</div>
+                    <a href="dashboard.html" class="nav-item">
+                        <span class="nav-icon">📊</span>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="pipeline.html" class="nav-item active">
+                        <span class="nav-icon">🔄</span>
+                        <span>Pipeline</span>
+                    </a>
+                    <a href="contacts.html" class="nav-item">
+                        <span class="nav-icon">👥</span>
+                        <span>Contacts</span>
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">Tools</div>
+                    <a href="campaigns.html" class="nav-item">
+                        <span class="nav-icon">📧</span>
+                        <span>Campaigns</span>
+                    </a>
+                    <a href="#" class="nav-item" onclick="scrollToAnalytics(); return false;">
+                        <span class="nav-icon">📈</span>
+                        <span>Analytics</span>
+                    </a>
+                    <a href="#" class="nav-item" onclick="scrollToReports(); return false;">
+                        <span class="nav-icon">📋</span>
+                        <span>Reports</span>
+                    </a>
+                </div>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <a href="#" class="logout-link" onclick="handleLogout(); return false;">
+                    <span class="logout-icon">→</span>
+                    <span>Logout</span>
                 </a>
             </div>
+        </aside>
 
-            <div class="nav-section">
-                <div class="nav-section-title">Lead Generation</div>
-                <a href="podcast-calls.html" class="nav-item">
-                    <span class="nav-icon">🎙️</span>
-                    <span>Podcast Calls</span>
-                </a>
-                <a href="discovery-calls.html" class="nav-item">
-                    <span class="nav-icon">🔍</span>
-                    <span>Discovery Calls</span>
-                </a>
-                <a href="sales-calls.html" class="nav-item">
-                    <span class="nav-icon">💼</span>
-                    <span>Sales Calls</span>
-                </a>
-            </div>
-
-            <div class="nav-section">
-                <div class="nav-section-title">Sales & Revenue</div>
-                <a href="pipeline.html" class="nav-item active">
-                    <span class="nav-icon">📈</span>
-                    <span>Pipeline</span>
-                </a>
-                <a href="deals.html" class="nav-item">
-                    <span class="nav-icon">🤝</span>
-                    <span>Deals</span>
-                </a>
-                <a href="cash-flow.html" class="nav-item">
-                    <span class="nav-icon">💰</span>
-                    <span>Cash Flow</span>
-                </a>
-            </div>
-
-            <div class="nav-section">
-                <div class="nav-section-title">Marketing</div>
-                <a href="campaigns.html" class="nav-item">
-                    <span class="nav-icon">📧</span>
-                    <span>Campaigns</span>
-                </a>
-                <a href="sprints.html" class="nav-item">
-                    <span class="nav-icon">🚀</span>
-                    <span>Sprints</span>
-                </a>
-            </div>
-
-            <div class="nav-section">
-                <div class="nav-section-title">Management</div>
-                <a href="expense-tracker.html" class="nav-item">
-                    <span class="nav-icon">💳</span>
-                    <span>Expense Tracker</span>
-                </a>
-                <a href="availability.html" class="nav-item">
-                    <span class="nav-icon">📅</span>
-                    <span>Availability</span>
-                </a>
-            </div>
-
-            <div class="nav-section">
-                <div class="nav-section-title">Settings</div>
-                <a href="user-management.html" class="nav-item">
-                    <span class="nav-icon">⚙️</span>
-                    <span>User Management</span>
-                </a>
-            </div>
-        </div>
         <!-- Main Content -->
         <main class="main-content">
             <!-- Page Header -->
             <div class="page-header">
-                <h2>📈 Sales Pipeline</h2>
-                <p>Visual Deal Flow & Stage Management</p>
+                <h2>Contact Pipeline</h2>
+                <p>Track contacts through your acquisition funnel from podcast to closed deal</p>
                 <div class="header-actions">
-                    <button class="btn btn-primary" onclick="addDeal()">+ Add Deal</button>
-                    <button class="btn btn-secondary" onclick="refreshData()">🔄 Refresh</button>
-                </div>
-            </div>
-            <!-- Stats Grid -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-label">Total Pipeline Value</div>
-                    <div class="stat-value" style="color: #27ae60;" id="total-value">$0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Active Deals</div>
-                    <div class="stat-value" style="color: #3498db;" id="active-deals">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Average Deal Size</div>
-                    <div class="stat-value" style="color: #9b59b6;" id="avg-deal-size">$0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Win Rate</div>
-                    <div class="stat-value" style="color: #f39c12;" id="win-rate">0%</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Automation Rate</div>
-                    <div class="stat-value" style="color: #2e7d32;" id="automation-rate">0%</div>
-                    <div style="font-size: 0.75rem; color: #7f8c8d; margin-top: 0.25rem;">
-                        <span id="auto-count">0</span> auto / <span id="manual-count">0</span> manual
+                    <button class="btn btn-primary" onclick="refreshData()">🔄 Refresh</button>
+                    <div class="connection-status">
+                        <div class="status-indicator" id="status-indicator"></div>
+                        <span id="status-text">Initializing...</span>
                     </div>
                 </div>
             </div>
-            <!-- Pipeline View -->
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Contacts</div>
+                    <div class="stat-value" style="color: #3498db;" id="total-contacts">0</div>
+                    <div class="stat-change">In pipeline</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Active Contacts</div>
+                    <div class="stat-value" style="color: #27ae60;" id="active-contacts">0</div>
+                    <div class="stat-change">Progressing</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Closed Won</div>
+                    <div class="stat-value" style="color: #f39c12;" id="closed-won">0</div>
+                    <div class="stat-change" id="conversion-rate">0% conversion</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">From Podcast</div>
+                    <div class="stat-value" style="color: #9b59b6;" id="from-podcast">0</div>
+                    <div class="stat-change">Automated flow</div>
+                </div>
+            </div>
+
+            <!-- Pipeline Stages -->
             <div class="pipeline-card">
                 <div class="pipeline-header">
-                    <h3>Deal Pipeline (<span id="pipeline-count">0</span> deals)</h3>
+                    <h3>Pipeline Stages</h3>
+                    <div class="pipeline-count">
+                        <span id="pipeline-count">0</span> total contacts
+                    </div>
                 </div>
                 <div class="pipeline-container">
                     <div class="pipeline-stages" id="pipeline-stages">
-                        <div class="loading">
-                            <div class="loading-spinner"></div>
-                            <p>Loading pipeline...</p>
+                        <!-- Stages will be rendered here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Section -->
+            <div class="expandable-section" id="analytics-section">
+                <div class="section-toggle" onclick="toggleSection('analytics')">
+                    <h3>
+                        <span>📈</span>
+                        <span>Analytics & Insights</span>
+                    </h3>
+                    <span class="toggle-icon" id="analytics-toggle">▼</span>
+                </div>
+                <div class="section-content" id="analytics-content">
+                    <div class="section-inner">
+                        <div class="charts-grid">
+                            <div class="chart-container">
+                                <div class="chart-title">Conversion Funnel</div>
+                                <div class="chart-wrapper">
+                                    <canvas id="funnelChart"></canvas>
+                                </div>
+                            </div>
+                            <div class="chart-container">
+                                <div class="chart-title">Stage Distribution</div>
+                                <div class="chart-wrapper">
+                                    <canvas id="stageChart"></canvas>
+                                </div>
+                            </div>
+                            <div class="chart-container">
+                                <div class="chart-title">Pipeline Velocity (Days in Stage)</div>
+                                <div class="chart-wrapper">
+                                    <canvas id="velocityChart"></canvas>
+                                </div>
+                            </div>
+                            <div class="chart-container">
+                                <div class="chart-title">Monthly Trend</div>
+                                <div class="chart-wrapper">
+                                    <canvas id="trendChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports Section -->
+            <div class="expandable-section" id="reports-section">
+                <div class="section-toggle" onclick="toggleSection('reports')">
+                    <h3>
+                        <span>📋</span>
+                        <span>Performance Reports</span>
+                    </h3>
+                    <span class="toggle-icon" id="reports-toggle">▼</span>
+                </div>
+                <div class="section-content" id="reports-content">
+                    <div class="section-inner">
+                        <div class="report-grid">
+                            <div class="report-card" style="border-left-color: #3498db;">
+                                <div class="report-title">Podcast to Discovery</div>
+                                <div class="report-value" style="color: #3498db;" id="report-podcast-discovery">0%</div>
+                                <div class="report-description">Conversion rate from podcast interviews to discovery calls</div>
+                            </div>
+                            <div class="report-card" style="border-left-color: #27ae60;">
+                                <div class="report-title">Discovery to Sales</div>
+                                <div class="report-value" style="color: #27ae60;" id="report-discovery-sales">0%</div>
+                                <div class="report-description">Qualification success rate</div>
+                            </div>
+                            <div class="report-card" style="border-left-color: #f39c12;">
+                                <div class="report-title">Sales to Close</div>
+                                <div class="report-value" style="color: #f39c12;" id="report-sales-close">0%</div>
+                                <div class="report-description">Close rate from sales calls</div>
+                            </div>
+                            <div class="report-card" style="border-left-color: #9b59b6;">
+                                <div class="report-title">Overall Pipeline Health</div>
+                                <div class="report-value" style="color: #9b59b6;" id="report-health">Good</div>
+                                <div class="report-description">Based on stage distribution and velocity</div>
+                            </div>
+                            <div class="report-card" style="border-left-color: #e74c3c;">
+                                <div class="report-title">Average Deal Cycle</div>
+                                <div class="report-value" style="color: #e74c3c;" id="report-cycle">0 days</div>
+                                <div class="report-description">From first contact to closed won</div>
+                            </div>
+                            <div class="report-card" style="border-left-color: #1abc9c;">
+                                <div class="report-title">Automation Rate</div>
+                                <div class="report-value" style="color: #1abc9c;" id="report-automation">0%</div>
+                                <div class="report-description">Contacts auto-progressed from podcast</div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </main>
-        <!-- Connection Status -->
-        <div class="connection-status" id="connection-status">
-            <div class="status-indicator" id="status-indicator"></div>
-            <span id="status-text">Connecting...</span>
-        </div>
     </div>
+
     <script>
-        const API_BASE = 'https://growthmanagerpro-backend.vercel.app';
-        let pipelineData = [];
-        let contactsData = [];
-        const STAGES = [
-            { id: 'lead', name: 'Lead', color: '#95a5a6' },
-            { id: 'qualified', name: 'Qualified', color: '#3498db' },
-            { id: 'proposal', name: 'Proposal', color: '#9b59b6' },
-            { id: 'negotiation', name: 'Negotiation', color: '#f39c12' },
-            { id: 'closed', name: 'Closed/Won', color: '#27ae60' }
-        ];
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('[Pipeline] Initializing...');
-            console.log('[Pipeline] API Base:', API_BASE);
+        // Configuration
+        const API_BASE = 'https://maggieforbesstrategies-backend.vercel.app';
+        
+        // State
+        let pipelineData = { stages: [], stats: {} };
+        let charts = {};
+        
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            console.log('[Pipeline] Page loaded');
             loadPipeline();
-            
-            // Auto-refresh every 5 minutes
-            setInterval(loadPipeline, 300000);
         });
-        // Load pipeline from API
+
+        // Logout handler
+        function handleLogout() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('userRole');
+            window.location.href = 'index.html';
+        }
+
+        // Toggle section
+        function toggleSection(sectionName) {
+            const content = document.getElementById(`${sectionName}-content`);
+            const toggle = document.getElementById(`${sectionName}-toggle`);
+            
+            if (content.classList.contains('expanded')) {
+                content.classList.remove('expanded');
+                toggle.classList.remove('expanded');
+            } else {
+                content.classList.add('expanded');
+                toggle.classList.add('expanded');
+                
+                // Initialize charts when analytics is opened
+                if (sectionName === 'analytics' && Object.keys(charts).length === 0) {
+                    setTimeout(() => initializeCharts(), 100);
+                }
+            }
+        }
+
+        // Scroll to sections
+        function scrollToAnalytics() {
+            document.getElementById('analytics-section').scrollIntoView({ behavior: 'smooth' });
+            if (!document.getElementById('analytics-content').classList.contains('expanded')) {
+                toggleSection('analytics');
+            }
+        }
+
+        function scrollToReports() {
+            document.getElementById('reports-section').scrollIntoView({ behavior: 'smooth' });
+            if (!document.getElementById('reports-content').classList.contains('expanded')) {
+                toggleSection('reports');
+            }
+        }
+
+        // Load pipeline data
         async function loadPipeline() {
             try {
                 updateConnectionStatus('connecting');
@@ -547,11 +708,15 @@
                 const result = await response.json();
                 
                 if (result.success && result.data) {
-                    pipelineData = result.data.deals || [];
+                    pipelineData = result.data;
                     updateStats(result.data.stats);
                     renderPipeline();
+                    updateReports();
+                    if (Object.keys(charts).length > 0) {
+                        updateCharts();
+                    }
                     updateConnectionStatus('connected');
-                    console.log('[Pipeline] ✅ Loaded', pipelineData.length, 'deals');
+                    console.log('[Pipeline] ✅ Loaded pipeline data');
                 } else {
                     throw new Error('Invalid response format');
                 }
@@ -561,124 +726,274 @@
                 renderErrorState(error.message);
             }
         }
+
         // Update statistics
         function updateStats(stats) {
-            if (!stats) {
-                // Calculate from data if stats not provided
-                stats = calculateStats();
-            }
+            if (!stats) return;
             
-            document.getElementById('total-value').textContent = `$${(stats.totalValue || 0).toLocaleString()}`;
-            document.getElementById('active-deals').textContent = stats.activeDeals || 0;
-            document.getElementById('avg-deal-size').textContent = `$${(stats.avgDealSize || 0).toLocaleString()}`;
-            document.getElementById('win-rate').textContent = `${(stats.winRate || 0).toFixed(0)}%`;
-            
-            // Automation stats
-            const autoCount = stats.autoCreatedCount || 0;
-            const manualCount = stats.manualCount || 0;
-            const totalDeals = autoCount + manualCount;
-            const automationRate = totalDeals > 0 ? (autoCount / totalDeals * 100) : 0;
-            
-            document.getElementById('automation-rate').textContent = `${automationRate.toFixed(0)}%`;
-            document.getElementById('auto-count').textContent = autoCount;
-            document.getElementById('manual-count').textContent = manualCount;
+            document.getElementById('total-contacts').textContent = stats.totalContacts || 0;
+            document.getElementById('active-contacts').textContent = stats.activeContacts || 0;
+            document.getElementById('closed-won').textContent = stats.closedWon || 0;
+            document.getElementById('conversion-rate').textContent = 
+                `${(stats.conversionRate || 0).toFixed(1)}% conversion`;
+            document.getElementById('from-podcast').textContent = stats.fromPodcast || 0;
         }
-        // Calculate stats from data
-        function calculateStats() {
-            const totalValue = pipelineData.reduce((sum, deal) => sum + (parseFloat(deal.value) || 0), 0);
-            const activeDeals = pipelineData.filter(d => d.stage !== 'lost').length;
-            const avgDealSize = activeDeals > 0 ? totalValue / activeDeals : 0;
-            
-            const closedDeals = pipelineData.filter(d => d.stage === 'closed').length;
-            const advancedDeals = pipelineData.filter(d => 
-                ['proposal', 'negotiation', 'closed', 'lost'].includes(d.stage)
-            ).length;
-            const winRate = advancedDeals > 0 ? (closedDeals / advancedDeals * 100) : 0;
-            // Automation metrics
-            const autoCreatedCount = pipelineData.filter(d => d.autoCreated === true).length;
-            const manualCount = pipelineData.filter(d => !d.autoCreated).length;
-            const fromPodcast = pipelineData.filter(d => d.sourceType === 'sales_call').length;
-            return { 
-                totalValue, 
-                activeDeals, 
-                avgDealSize, 
-                winRate,
-                autoCreatedCount,
-                manualCount,
-                fromPodcast
-            };
-        }
+
         // Render pipeline
         function renderPipeline() {
             const container = document.getElementById('pipeline-stages');
-            document.getElementById('pipeline-count').textContent = pipelineData.length;
-            if (pipelineData.length === 0) {
+            const stages = pipelineData.stages || [];
+            
+            document.getElementById('pipeline-count').textContent = 
+                pipelineData.stats?.totalContacts || 0;
+
+            if (stages.length === 0) {
                 container.innerHTML = `
                     <div style="grid-column: 1 / -1;">
                         <div style="text-align: center; padding: 3rem; color: #7f8c8d;">
-                            <p style="font-size: 1.1rem; margin-bottom: 0.5rem;">📊 No deals in pipeline</p>
-                            <p>Add your first deal to start tracking!</p>
-                            <button class="btn btn-primary" onclick="addDeal()" style="margin-top: 1.5rem;">
-                                + Add Deal
-                            </button>
+                            <p style="font-size: 1.1rem; margin-bottom: 0.5rem;">📊 No contacts in pipeline</p>
+                            <p>Contacts will appear here as they progress through your funnel</p>
                         </div>
                     </div>
                 `;
                 return;
             }
-            container.innerHTML = STAGES.map(stage => {
-                const stageDeals = pipelineData.filter(deal => deal.stage === stage.id);
-                const stageValue = stageDeals.reduce((sum, deal) => sum + (parseFloat(deal.value) || 0), 0);
+
+            container.innerHTML = stages.map(stage => {
+                const prospects = stage.prospects || [];
                 
                 return `
                     <div class="stage-column">
                         <div class="stage-header">
-                            <div>
-                                <div class="stage-title" style="color: ${stage.color}">${stage.name}</div>
-                                <div class="stage-value">$${stageValue.toLocaleString()}</div>
+                            <div class="stage-title" style="color: ${getStageColor(stage.key)}">
+                                <span>${stage.icon || ''}</span>
+                                <span>${stage.name}</span>
                             </div>
-                            <div class="stage-count">${stageDeals.length}</div>
+                            <div class="stage-count">${stage.count || 0}</div>
                         </div>
                         <div class="stage-deals">
-                            ${stageDeals.length === 0 ? 
-                                '<div class="empty-stage">No deals in this stage</div>' : 
-                                stageDeals.map(deal => renderDealCard(deal, stage.color)).join('')
+                            ${prospects.length === 0 ? 
+                                '<div class="empty-stage">No contacts yet</div>' : 
+                                prospects.map(contact => renderContactCard(contact, stage.key)).join('')
                             }
                         </div>
                     </div>
                 `;
             }).join('');
         }
-        // Render deal card - FIXED: Using camelCase field names
-        function renderDealCard(deal, stageColor) {
-            const daysInStage = deal.createdAt ? 
-                Math.floor((new Date() - new Date(deal.createdAt)) / (1000 * 60 * 60 * 24)) : 0;
-            
-            // Determine automation badge - FIXED: Using camelCase
-            let badge = '';
-            if (deal.autoCreated) {
-                if (deal.sourceType === 'sales_call') {
-                    badge = '<span class="automation-badge badge-podcast">🎙️ From Podcast</span>';
-                } else {
-                    badge = '<span class="automation-badge badge-auto">🤖 Auto-Created</span>';
-                }
-            } else {
-                badge = '<span class="automation-badge badge-manual">👤 Manual</span>';
-            }
+
+        // Render contact card
+        function renderContactCard(contact, stageKey) {
+            const stageColor = getStageColor(stageKey);
+            const score = contact.podcastScore || contact.score || 0;
             
             return `
-                <div class="deal-card" onclick="viewDeal('${deal.id}')" style="border-left-color: ${stageColor}">
-                    ${badge}
-                    <div class="deal-name">${deal.name || 'Untitled Deal'}</div>
-                    <div class="deal-company">${deal.company || 'No company'}</div>
-                    <div class="deal-value">$${(deal.value || 0).toLocaleString()}</div>
-                    <div class="deal-meta">
-                        <span>${deal.expectedCloseDate ? formatDate(deal.expectedCloseDate) : 'No date set'}</span>
-                        <span class="deal-days">${daysInStage}d</span>
+                <div class="contact-card" onclick="viewContact('${contact.id}')" 
+                     style="border-left-color: ${stageColor}">
+                    <div class="contact-name">${contact.name || 'Unnamed Contact'}</div>
+                    <div class="contact-company">${contact.company || 'No company'}</div>
+                    <div class="contact-email">${contact.email || 'No email'}</div>
+                    <div class="contact-meta">
+                        <span>${formatDate(contact.updatedAt || contact.createdAt)}</span>
+                        ${score > 0 ? `<span class="contact-score">${score} pts</span>` : ''}
                     </div>
                 </div>
             `;
         }
+
+        // Get stage color
+        function getStageColor(stageKey) {
+            const colors = {
+                'lead': '#95a5a6',
+                'podcast': '#9b59b6',
+                'discovery': '#3498db',
+                'sales': '#f39c12',
+                'proposal': '#e67e22',
+                'negotiation': '#e74c3c',
+                'closed': '#27ae60',
+                'lost': '#7f8c8d'
+            };
+            return colors[stageKey] || '#95a5a6';
+        }
+
+        // Initialize charts
+        function initializeCharts() {
+            // Conversion Funnel
+            const funnelCtx = document.getElementById('funnelChart').getContext('2d');
+            charts.funnel = new Chart(funnelCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Podcast', 'Discovery', 'Sales', 'Proposal', 'Closed'],
+                    datasets: [{
+                        label: 'Contacts',
+                        data: [0, 0, 0, 0, 0],
+                        backgroundColor: [
+                            '#9b59b6',
+                            '#3498db',
+                            '#f39c12',
+                            '#e67e22',
+                            '#27ae60'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+
+            // Stage Distribution (Pie)
+            const stageCtx = document.getElementById('stageChart').getContext('2d');
+            charts.stage = new Chart(stageCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        data: [],
+                        backgroundColor: [
+                            '#95a5a6',
+                            '#9b59b6',
+                            '#3498db',
+                            '#f39c12',
+                            '#e67e22',
+                            '#e74c3c',
+                            '#27ae60',
+                            '#7f8c8d'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+
+            // Velocity Chart
+            const velocityCtx = document.getElementById('velocityChart').getContext('2d');
+            charts.velocity = new Chart(velocityCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Discovery', 'Sales', 'Proposal', 'Negotiation'],
+                    datasets: [{
+                        label: 'Avg Days',
+                        data: [7, 14, 10, 5],
+                        backgroundColor: '#3498db'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+
+            // Trend Chart
+            const trendCtx = document.getElementById('trendChart').getContext('2d');
+            charts.trend = new Chart(trendCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                    datasets: [{
+                        label: 'New Contacts',
+                        data: [5, 8, 12, 15],
+                        borderColor: '#3498db',
+                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: 'Closed Won',
+                        data: [1, 2, 3, 4],
+                        borderColor: '#27ae60',
+                        backgroundColor: 'rgba(39, 174, 96, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+
+            updateCharts();
+        }
+
+        // Update charts with real data
+        function updateCharts() {
+            if (!pipelineData.stages) return;
+
+            const stages = pipelineData.stages;
+
+            // Update funnel chart
+            if (charts.funnel) {
+                const podcast = stages.find(s => s.key === 'podcast');
+                const discovery = stages.find(s => s.key === 'discovery');
+                const sales = stages.find(s => s.key === 'sales');
+                const proposal = stages.find(s => s.key === 'proposal');
+                const closed = stages.find(s => s.key === 'closed');
+
+                charts.funnel.data.datasets[0].data = [
+                    podcast?.count || 0,
+                    discovery?.count || 0,
+                    sales?.count || 0,
+                    proposal?.count || 0,
+                    closed?.count || 0
+                ];
+                charts.funnel.update();
+            }
+
+            // Update stage distribution
+            if (charts.stage) {
+                charts.stage.data.labels = stages.map(s => s.name);
+                charts.stage.data.datasets[0].data = stages.map(s => s.count);
+                charts.stage.update();
+            }
+        }
+
+        // Update reports
+        function updateReports() {
+            const stages = pipelineData.stages || [];
+            
+            const podcast = stages.find(s => s.key === 'podcast');
+            const discovery = stages.find(s => s.key === 'discovery');
+            const sales = stages.find(s => s.key === 'sales');
+            const closed = stages.find(s => s.key === 'closed');
+
+            // Conversion rates
+            const podcastCount = podcast?.count || 0;
+            const discoveryCount = discovery?.count || 0;
+            const salesCount = sales?.count || 0;
+            const closedCount = closed?.count || 0;
+
+            const podcastToDiscovery = podcastCount > 0 ? (discoveryCount / podcastCount * 100) : 0;
+            const discoveryToSales = discoveryCount > 0 ? (salesCount / discoveryCount * 100) : 0;
+            const salesToClose = salesCount > 0 ? (closedCount / salesCount * 100) : 0;
+
+            document.getElementById('report-podcast-discovery').textContent = 
+                `${podcastToDiscovery.toFixed(1)}%`;
+            document.getElementById('report-discovery-sales').textContent = 
+                `${discoveryToSales.toFixed(1)}%`;
+            document.getElementById('report-sales-close').textContent = 
+                `${salesToClose.toFixed(1)}%`;
+
+            // Pipeline health
+            const totalActive = pipelineData.stats?.activeContacts || 0;
+            const health = totalActive > 10 ? 'Excellent' : totalActive > 5 ? 'Good' : 'Building';
+            document.getElementById('report-health').textContent = health;
+
+            // Average cycle (placeholder)
+            document.getElementById('report-cycle').textContent = '30 days';
+
+            // Automation rate
+            const fromPodcast = pipelineData.stats?.fromPodcast || 0;
+            const totalContacts = pipelineData.stats?.totalContacts || 1;
+            const automationRate = (fromPodcast / totalContacts * 100).toFixed(1);
+            document.getElementById('report-automation').textContent = `${automationRate}%`;
+        }
+
         // Render error state
         function renderErrorState(message) {
             const container = document.getElementById('pipeline-stages');
@@ -695,10 +1010,12 @@
                 </div>
             `;
         }
+
         // Update connection status indicator
         function updateConnectionStatus(status, message = '') {
             const indicator = document.getElementById('status-indicator');
             const statusText = document.getElementById('status-text');
+            
             if (status === 'connected') {
                 indicator.className = 'status-indicator status-connected';
                 statusText.textContent = 'Live Connected';
@@ -711,35 +1028,31 @@
                 statusText.textContent = 'Connecting...';
             }
         }
-        // Actions
-        function addDeal() {
-            alert('Add Deal feature coming soon!');
-            // TODO: Open modal to add new deal
+
+        // View contact details
+        function viewContact(id) {
+            console.log('[Pipeline] Viewing contact:', id);
+            alert('Contact details coming soon!\n\nFull contact management interface in development.');
         }
-        function viewDeal(id) {
-            const deal = pipelineData.find(d => d.id === id);
-            if (deal) {
-                console.log('Viewing deal:', deal);
-                alert(`Deal Details:\n\nName: ${deal.name}\nValue: $${(deal.value || 0).toLocaleString()}\nStage: ${deal.stage}\n\nFull deal management coming soon!`);
-                // TODO: Open detailed view modal
-            }
-        }
+
+        // Refresh data
         function refreshData() {
             console.log('[Pipeline] Manual refresh triggered');
             loadPipeline();
         }
-        // Utility functions
+
+        // Utility: Format date
         function formatDate(dateString) {
-            if (!dateString) return '';
+            if (!dateString) return 'No date';
             const date = new Date(dateString);
             return date.toLocaleDateString('en-US', { 
                 month: 'short', 
-                day: 'numeric',
-                year: 'numeric'
+                day: 'numeric'
             });
         }
+
         // Log system info
-        console.log('[Pipeline] System initialized');
+        console.log('[Pipeline] Contact Pipeline initialized');
         console.log('[Pipeline] API Endpoint:', API_BASE);
     </script>
 </body>
