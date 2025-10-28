@@ -742,7 +742,16 @@
     </div>
 
     <script>
-        const API_URL = 'https://growthmanagerpro-backend.vercel.app';
+        <script src="auth-helper.js"></script>
+<script>
+    (function() {
+        if (!AuthHelper.protectPage('advisor-dashboard.html')) {  // ← NOW CORRECT
+            throw new Error('Unauthorized access');
+        }
+        AuthHelper.applyPermissions();
+    })();
+    
+    const API_URL = 'https://growthmanagerpro-backend.vercel.app';
         let currentClientData = null;
 
         // Sample client data
