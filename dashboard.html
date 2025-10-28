@@ -713,9 +713,9 @@
         </main>
     </div>
 
+    <script src="auth-helper.js"></script>
+    
     <script>
-        <script src="auth-helper.js"></script>
-<script>
     (function() {
         if (!AuthHelper.protectPage('advisor-dashboard.html')) {  // ← NOW CORRECT
             throw new Error('Unauthorized access');
