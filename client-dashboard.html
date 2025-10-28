@@ -110,12 +110,32 @@
             margin-right: 0.75rem;
             font-size: 1.2rem;
         }
-        <div class="sidebar-footer">
-    <a href="#" class="logout-link" onclick="handleLogout(); return false;">
-        <span class="logout-icon">→</span>
-        <span>Logout</span>
-    </a>
-</div>
+       .sidebar-footer {
+    margin-top: auto;
+    padding: 1.5rem 2rem;
+    border-top: 2px solid #e1e5e9;
+    background: white;
+}
+
+.logout-link {
+    display: flex;
+    align-items: center;
+    padding: 0.8rem 0;
+    color: #e74c3c;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.logout-link:hover {
+    color: #c0392b;
+    padding-left: 0.5rem;
+}
+
+.logout-icon {
+    margin-right: 0.75rem;
+    font-size: 1.2rem;
+}
         /* Main Content */
         .main-content {
             flex: 1;
