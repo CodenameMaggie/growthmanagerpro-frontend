@@ -3,465 +3,468 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome - Growth Manager Pro</title>
+    <title>Growth Manager Pro - Business Growth Platform</title>
+    <meta name="description" content="Streamline your business growth with comprehensive client acquisition, pipeline management, and revenue tracking in one powerful platform.">
     <style>
-        * { 
-            margin: 0; 
-            padding: 0; 
-            box-sizing: border-box; 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
         
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; 
-            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+            color: white;
+            padding: 80px 20px 120px;
+            text-align: center;
             position: relative;
             overflow: hidden;
         }
-        
-        /* Subtle animated background elements */
-        body::before {
+
+        .hero::before {
             content: '';
             position: absolute;
-            width: 600px;
-            height: 600px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 50%;
-            top: -300px;
-            right: -200px;
-            animation: float 25s infinite ease-in-out;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.5;
         }
-        
-        body::after {
-            content: '';
-            position: absolute;
-            width: 500px;
-            height: 500px;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 50%;
-            bottom: -250px;
-            left: -200px;
-            animation: float 20s infinite ease-in-out reverse;
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0) scale(1); }
-            50% { transform: translateY(-40px) scale(1.08); }
-        }
-        
-        .welcome-container {
-            background: white;
-            padding: 3rem 2.5rem;
-            border-radius: 24px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 8px 16px rgba(0, 0, 0, 0.2);
-            width: 100%;
-            max-width: 480px;
+
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
             position: relative;
             z-index: 1;
-            animation: slideUp 0.6s ease-out;
         }
-        
-        @keyframes slideUp {
-            from { 
-                opacity: 0;
-                transform: translateY(40px);
-            }
-            to { 
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .header-section {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        
-        .logo-image {
-            width: 200px;
-            height: auto;
-            margin: 0 auto 1.5rem;
-            display: block;
-        }
-        
-        .welcome-title {
-            color: #2c3e50;
-            font-size: 2rem;
+
+        .logo {
+            font-size: 32px;
             font-weight: 700;
-            margin-bottom: 0.75rem;
-            letter-spacing: -0.03em;
-        }
-        
-        .welcome-subtitle {
-            color: #475569;
-            font-size: 1.05rem;
-            line-height: 1.6;
-            margin-bottom: 0.5rem;
-        }
-        
-        .tagline {
-            color: #2980b9;
-            font-size: 0.95rem;
-            font-weight: 600;
-            padding: 0.6rem 1.2rem;
-            background: linear-gradient(135deg, #ebf5fb 0%, #d6eaf8 100%);
-            border-radius: 10px;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             display: inline-block;
-            margin-top: 1rem;
         }
-        
-        .features-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.75rem;
-            margin: 1.5rem 0 2rem;
+
+        h1 {
+            font-size: 56px;
+            font-weight: 800;
+            margin-bottom: 24px;
+            line-height: 1.2;
         }
-        
-        .feature-item {
-            background: #f8fafc;
-            padding: 0.9rem;
-            border-radius: 10px;
-            text-align: center;
-            border: 1px solid #e2e8f0;
+
+        .hero p {
+            font-size: 24px;
+            margin-bottom: 40px;
+            opacity: 0.95;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
         }
-        
-        .feature-item .icon {
-            font-size: 1.5rem;
-            margin-bottom: 0.4rem;
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
         }
-        
-        .feature-item .text {
-            color: #475569;
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-        
-        .form-section {
-            margin-bottom: 1.5rem;
-        }
-        
-        .section-title {
-            color: #1e293b;
-            font-size: 0.95rem;
-            font-weight: 600;
-            margin-bottom: 1.2rem;
-            text-align: center;
-        }
-        
-        .form-group {
-            margin-bottom: 1.3rem;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 0.6rem;
-            color: #334155;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-        
-        .input-wrapper {
-            position: relative;
-        }
-        
-        .input-icon {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #94a3b8;
-            width: 18px;
-            height: 18px;
-        }
-        
-        .form-group input {
-            width: 100%;
-            padding: 1rem 1rem 1rem 3rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            font-size: 1rem;
-            transition: all 0.3s;
-            background: #f8fafc;
-        }
-        
-        .form-group input:focus {
-            outline: none;
-            border-color: #3498db;
-            background: white;
-            box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.1);
-        }
-        
-        .login-btn {
-            width: 100%;
-            padding: 1.15rem;
-            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
-            color: white;
+
+        .btn {
+            padding: 16px 40px;
             border: none;
-            border-radius: 12px;
-            font-size: 1.05rem;
+            border-radius: 8px;
+            font-size: 18px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
-            margin-top: 0.5rem;
-            box-shadow: 0 6px 16px rgba(52, 152, 219, 0.35);
+            text-decoration: none;
+            display: inline-block;
         }
-        
-        .login-btn:hover {
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%);
+            color: white;
+            box-shadow: 0 4px 20px rgba(8, 145, 178, 0.4);
+        }
+
+        .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(52, 152, 219, 0.45);
+            box-shadow: 0 6px 30px rgba(8, 145, 178, 0.5);
         }
-        
-        .login-btn:active {
-            transform: translateY(0);
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
         }
-        
-        .login-btn:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-            transform: none;
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.5);
         }
-        
-        .error-message {
-            background: #fee2e2;
-            color: #991b1b;
-            padding: 1rem;
-            border-radius: 12px;
-            margin-bottom: 1.5rem;
-            font-size: 0.9rem;
-            display: none;
-            border-left: 4px solid #ef4444;
-            animation: shake 0.4s;
+
+        /* Features Section */
+        .features {
+            padding: 80px 20px;
+            background: white;
         }
-        
-        .error-message.show {
-            display: block;
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
         }
-        
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-8px); }
-            75% { transform: translateX(8px); }
-        }
-        
-        .welcome-message {
-            background: linear-gradient(135deg, #ebf5fb 0%, #d6eaf8 100%);
-            border: 1px solid #aed6f1;
-            padding: 1.2rem;
-            border-radius: 12px;
-            margin-bottom: 2rem;
+
+        .section-title {
             text-align: center;
-        }
-        
-        .welcome-message h2 {
-            color: #2c3e50;
-            font-size: 1.1rem;
+            font-size: 42px;
             font-weight: 700;
-            margin-bottom: 0.5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-        
-        .welcome-message p {
-            color: #2980b9;
-            font-size: 0.9rem;
-            font-weight: 500;
-            line-height: 1.5;
-        }
-        
-        .footer {
+
+        .section-subtitle {
             text-align: center;
-            margin-top: 2rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid #e2e8f0;
+            font-size: 20px;
+            color: #64748b;
+            margin-bottom: 60px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
         }
-        
-        .footer p {
-            color: #94a3b8;
-            font-size: 0.85rem;
-            margin-bottom: 0.3rem;
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin-bottom: 60px;
         }
-        
-        .footer strong {
-            color: #475569;
-            font-weight: 600;
+
+        .feature-card {
+            padding: 40px;
+            background: #f8fafc;
+            border-radius: 16px;
+            transition: all 0.3s;
+            border: 2px solid transparent;
         }
-        
-        /* Responsive */
-        @media (max-width: 480px) {
-            .welcome-container {
-                padding: 2rem 1.5rem;
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            border-color: #0891b2;
+        }
+
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            font-size: 24px;
+            margin-bottom: 12px;
+            color: #1e293b;
+        }
+
+        .feature-card p {
+            color: #64748b;
+            font-size: 16px;
+            line-height: 1.7;
+        }
+
+        /* Stats Section */
+        .stats {
+            padding: 80px 20px;
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+            color: white;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 56px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        /* How It Works */
+        .how-it-works {
+            padding: 80px 20px;
+            background: white;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
+        }
+
+        .step {
+            text-align: center;
+            position: relative;
+        }
+
+        .step-number {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: 700;
+            margin: 0 auto 24px;
+            box-shadow: 0 4px 20px rgba(8, 145, 178, 0.3);
+        }
+
+        .step h3 {
+            font-size: 22px;
+            margin-bottom: 12px;
+            color: #1e293b;
+        }
+
+        .step p {
+            color: #64748b;
+            line-height: 1.7;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 80px 20px;
+            background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .cta-section h2 {
+            font-size: 42px;
+            margin-bottom: 20px;
+        }
+
+        .cta-section p {
+            font-size: 20px;
+            margin-bottom: 40px;
+            opacity: 0.95;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 40px 20px;
+            background: #0f172a;
+            color: white;
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+
+        .footer-links a:hover {
+            opacity: 1;
+        }
+
+        .copyright {
+            opacity: 0.6;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 36px;
             }
             
-            .welcome-title {
-                font-size: 1.6rem;
+            .hero p {
+                font-size: 18px;
             }
-            
+
+            .section-title {
+                font-size: 32px;
+            }
+
             .features-grid {
                 grid-template-columns: 1fr;
-            }
-            
-            .logo-image {
-                width: 160px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="welcome-container">
-        <div class="header-section">
-            <img src="logo.png" alt="Maggie Forbes - B2B Growth Strategist" class="logo-image">
-            <h1 class="welcome-title">Welcome Back! 👋</h1>
-            <p class="welcome-subtitle">Sign in to access your Growth Manager Pro dashboard</p>
-            <div class="tagline">The Leadership Intelligence System™</div>
-        </div>
-        
-        <div class="features-grid">
-            <div class="feature-item">
-                <div class="icon">🎙️</div>
-                <div class="text">Podcast Pipeline</div>
-            </div>
-            <div class="feature-item">
-                <div class="icon">📊</div>
-                <div class="text">Deal Tracking</div>
-            </div>
-            <div class="feature-item">
-                <div class="icon">🤖</div>
-                <div class="text">AI Analysis</div>
-            </div>
-            <div class="feature-item">
-                <div class="icon">💰</div>
-                <div class="text">Cash Flow</div>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="logo">Growth Manager Pro</div>
+            <h1>Streamline Your Business Growth</h1>
+            <p>Comprehensive client acquisition, pipeline management, and revenue tracking in one powerful platform</p>
+            <div class="cta-buttons">
+                <a href="dashboard.html" class="btn btn-primary">Access Dashboard</a>
+                <a href="#features" class="btn btn-secondary">Learn More</a>
             </div>
         </div>
-        
-        <div class="welcome-message">
-            <h2>Your Growth Hub Awaits</h2>
-            <p>Access your complete client acquisition system with real-time pipeline visibility and automated workflows</p>
-        </div>
-        
-        <div class="error-message" id="errorMessage"></div>
-        
-        <form id="loginForm" onsubmit="handleLogin(event)">
-            <div class="section-title">🔐 Secure Access</div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <h2 class="section-title">Everything You Need to Scale</h2>
+            <p class="section-subtitle">From first contact to closed deal, manage your entire growth engine in one place</p>
             
-            <div class="form-group">
-                <label for="email">Email Address</label>
-                <div class="input-wrapper">
-                    <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M1.5 8.67v8.58a3 3 0 003 3h15a3 3 0 003-3V8.67l-8.928 5.493a3 3 0 01-3.144 0L1.5 8.67z" />
-                        <path d="M22.5 6.908V6.75a3 3 0 00-3-3h-15a3 3 0 00-3 3v.158l9.714 5.978a1.5 1.5 0 001.572 0L22.5 6.908z" />
-                    </svg>
-                    <input type="email" id="email" required autocomplete="email" placeholder="you@example.com">
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🎙️</div>
+                    <h3>Client Acquisition</h3>
+                    <p>Track pre-qualification calls, podcast interviews, discovery sessions, and strategy calls through your entire acquisition funnel.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📈</div>
+                    <h3>Pipeline Management</h3>
+                    <p>Visualize your sales pipeline with real-time insights. Move deals through stages and track conversion rates effortlessly.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">💰</div>
+                    <h3>Revenue Tracking</h3>
+                    <p>Monitor cash flow, forecast revenue, and track deals from proposal to payment. Know exactly where your business stands.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📧</div>
+                    <h3>Campaign Management</h3>
+                    <p>Launch and manage outbound campaigns, track email engagement, and automate follow-ups with integrated tools.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🚀</div>
+                    <h3>Growth Sprints</h3>
+                    <p>Plan and execute focused growth initiatives with sprint planning, goal tracking, and performance analytics.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">👥</div>
+                    <h3>Contact Management</h3>
+                    <p>Centralize all your contacts, prospects, and clients with detailed profiles, interaction history, and engagement data.</p>
                 </div>
             </div>
-            
-            <div class="form-group">
-                <label for="password">Password</label>
-                <div class="input-wrapper">
-                    <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                        <path fill-rule="evenodd" d="M12 1.5a5.25 5.25 0 00-5.25 5.25v3a3 3 0 00-3 3v6.75a3 3 0 003 3h10.5a3 3 0 003-3v-6.75a3 3 0 00-3-3v-3c0-2.9-2.35-5.25-5.25-5.25zm3.75 8.25v-3a3.75 3.75 0 10-7.5 0v3h7.5z" clip-rule="evenodd" />
-                    </svg>
-                    <input type="password" id="password" required autocomplete="current-password" placeholder="Enter your password">
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">14</div>
+                    <div class="stat-label">Integrated Modules</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">100%</div>
+                    <div class="stat-label">Automated Workflows</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">7x</div>
+                    <div class="stat-label">Average ROI</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">90</div>
+                    <div class="stat-label">Days to Results</div>
                 </div>
             </div>
-            
-            <button type="submit" class="login-btn" id="loginBtn">
-                ✨ Access Your Dashboard
-            </button>
-        </form>
-        
-        <div class="footer">
-            <p><strong>Maggie Forbes Strategies</strong></p>
-            <p>Empowering B2B Growth Through The Leadership Intelligence System™</p>
-            <p style="margin-top: 0.8rem; color: #cbd5e1; font-size: 0.8rem;">© 2025 Growth Manager Pro. All rights reserved.</p>
         </div>
-    </div>
+    </section>
 
-    <script>
-    const API_URL = 'https://growthmanagerpro-backend.vercel.app';
+    <!-- How It Works -->
+    <section class="how-it-works">
+        <div class="container">
+            <h2 class="section-title">How It Works</h2>
+            <p class="section-subtitle">A systematic approach to predictable growth</p>
+            
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Capture Leads</h3>
+                    <p>Integrate with Calendly, Zoom, and your email tools to automatically capture every prospect interaction.</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Qualify & Nurture</h3>
+                    <p>AI-powered analysis scores prospects and automatically advances qualified leads through your funnel.</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Close Deals</h3>
+                    <p>Track proposals, manage negotiations, and monitor cash flow from opportunity to closed deal.</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3>Scale Growth</h3>
+                    <p>Use analytics and insights to optimize your process, run focused sprints, and scale what's working.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-        // Check if already logged in
-        const existingUser = localStorage.getItem('user');
-        if (existingUser) {
-            try {
-                const user = JSON.parse(existingUser);
-                // Redirect based on user type
-                if (user.type === 'client') {
-                    window.location.href = '/client-portal.html';
-                } else {
-                    window.location.href = '/dashboard.html';
-                }
-            } catch (e) {
-                // Invalid user data, clear it
-                localStorage.removeItem('user');
-            }
-        }
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <h2>Ready to Accelerate Your Growth?</h2>
+            <p>Join business leaders who are systematically scaling with Growth Manager Pro</p>
+            <a href="dashboard.html" class="btn btn-primary" style="background: white; color: #0891b2;">Get Started Now</a>
+        </div>
+    </section>
 
-        async function handleLogin(event) {
-            event.preventDefault();
-            
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const errorMessage = document.getElementById('errorMessage');
-            const loginBtn = document.getElementById('loginBtn');
-            
-            // Hide previous errors
-            errorMessage.classList.remove('show');
-            
-            // Disable button
-            loginBtn.disabled = true;
-            loginBtn.textContent = '⏳ Signing you in...';
-            
-            try {
-                const response = await fetch(`${API_URL}/api/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password })
-                });
-                
-                const result = await response.json();
-                
-                if (!result.success) {
-                    throw new Error(result.error || 'Login failed. Please check your credentials.');
-                }
-                
-                // Store user data with permissions
-                localStorage.setItem('user', JSON.stringify(result.data));
-                
-                console.log('Login successful:', {
-                    name: result.data.name,
-                    role: result.data.role,
-                    type: result.data.type,
-                    permissions: result.data.permissions
-                });
-                
-                // Show success
-                loginBtn.textContent = '✓ Success! Opening your dashboard...';
-                
-                // Redirect based on backend's recommendation
-                const redirectTo = result.data.redirectTo || '/dashboard.html';
-                
-                setTimeout(() => {
-                    window.location.href = redirectTo;
-                }, 1000);
-                
-            } catch (error) {
-                console.error('Login error:', error);
-                errorMessage.textContent = '⚠️ ' + error.message;
-                errorMessage.classList.add('show');
-                
-                // Re-enable button
-                loginBtn.disabled = false;
-                loginBtn.textContent = '✨ Access Your Dashboard';
-            }
-        }
-        
-        // Add enter key support and auto-focus
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('email').focus();
-        });
-    </script>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-links">
+                <a href="dashboard.html">Dashboard</a>
+                <a href="#features">Features</a>
+                <a href="mailto:maggie@maggieforbesstrategies.com">Contact</a>
+                <a href="https://www.maggieforbesstrategies.com" target="_blank">About</a>
+            </div>
+            <div class="copyright">
+                &copy; 2025 Growth Manager Pro. Part of The Leadership Intelligence System™ by Maggie Forbes Strategies.
+            </div>
+        </div>
+    </footer>
 </body>
 </html>
