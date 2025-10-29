@@ -545,9 +545,9 @@
                         <span class="nav-icon">🔍</span>
                         Discovery Calls
                     </a>
-                    <a href="sales-calls.html" class="nav-item">
+                    <a href="strategy-calls.html" class="nav-item">
                         <span class="nav-icon">💼</span>
-                        Sales Calls
+                        <span>Strategy Calls</span>
                     </a>
                     <a href="pipeline.html" class="nav-item">
                         <span class="nav-icon">📈</span>
@@ -719,8 +719,8 @@
                                 <input type="number" class="result-input" id="content-created" placeholder="0">
                             </div>
                             <div class="result-card">
-                                <div class="result-label">Sales Calls Analyzed</div>
-                                <input type="number" class="result-input" id="sales-calls-analyzed" placeholder="0">
+                                <div class="result-label">Strategy Calls Analyzed</div>
+                                <input type="number" class="result-input" id="strategy-calls-analyzed" placeholder="0">
                             </div>
                         </div>
                     </div>
@@ -779,7 +779,7 @@
                     leadsGenerated: 47,
                     callsBooked: 12,
                     contentCreated: 8,
-                    salesCallsAnalyzed: 6
+                    strategyCallsAnalyzed: 6
                 }
             },
             tye: {
@@ -845,7 +845,7 @@
             document.getElementById('leads-generated').value = currentClientData.results.leadsGenerated;
             document.getElementById('calls-booked').value = currentClientData.results.callsBooked;
             document.getElementById('content-created').value = currentClientData.results.contentCreated;
-            document.getElementById('sales-calls-analyzed').value = currentClientData.results.salesCallsAnalyzed;
+            document.getElementById('strategy-calls-analyzed').value = currentClientData.results.strategyCallsAnalyzed;
         }
 
         function updateProgress() {
@@ -953,7 +953,7 @@
             currentClientData.results.leadsGenerated = parseInt(document.getElementById('leads-generated').value) || 0;
             currentClientData.results.callsBooked = parseInt(document.getElementById('calls-booked').value) || 0;
             currentClientData.results.contentCreated = parseInt(document.getElementById('content-created').value) || 0;
-            currentClientData.results.salesCallsAnalyzed = parseInt(document.getElementById('sales-calls-analyzed').value) || 0;
+            currentClientData.results.strategyCallsAnalyzed = parseInt(document.getElementById('strategy-calls-analyzed').value) || 0;
 
             alert('✅ Client data saved successfully!\n\nIn production, this will sync to the backend.');
             console.log('Saved client data:', currentClientData);
