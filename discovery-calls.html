@@ -600,7 +600,7 @@
                 <h2>Discovery Calls</h2>
                 <p>AI-powered tier qualification and systems recommendation</p>
                 <div class="header-actions">
-                    <button class="btn btn-primary" onclick="scheduleCall()">+ Schedule Call</button>
+                    <button class="btn btn-primary" onclick="scheduleCall()">+ Book Strategy Call</button>
                     <button class="btn btn-secondary" onclick="refreshData()">🔄 Refresh</button>
                 </div>
             </div>
@@ -1007,9 +1007,9 @@
 
         // Actions
         function scheduleCall() {
-            alert('Schedule Discovery Call feature coming soon!');
-            // TODO: Open modal to schedule new call
-        }
+    // Book STRATEGY call (next stage after discovery)
+    window.open('https://calendly.com/maggie-maggieforbesstrategies/strategy-call', '_blank');
+}
 
         function refreshData() {
             console.log('[Discovery Calls] Manual refresh triggered');
