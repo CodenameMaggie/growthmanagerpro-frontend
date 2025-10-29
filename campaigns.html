@@ -677,19 +677,25 @@
         }
 
         // Update stats display
-        function updateStats(data) {
-            document.getElementById('active-campaigns').textContent = data.activeCampaigns || '0';
-            document.getElementById('total-sent').textContent = data.totalSent || '0';
-            document.getElementById('open-rate').textContent = data.openRate || '0%';
-            document.getElementById('click-rate').textContent = data.clickRate || '0%';
-            document.getElementById('reply-rate').textContent = data.replyRate || '0%';
-            
-            document.getElementById('active-change').textContent = 'This month';
-            document.getElementById('sent-change').textContent = 'Total emails';
-            document.getElementById('open-change').textContent = 'Average';
-            document.getElementById('click-change').textContent = 'Average';
-            document.getElementById('reply-change').textContent = 'Average';
-        }
+        // Update stats display
+function updateStats(stats) {
+    // Calculate rates
+    const totalSent = stats.totalSent || 0;
+    const openRate = totalSent > 0 ? Math.round((stats.totalOpened / totalSent) * 100) : 0;
+    const replyRate = totalSent > 0 ? Math.round((stats.totalReplied / totalSent) * 100) : 0;
+    
+    document.getElementById('active-campaigns').textContent = stats.activeCampaigns || '0';
+    document.getElementById('total-sent').textContent = totalSent;
+    document.getElementById('open-rate').textContent = openRate + '%';
+    document.getElementById('click-rate').textContent = '0%';  // Not tracked yet
+    document.getElementById('reply-rate').textContent = replyRate + '%';
+    
+    document.getElementById('active-change').textContent = 'This month';
+    document.getElementById('sent-change').textContent = 'Total emails';
+    document.getElementById('open-change').textContent = 'Average';
+    document.getElementById('click-change').textContent = 'Average';
+    document.getElementById('reply-change').textContent = 'Average';
+}
 
         // Display campaigns
         function displayCampaigns(campaigns) {
