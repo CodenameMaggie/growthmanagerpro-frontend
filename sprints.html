@@ -831,14 +831,14 @@
                         </div>
                     </div>
 
-                    <!-- Post-Sales Actions -->
+                    <!-- Post-Strategy Actions -->
                     <div class="action-category">
                         <div class="category-header">
                             <span class="category-icon">💼</span>
-                            <span class="category-title">Post-Sales Actions</span>
-                            <span class="category-count" id="sales-count">0</span>
+                            <span class="category-title">Post-Strategy Actions</span>
+                            <span class="category-count" id="strategy-count">0</span>
                         </div>
-                        <div class="task-list" id="sales-tasks">
+                        <div class="task-list" id="strategy-tasks">
                             <div class="loading">
                                 <div class="loading-spinner"></div>
                                 <p>Loading tasks...</p>
@@ -912,7 +912,7 @@
         let tasksData = {
             podcast: [],
             discovery: [],
-            sales: [],
+            strategy: [],
             client: []
         };
         
@@ -987,7 +987,7 @@
                         completed: false
                     }
                 ],
-                sales: [
+                strategy: [
                     {
                         id: 's1',
                         title: 'Onboard New Client: Sarah (Design Co)',
@@ -1022,7 +1022,7 @@
         function renderAllTasks() {
             renderTaskCategory('podcast', tasksData.podcast, 'podcast-tasks', 'podcast-count');
             renderTaskCategory('discovery', tasksData.discovery, 'discovery-tasks', 'discovery-count');
-            renderTaskCategory('sales', tasksData.sales, 'sales-tasks', 'sales-count');
+            renderTaskCategory('strategy', tasksData.strategy, 'strategy-tasks', 'strategy-count');
             renderTaskCategory('client', tasksData.client, 'client-tasks', 'client-count');
         }
 
@@ -1078,7 +1078,7 @@
             const totalIncomplete = 
                 tasksData.podcast.filter(t => !t.completed).length +
                 tasksData.discovery.filter(t => !t.completed).length +
-                tasksData.sales.filter(t => !t.completed).length +
+                tasksData.strategy.filter(t => !t.completed).length +
                 tasksData.client.filter(t => !t.completed).length;
             
             const badge = document.getElementById('tasks-badge');
