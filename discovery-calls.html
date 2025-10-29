@@ -225,37 +225,31 @@
         tbody tr:hover {
             background: #f8f9fa;
         }
-        /* AI Score Badge */
-        .score-badge {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            font-weight: bold;
-            font-size: 0.9rem;
-            border: 3px solid;
+        /* Tier Badge Styles */
+        .tier-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-        .score-hot {
-            background: #d4edda;
-            color: #155724;
-            border-color: #27ae60;
+        .tier-foundations {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
         }
-        .score-warm {
-            background: #fff3cd;
-            color: #856404;
-            border-color: #f39c12;
+        .tier-architecture {
+            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+            color: white;
         }
-        .score-nurture {
-            background: #f8d7da;
-            color: #721c24;
-            border-color: #e74c3c;
+        .tier-alliance {
+            background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
+            color: white;
         }
-        .score-pending {
+        .tier-pending {
             background: #e9ecef;
             color: #6c757d;
-            border-color: #95a5a6;
         }
         /* Qualification Badge */
         .qual-badge {
@@ -267,11 +261,11 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-        .qual-hot {
+        .qual-qualified {
             background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
             color: white;
         }
-        .qual-warm {
+        .qual-review {
             background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
             color: white;
         }
@@ -308,23 +302,6 @@
         .status-nurture {
             background: #e9ecef;
             color: #6c757d;
-        }
-        .status-no-show {
-            background: #f8d7da;
-            color: #721c24;
-        }
-        /* Source Badges */
-        .source-badge {
-            display: inline-block;
-            padding: 0.3rem 0.6rem;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
-            color: white;
-        }
-        .source-manual {
-            background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
         }
         /* Buttons */
         .btn {
@@ -436,27 +413,44 @@
             margin-bottom: 1rem;
             font-size: 1.1rem;
         }
-        .score-breakdown {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
+        .tier-recommendation {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
         }
-        .score-item {
-            background: white;
-            padding: 1rem;
-            border-radius: 8px;
-            border-left: 4px solid #3498db;
+        .tier-recommendation h4 {
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
         }
-        .score-item-label {
-            font-size: 0.85rem;
-            color: #7f8c8d;
+        .tier-recommendation .tier-name {
+            font-size: 2rem;
+            font-weight: bold;
             margin-bottom: 0.5rem;
         }
-        .score-item-value {
-            font-size: 1.5rem;
-            font-weight: bold;
+        .tier-recommendation .tier-price {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 1rem;
+        }
+        .systems-list {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+        .systems-list h5 {
             color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+        .system-item {
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 3px solid #3498db;
         }
         .pain-points {
             list-style: none;
@@ -470,7 +464,7 @@
             border-left: 3px solid #e74c3c;
         }
         .recommendation-box {
-            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
             color: white;
             padding: 1.5rem;
             border-radius: 8px;
@@ -552,13 +546,17 @@
                         <span class="nav-icon">👥</span>
                         <span>Contacts</span>
                     </a>
+                    <a href="deals.html" class="nav-item">
+                        <span class="nav-icon">💰</span>
+                        <span>Client Partnerships</span>
+                    </a>
                 </div>
                 
                 <div class="nav-section">
-                    <div class="nav-section-title">Acquisition</div>
-                    <a href="podcast-interviews.html" class="nav-item">
+                    <div class="nav-section-title">Client Acquisition</div>
+                    <a href="initial-calls.html" class="nav-item">
                         <span class="nav-icon">🎙️</span>
-                        <span>Podcast Interviews</span>
+                        <span>Initial Calls</span>
                     </a>
                     <a href="discovery-calls.html" class="nav-item active">
                         <span class="nav-icon">🔍</span>
@@ -566,15 +564,15 @@
                     </a>
                     <a href="sales-calls.html" class="nav-item">
                         <span class="nav-icon">💼</span>
-                        <span>Sales Calls</span>
+                        <span>Strategy Calls</span>
                     </a>
                 </div>
                 
                 <div class="nav-section">
-                    <div class="nav-section-title">Tools</div>
+                    <div class="nav-section-title">Systems Management</div>
                     <a href="campaigns.html" class="nav-item">
-                        <span class="nav-icon">📧</span>
-                        <span>Campaigns</span>
+                        <span class="nav-icon">🤖</span>
+                        <span>System Deployments</span>
                     </a>
                     <a href="analytics.html" class="nav-item">
                         <span class="nav-icon">📈</span>
@@ -600,7 +598,7 @@
             <!-- Page Header -->
             <div class="page-header">
                 <h2>Discovery Calls</h2>
-                <p>AI-powered qualification of discovery calls with automatic advancement to sales</p>
+                <p>AI-powered tier qualification and systems recommendation</p>
                 <div class="header-actions">
                     <button class="btn btn-primary" onclick="scheduleCall()">+ Schedule Call</button>
                     <button class="btn btn-secondary" onclick="refreshData()">🔄 Refresh</button>
@@ -615,27 +613,27 @@
                 </div>
 
                 <div class="stat-card">
-                    <div class="stat-label">🟢 Hot Leads</div>
-                    <div class="stat-value" style="color: #27ae60;" id="hot-leads">0</div>
-                    <div class="stat-change">40+ points</div>
+                    <div class="stat-label">Architecture Tier</div>
+                    <div class="stat-value" style="color: #9b59b6;" id="architecture-count">0</div>
+                    <div class="stat-change">$150K+ Annual</div>
                 </div>
 
                 <div class="stat-card">
-                    <div class="stat-label">🟡 Warm Leads</div>
-                    <div class="stat-value" style="color: #f39c12;" id="warm-leads">0</div>
-                    <div class="stat-change">30-39 points</div>
+                    <div class="stat-label">Foundations Tier</div>
+                    <div class="stat-value" style="color: #3498db;" id="foundations-count">0</div>
+                    <div class="stat-change">$25K-75K Projects</div>
                 </div>
 
                 <div class="stat-card">
-                    <div class="stat-label">Auto → Sales</div>
-                    <div class="stat-value" style="color: #2ecc71;" id="auto-progressed">0</div>
+                    <div class="stat-label">Alliance Tier</div>
+                    <div class="stat-value" style="color: #e67e22;" id="alliance-count">0</div>
+                    <div class="stat-change">Premium Partnerships</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-label">Auto → Strategy</div>
+                    <div class="stat-value" style="color: #27ae60;" id="auto-progressed">0</div>
                     <div class="stat-change">🤖 Automated</div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-label">Avg AI Score</div>
-                    <div class="stat-value" style="color: #9b59b6;" id="avg-score">0</div>
-                    <div class="stat-change">Out of 50</div>
                 </div>
             </div>
 
@@ -651,16 +649,15 @@
                                 <th>Contact</th>
                                 <th>Company</th>
                                 <th>Date</th>
-                                <th>AI Score</th>
-                                <th>Qualification</th>
-                                <th>Recommended</th>
-                                <th>Source</th>
+                                <th>Recommended Tier</th>
+                                <th>Status</th>
+                                <th>Priority Systems</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody id="calls-body">
                             <tr>
-                                <td colspan="8" class="loading">
+                                <td colspan="7" class="loading">
                                     <div class="loading-spinner"></div>
                                     <p>Loading discovery calls...</p>
                                 </td>
@@ -682,7 +679,7 @@
     <div class="modal" id="analysis-modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>AI Discovery Call Analysis</h3>
+                <h3>AI Tier & Systems Recommendation</h3>
                 <button class="modal-close" onclick="closeModal()">&times;</button>
             </div>
             <div class="modal-body" id="modal-body">
@@ -691,17 +688,8 @@
         </div>
     </div>
 
-<script src="auth-helper.js"></script>
-    
-<script>
-    (function() {
-        if (!AuthHelper.protectPage('advisor-dashboard.html')) {  // ← NOW CORRECT
-            throw new Error('Unauthorized access');
-        }
-        AuthHelper.applyPermissions();
-    })();
-    
-    const API_BASE = 'https://growthmanagerpro-backend.vercel.app';
+    <script>
+        const API_BASE = 'https://growthmanagerpro-backend.vercel.app';
         let callsData = [];
 
         // Initialize
@@ -755,11 +743,23 @@
         function updateStats(stats) {
             if (!stats) return;
             
+            const architectureCount = callsData.filter(c => 
+                c.aiAnalysis?.recommendation?.engagementModel === 'Growth Architecture'
+            ).length;
+            
+            const foundationsCount = callsData.filter(c => 
+                c.aiAnalysis?.recommendation?.engagementModel === 'Strategic Foundations'
+            ).length;
+            
+            const allianceCount = callsData.filter(c => 
+                c.aiAnalysis?.recommendation?.engagementModel === 'Strategic Alliance'
+            ).length;
+            
             document.getElementById('total-calls').textContent = stats.totalCalls || 0;
-            document.getElementById('hot-leads').textContent = stats.hotLeads || 0;
-            document.getElementById('warm-leads').textContent = stats.warmLeads || 0;
+            document.getElementById('architecture-count').textContent = architectureCount;
+            document.getElementById('foundations-count').textContent = foundationsCount;
+            document.getElementById('alliance-count').textContent = allianceCount;
             document.getElementById('auto-progressed').textContent = stats.autoProgressedToSales || 0;
-            document.getElementById('avg-score').textContent = stats.avgScore || 0;
         }
 
         // Render calls table
@@ -770,9 +770,9 @@
             if (callsData.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="8" style="text-align: center; padding: 3rem; color: #7f8c8d;">
+                        <td colspan="7" style="text-align: center; padding: 3rem; color: #7f8c8d;">
                             <p style="font-size: 1.1rem; margin-bottom: 0.5rem;">📭 No discovery calls yet</p>
-                            <p>Schedule your first discovery call or wait for qualified podcast guests!</p>
+                            <p>Schedule your first discovery call!</p>
                         </td>
                     </tr>
                 `;
@@ -787,14 +787,13 @@
                     </td>
                     <td>${call.company || '—'}</td>
                     <td>${call.callDate ? new Date(call.callDate).toLocaleDateString() : '—'}</td>
-                    <td>${renderScoreBadge(call)}</td>
-                    <td>${renderQualificationBadge(call)}</td>
-                    <td>${renderRecommendation(call)}</td>
-                    <td>${renderSourceBadge(call.callSource)}</td>
+                    <td>${renderTierBadge(call)}</td>
+                    <td>${renderStatusBadge(call)}</td>
+                    <td>${renderPrioritySystems(call)}</td>
                     <td>
-                        ${call.aiScore ? `
+                        ${call.aiAnalysis ? `
                             <button class="btn btn-small btn-secondary" onclick="viewAnalysis('${call.id}')">
-                                View Analysis
+                                View Full Analysis
                             </button>
                         ` : `
                             <button class="btn btn-small btn-analyze" onclick="analyzeCall('${call.id}')">
@@ -806,61 +805,63 @@
             `).join('');
         }
 
-        // Render AI score badge
-        function renderScoreBadge(call) {
-            if (!call.aiScore) {
-                return `<span class="score-badge score-pending">—</span>`;
-            }
-            
-            let scoreClass = 'score-nurture';
-            if (call.aiScore >= 40) scoreClass = 'score-hot';
-            else if (call.aiScore >= 30) scoreClass = 'score-warm';
-            
-            return `<span class="score-badge ${scoreClass}">${call.aiScore}</span>`;
-        }
-
-        // Render qualification badge
-        function renderQualificationBadge(call) {
-            if (!call.aiScore) {
-                return `<span style="color: #95a5a6; font-size: 0.9rem;">Pending</span>`;
-            }
-            
-            if (call.aiScore >= 40) {
-                return `<span class="qual-badge qual-hot">🟢 HOT</span>`;
-            } else if (call.aiScore >= 30) {
-                return `<span class="qual-badge qual-warm">🟡 WARM</span>`;
-            } else {
-                return `<span class="qual-badge qual-nurture">📧 NURTURE</span>`;
-            }
-        }
-
-        // Render recommendation
-        function renderRecommendation(call) {
+        // Render tier badge
+        function renderTierBadge(call) {
             if (!call.aiAnalysis || !call.aiAnalysis.recommendation) {
+                return `<span class="tier-badge tier-pending">Pending Analysis</span>`;
+            }
+            
+            const tier = call.aiAnalysis.recommendation.engagementModel;
+            
+            if (tier === 'Growth Architecture') {
+                return `<span class="tier-badge tier-architecture">💎 Architecture</span>`;
+            } else if (tier === 'Strategic Foundations') {
+                return `<span class="tier-badge tier-foundations">🔷 Foundations</span>`;
+            } else if (tier === 'Strategic Alliance') {
+                return `<span class="tier-badge tier-alliance">👑 Alliance</span>`;
+            } else {
+                return `<span class="tier-badge tier-pending">${tier}</span>`;
+            }
+        }
+
+        // Render status badge
+        function renderStatusBadge(call) {
+            const status = call.callStatus || 'scheduled';
+            
+            if (status === 'qualified') {
+                return `<span class="qual-badge qual-qualified">✓ QUALIFIED</span>`;
+            } else if (status === 'review') {
+                return `<span class="qual-badge qual-review">⚠ REVIEW</span>`;
+            } else if (status === 'nurture') {
+                return `<span class="qual-badge qual-nurture">📧 NURTURE</span>`;
+            } else if (status === 'scheduled') {
+                return `<span class="status-badge status-scheduled">Scheduled</span>`;
+            } else {
+                return `<span class="status-badge status-completed">Completed</span>`;
+            }
+        }
+
+        // Render priority systems
+        function renderPrioritySystems(call) {
+            if (!call.aiAnalysis || !call.aiAnalysis.recommendation || !call.aiAnalysis.recommendation.specificServices) {
                 return `<span style="color: #95a5a6; font-size: 0.9rem;">—</span>`;
             }
             
-            const rec = call.aiAnalysis.recommendation.engagementModel;
-            return `<div style="font-size: 0.85rem; color: #2c3e50;">${rec}</div>`;
-        }
-
-        // Render source badge
-        function renderSourceBadge(source) {
-            if (source === 'podcast_qualified') {
-                return `<span class="source-badge">🎙️ Podcast</span>`;
-            }
-            return `<span class="source-badge source-manual">✋ Manual</span>`;
+            const systems = call.aiAnalysis.recommendation.specificServices.slice(0, 2);
+            return `<div style="font-size: 0.85rem; color: #2c3e50;">
+                ${systems.map(s => `<div>• ${s}</div>`).join('')}
+            </div>`;
         }
 
         // Analyze call manually
         async function analyzeCall(callId) {
-            if (!confirm('Analyze this discovery call with AI? This will score the prospect and recommend next steps.')) {
+            if (!confirm('Analyze this discovery call with AI? This will recommend tier and systems.')) {
                 return;
             }
 
             const call = callsData.find(c => c.id === callId);
             if (!call || !call.transcript) {
-                alert('No transcript available for this call. Please ensure the Zoom recording has been processed.');
+                alert('No transcript available for this call. Please ensure the recording has been processed.');
                 return;
             }
 
@@ -899,49 +900,30 @@
             const analysis = call.aiAnalysis;
             const modalBody = document.getElementById('modal-body');
             
+            const tierClass = analysis.recommendation.engagementModel === 'Growth Architecture' ? 'tier-architecture' : 
+                              analysis.recommendation.engagementModel === 'Strategic Foundations' ? 'tier-foundations' : 'tier-alliance';
+            
             modalBody.innerHTML = `
-                <div style="text-align: center; margin-bottom: 2rem;">
-                    <div style="display: inline-block;">
-                        ${renderScoreBadge(call)}
-                        <div style="margin-top: 0.5rem; font-weight: 600; color: #2c3e50;">
-                            Total Score: ${call.aiScore}/50
-                        </div>
-                    </div>
-                </div>
-
-                <div class="analysis-section">
-                    <h4>Score Breakdown</h4>
-                    <div class="score-breakdown">
-                        <div class="score-item">
-                            <div class="score-item-label">Budget Signals</div>
-                            <div class="score-item-value">${analysis.budgetSignals?.score || 0}/15</div>
-                        </div>
-                        <div class="score-item">
-                            <div class="score-item-label">Timeline/Urgency</div>
-                            <div class="score-item-value">${analysis.timeline?.score || 0}/10</div>
-                        </div>
-                        <div class="score-item">
-                            <div class="score-item-label">Decision Authority</div>
-                            <div class="score-item-value">${analysis.decisionAuthority?.score || 0}/10</div>
-                        </div>
-                        <div class="score-item">
-                            <div class="score-item-label">Pain Severity</div>
-                            <div class="score-item-value">${analysis.painSeverity?.score || 0}/10</div>
-                        </div>
-                        <div class="score-item">
-                            <div class="score-item-label">Strategic Fit</div>
-                            <div class="score-item-value">${analysis.strategicFit?.score || 0}/5</div>
-                        </div>
-                        <div class="score-item">
-                            <div class="score-item-label">Agreement to Offer</div>
-                            <div class="score-item-value">${analysis.agreementToOffer?.score || 0}/10</div>
-                        </div>
+                <div class="tier-recommendation">
+                    <h4>Recommended Partnership Tier</h4>
+                    <div class="tier-name">${analysis.recommendation.engagementModel}</div>
+                    <div class="tier-price">${analysis.recommendation.estimatedValue || 'Custom Pricing'}</div>
+                    <div>${analysis.recommendation.reasoning}</div>
+                    
+                    <div class="systems-list">
+                        <h5>Recommended AI Systems</h5>
+                        ${analysis.recommendation.specificServices ? 
+                            analysis.recommendation.specificServices.map(service => `
+                                <div class="system-item">🤖 ${service}</div>
+                            `).join('') 
+                            : '<p>No specific systems identified</p>'
+                        }
                     </div>
                 </div>
 
                 ${analysis.painSeverity?.keyPainPoints ? `
                     <div class="analysis-section">
-                        <h4>Key Pain Points</h4>
+                        <h4>Key Pain Points Identified</h4>
                         <ul class="pain-points">
                             ${analysis.painSeverity.keyPainPoints.map(pain => `
                                 <li>🎯 ${pain}</li>
@@ -951,26 +933,12 @@
                 ` : ''}
 
                 <div class="analysis-section">
-                    <h4>AI Recommendation</h4>
-                    <div class="recommendation-box">
-                        <h5>${analysis.recommendation?.engagementModel || 'N/A'}</h5>
-                        <p>${analysis.recommendation?.reasoning || 'No reasoning provided'}</p>
-                        ${analysis.recommendation?.specificServices ? `
-                            <div style="margin-top: 1rem;">
-                                <strong>Recommended Services:</strong>
-                                <ul style="margin-top: 0.5rem;">
-                                    ${analysis.recommendation.specificServices.map(service => `
-                                        <li>${service}</li>
-                                    `).join('')}
-                                </ul>
-                            </div>
-                        ` : ''}
-                        ${analysis.recommendation?.estimatedValue ? `
-                            <div style="margin-top: 1rem;">
-                                <strong>Estimated Value:</strong> ${analysis.recommendation.estimatedValue}
-                            </div>
-                        ` : ''}
-                    </div>
+                    <h4>Qualification Details</h4>
+                    <p><strong>Total Qualification Score:</strong> ${call.aiScore || 0}/50</p>
+                    <p><strong>Budget Signals:</strong> ${analysis.budgetSignals?.revenueRange || 'Not specified'}</p>
+                    <p><strong>Timeline:</strong> ${analysis.timeline?.estimatedTimeline || 'Not specified'}</p>
+                    <p><strong>Decision Authority:</strong> ${analysis.decisionAuthority?.role || 'Not specified'}</p>
+                    <p><strong>Strategic Fit:</strong> ${analysis.strategicFit?.industry || 'Not specified'}</p>
                 </div>
 
                 <div class="analysis-section">
@@ -978,8 +946,8 @@
                     <p>${analysis.executiveSummary || 'No summary available'}</p>
                 </div>
 
-                <div class="analysis-section">
-                    <h4>Next Steps</h4>
+                <div class="recommendation-box">
+                    <h5>Next Steps</h5>
                     <p><strong>Action:</strong> ${analysis.nextSteps?.action || 'N/A'}</p>
                     ${analysis.nextSteps?.notes ? `
                         <p style="margin-top: 0.5rem;"><strong>Notes:</strong> ${analysis.nextSteps.notes}</p>
@@ -1007,7 +975,7 @@
             const tbody = document.getElementById('calls-body');
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="8" style="text-align: center; padding: 3rem;">
+                    <td colspan="7" style="text-align: center; padding: 3rem;">
                         <p style="color: #e74c3c; font-size: 1.1rem; margin-bottom: 0.5rem;">⚠️ Connection Error</p>
                         <p style="color: #7f8c8d; margin-bottom: 1rem;">Could not connect to: ${API_BASE}/api/discovery-calls</p>
                         <p style="color: #7f8c8d; font-size: 0.9rem;">${message}</p>
