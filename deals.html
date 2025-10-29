@@ -728,11 +728,17 @@
                     </div>
 
                     <div class="deal-actions">
-                        <button class="btn-action" onclick="viewDetails(${deal.id})">View Details</button>
-                        <button class="btn-action" onclick="updateProgress(${deal.id})">Update Progress</button>
-                        <button class="btn-action" onclick="generateReport(${deal.id})">Generate Report</button>
-                    </div>
-                </div>
+    ${deal.status === 'pending' ? `
+        <button class="btn-action" onclick="activatePartnership(${deal.id})" style="background: #27ae60; color: white; border-color: #27ae60;">
+            ✓ Activate Client Portal
+        </button>
+        <button class="btn-action" onclick="rejectSignup(${deal.id})">Reject</button>
+    ` : `
+        <button class="btn-action" onclick="viewDetails(${deal.id})">View Details</button>
+        <button class="btn-action" onclick="updateProgress(${deal.id})">Update Progress</button>
+        <button class="btn-action" onclick="generateReport(${deal.id})">Generate Report</button>
+    `}
+</div>
             `).join('');
         }
 
@@ -853,6 +859,68 @@
             alert(`Generate report for deal ${dealId}`);
             // In production, this would generate a PDF or detailed report
         }
-    </script>
+        function generateReport(dealId) {
+            alert(`Generate report for deal ${dealId}`);
+            // In production, this would generate a PDF or detailed report
+        }
+
+        // ==================== ADD YOUR NEW CODE HERE ====================
+        
+        async function activatePartnership(dealId) {
+            if (!confirm('Activate client portal for this partnership?\n\nThis will:\n- Grant full dashboard access\n- Set program start date to today\n- Send welcome email to client')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/activate-client-portal`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ dealId })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('✓ Client portal activated successfully!\n\nClient: ' + data.client.name + '\nEmail sent to: ' + data.client.email);
+                    loadDeals(); // Reload to show updated status
+                } else {
+                    alert('❌ Error: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error activating partnership:', error);
+                alert('❌ Failed to activate. Please try again.');
+            }
+        }
+
+        async function rejectSignup(dealId) {
+            if (!confirm('Reject this client signup?\n\nThis will update the status to rejected.')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/deals`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        id: dealId,
+                        status: 'rejected'
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('Signup rejected.');
+                    loadDeals();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error rejecting signup:', error);
+                alert('Failed to reject. Please try again.');
+            }
+        }
+
+    </script>  
 </body>
 </html>
