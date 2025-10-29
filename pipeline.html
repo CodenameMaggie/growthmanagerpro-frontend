@@ -609,14 +609,14 @@
                                 <div class="report-description">Conversion rate from podcast interviews to discovery calls</div>
                             </div>
                             <div class="report-card" style="border-left-color: #27ae60;">
-                                <div class="report-title">Discovery to Sales</div>
-                                <div class="report-value" style="color: #27ae60;" id="report-discovery-sales">0%</div>
+                                <div class="report-title">Discovery to Strategy</div>
+                                <div class="report-value" style="color: #27ae60;" id="report-discovery-strategy">0%</div>
                                 <div class="report-description">Qualification success rate</div>
                             </div>
                             <div class="report-card" style="border-left-color: #f39c12;">
-                                <div class="report-title">Sales to Close</div>
-                                <div class="report-value" style="color: #f39c12;" id="report-sales-close">0%</div>
-                                <div class="report-description">Close rate from sales calls</div>
+                                <div class="report-title">Strategy to Close</div>
+                                <div class="report-value" style="color: #f39c12;" id="report-strategy-close">0%</div>
+                                <div class="report-description">Close rate from strategy calls</div>
                             </div>
                             <div class="report-card" style="border-left-color: #9b59b6;">
                                 <div class="report-title">Overall Pipeline Health</div>
@@ -817,7 +817,7 @@
                 'lead': '#95a5a6',
                 'podcast': '#9b59b6',
                 'discovery': '#3498db',
-                'sales': '#f39c12',
+                'strategy': '#f39c12',
                 'proposal': '#e67e22',
                 'negotiation': '#e74c3c',
                 'closed': '#27ae60',
@@ -833,7 +833,7 @@
             charts.funnel = new Chart(funnelCtx, {
                 type: 'bar',
                 data: {
-                    labels: ['Podcast', 'Discovery', 'Sales', 'Proposal', 'Closed'],
+                    labels: ['Podcast', 'Discovery', 'Strategy', 'Proposal', 'Closed'],
                     datasets: [{
                         label: 'Contacts',
                         data: [0, 0, 0, 0, 0],
@@ -886,7 +886,7 @@
             charts.velocity = new Chart(velocityCtx, {
                 type: 'bar',
                 data: {
-                    labels: ['Discovery', 'Sales', 'Proposal', 'Negotiation'],
+                    labels: ['Discovery', 'Strategy', 'Proposal', 'Negotiation'],
                     datasets: [{
                         label: 'Avg Days',
                         data: [7, 14, 10, 5],
@@ -941,14 +941,14 @@
             if (charts.funnel) {
                 const podcast = stages.find(s => s.key === 'podcast');
                 const discovery = stages.find(s => s.key === 'discovery');
-                const sales = stages.find(s => s.key === 'sales');
+                const strategy = stages.find(s => s.key === 'strategy');
                 const proposal = stages.find(s => s.key === 'proposal');
                 const closed = stages.find(s => s.key === 'closed');
 
                 charts.funnel.data.datasets[0].data = [
                     podcast?.count || 0,
                     discovery?.count || 0,
-                    sales?.count || 0,
+                    strategy?.count || 0,
                     proposal?.count || 0,
                     closed?.count || 0
                 ];
@@ -969,25 +969,25 @@
             
             const podcast = stages.find(s => s.key === 'podcast');
             const discovery = stages.find(s => s.key === 'discovery');
-            const sales = stages.find(s => s.key === 'sales');
+            const strategy = stages.find(s => s.key === 'strategy');
             const closed = stages.find(s => s.key === 'closed');
 
             // Conversion rates
             const podcastCount = podcast?.count || 0;
             const discoveryCount = discovery?.count || 0;
-            const salesCount = sales?.count || 0;
+            const strategiesCount = strategy?.count || 0;
             const closedCount = closed?.count || 0;
 
             const podcastToDiscovery = podcastCount > 0 ? (discoveryCount / podcastCount * 100) : 0;
-            const discoveryToSales = discoveryCount > 0 ? (salesCount / discoveryCount * 100) : 0;
-            const salesToClose = salesCount > 0 ? (closedCount / salesCount * 100) : 0;
+            const discoveryToStrategy = discoveryCount > 0 ? (strategyCount / discoveryCount * 100) : 0;
+            const strategyToClose = strategyCount > 0 ? (closedCount / strategyCount * 100) : 0;
 
             document.getElementById('report-podcast-discovery').textContent = 
                 `${podcastToDiscovery.toFixed(1)}%`;
-            document.getElementById('report-discovery-sales').textContent = 
-                `${discoveryToSales.toFixed(1)}%`;
-            document.getElementById('report-sales-close').textContent = 
-                `${salesToClose.toFixed(1)}%`;
+            document.getElementById('report-discovery-strategy').textContent = 
+                `${discoveryToStrategy.toFixed(1)}%`;
+            document.getElementById('report-strategy-close').textContent = 
+                `${strategyToClose.toFixed(1)}%`;
 
             // Pipeline health
             const totalActive = pipelineData.stats?.activeContacts || 0;
