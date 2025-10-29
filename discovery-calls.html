@@ -32,8 +32,6 @@
             left: 0;
             top: 0;
             box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-            display: flex;
-            flex-direction: column;
         }
         .sidebar-header {
             padding: 0 2rem 2rem 2rem;
@@ -48,10 +46,6 @@
         .sidebar-header p {
             color: #7f8c8d;
             font-size: 0.9rem;
-        }
-        .sidebar-nav {
-            flex: 1;
-            overflow-y: auto;
         }
         .nav-section {
             margin-bottom: 2rem;
@@ -97,28 +91,6 @@
             width: 20px;
             height: 20px;
             margin-right: 1rem;
-            font-size: 1.2rem;
-        }
-        .sidebar-footer {
-            padding: 1.5rem 2rem;
-            border-top: 1px solid #e1e5e9;
-            background: white;
-        }
-        .logout-link {
-            display: flex;
-            align-items: center;
-            padding: 0.8rem 0;
-            color: #e74c3c;
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.2s ease;
-        }
-        .logout-link:hover {
-            color: #c0392b;
-            padding-left: 0.5rem;
-        }
-        .logout-icon {
-            margin-right: 0.75rem;
             font-size: 1.2rem;
         }
         /* Main Content */
@@ -524,76 +496,95 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- Sidebar -->
-         <!-- Sidebar Navigation -->
-        <nav class="sidebar" id="sidebar">
+        <!-- Sidebar Navigation -->
+        <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <h1>Growth Manager Pro</h1>
-                <p>Business Growth Platform</p>
+                <p>Client Acquisition System</p>
             </div>
 
-    <div class="nav-section">
-     <div class="nav-section-title">Overview</div>
-     <a href="dashboard.html" class="nav-item active">
-        <span class="nav-icon">📊</span>
-        <span>Dashboard</span>
-    </a>
-    <a href="contacts.html" class="nav-item">
-        <span class="nav-icon">👥</span>
-        <span>Contacts</span>
-    </a>
-            </div>
-
-           <div class="nav-section">
-    <div class="nav-section-title">Acquisition</div>
-    <a href="prequal-calls.html" class="nav-item">
-        <span class="nav-icon">📞</span>
-        <span>Pre-Qual Calls</span>
-    </a>
-    <a href="podcast-calls.html" class="nav-item">
-        <span class="nav-icon">🎙️</span>
-        <span>Podcast Calls</span>
-    </a>
-    <a href="discovery-calls.html" class="nav-item">
-        <span class="nav-icon">🔍</span>
-        <span>Discovery Calls</span>
-    </a>
-    <a href="strategy-calls.html" class="nav-item">
-        <span class="nav-icon">💼</span>
-        <span>Strategy Calls</span>
-    </a>
-</div>
-                
-                <div class="nav-section">
-                    <div class="nav-section-title">Systems Management</div>
-                    <a href="campaigns.html" class="nav-item">
-                        <span class="nav-icon">🤖</span>
-                        <span>System Deployments</span>
-                    </a>
-                    <a href="analytics.html" class="nav-item">
-                        <span class="nav-icon">📈</span>
-                        <span>Analytics</span>
-                    </a>
-                    <a href="reports.html" class="nav-item">
-                        <span class="nav-icon">📋</span>
-                        <span>Reports</span>
-                    </a>
-                </div>
-            </nav>
-            
-            <div class="sidebar-footer">
-                <a href="#" class="logout-link" onclick="handleLogout(); return false;">
-                    <span class="logout-icon">→</span>
-                    <span>Logout</span>
+            <div class="nav-section">
+                <div class="nav-section-title">Main</div>
+                <a href="dashboard.html" class="nav-item">
+                    <span class="nav-icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="contacts.html" class="nav-item">
+                    <span class="nav-icon">👥</span>
+                    <span>Contacts</span>
                 </a>
             </div>
-        </aside>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Acquisition</div>
+                <a href="prequal-calls.html" class="nav-item">
+                    <span class="nav-icon">📞</span>
+                    <span>Pre-Qual Calls</span>
+                </a>
+                <a href="podcast-calls.html" class="nav-item">
+                    <span class="nav-icon">🎙️</span>
+                    <span>Podcast Calls</span>
+                </a>
+                <a href="discovery-calls.html" class="nav-item active">
+                    <span class="nav-icon">🔍</span>
+                    <span>Discovery Calls</span>
+                </a>
+                <a href="strategy-calls.html" class="nav-item">
+                    <span class="nav-icon">💼</span>
+                    <span>Strategy Calls</span>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Pipeline</div>
+                <a href="pipeline.html" class="nav-item">
+                    <span class="nav-icon">📈</span>
+                    <span>Pipeline</span>
+                </a>
+                <a href="deals.html" class="nav-item">
+                    <span class="nav-icon">🤝</span>
+                    <span>Deals</span>
+                </a>
+                <a href="cash-flow.html" class="nav-item">
+                    <span class="nav-icon">💰</span>
+                    <span>Cash Flow</span>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Operations</div>
+                <a href="campaigns.html" class="nav-item">
+                    <span class="nav-icon">📧</span>
+                    <span>Campaigns</span>
+                </a>
+                <a href="sprints.html" class="nav-item">
+                    <span class="nav-icon">⚡</span>
+                    <span>Sprints</span>
+                </a>
+                <a href="expense-tracker.html" class="nav-item">
+                    <span class="nav-icon">💳</span>
+                    <span>Expense Tracker</span>
+                </a>
+                <a href="availability.html" class="nav-item">
+                    <span class="nav-icon">📅</span>
+                    <span>Availability</span>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Settings</div>
+                <a href="user-management.html" class="nav-item">
+                    <span class="nav-icon">⚙️</span>
+                    <span>User Management</span>
+                </a>
+            </div>
+        </div>
 
         <!-- Main Content -->
         <main class="main-content">
             <!-- Page Header -->
             <div class="page-header">
-                <h2>Discovery Calls</h2>
+                <h2>🔍 Discovery Calls</h2>
                 <p>AI-powered tier qualification and systems recommendation</p>
                 <div class="header-actions">
                     <button class="btn btn-primary" onclick="scheduleCall()">+ Book Strategy Call</button>
@@ -697,13 +688,6 @@
             // Auto-refresh every 5 minutes
             setInterval(loadCalls, 300000);
         });
-
-        // Logout handler
-        function handleLogout() {
-            localStorage.removeItem('authToken');
-            localStorage.removeItem('userRole');
-            window.location.href = 'index.html';
-        }
 
         // Load calls from API
         async function loadCalls() {
@@ -1003,9 +987,9 @@
 
         // Actions
         function scheduleCall() {
-    // Book STRATEGY call (next stage after discovery)
-    window.open('https://calendly.com/maggie-maggieforbesstrategies/strategy-call', '_blank');
-}
+            // Book STRATEGY call (next stage after discovery)
+            window.open('https://calendly.com/maggie-maggieforbesstrategies/strategy-call', '_blank');
+        }
 
         function refreshData() {
             console.log('[Discovery Calls] Manual refresh triggered');
