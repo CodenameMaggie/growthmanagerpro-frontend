@@ -562,32 +562,36 @@
         });
 
         async function loadCalls() {
-            try {
-                const { data, error } = await supabase
-                    .from('pre_qualification_calls')
-                    .select('*, contacts(*)')
-                    .order('created_at', { ascending: false });
-
-                if (error) throw error;
-
-                allCalls = data || [];
-                filteredCalls = [...allCalls];
-                updateStats();
-                renderTable();
-            } catch (error) {
-                console.error('Error loading calls:', error);
-                document.getElementById('calls-tbody').innerHTML = `
-                    <tr>
-                        <td colspan="8">
-                            <div class="empty-state">
-                                <div class="empty-state-icon">⚠️</div>
-                                <div>Error loading calls. Please refresh.</div>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            }
+    try {
+        updateConnectionStatus('connecting');
+        console.log('[Pre-Qual Calls] Fetching from:', `${API_BASE}/api/pre-qualification-calls`);
+        
+        const response = await fetch(`${API_BASE}/api/pre-qualification-calls`);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
+
+        const result = await response.json();
+        console.log('[Pre-Qual Calls] Response:', result);
+        
+        if (result.success && result.data) {
+            allCalls = result.data.calls || [];
+            filteredCalls = [...allCalls];
+            updateStats();
+            renderTable();
+            updateConnectionStatus('connected');
+            console.log('[Pre-Qual Calls] ✅ Loaded', allCalls.length, 'calls');
+        } else {
+            throw new Error('Invalid response format');
+        }
+
+    } catch (error) {
+        console.error('[Pre-Qual Calls] ❌ Error loading calls:', error);
+        updateConnectionStatus('error', error.message);
+        renderErrorState(error.message);
+    }
+}
 
         function updateStats() {
             const total = allCalls.length;
