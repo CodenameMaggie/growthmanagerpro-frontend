@@ -975,12 +975,12 @@
             // Conversion rates
             const podcastCount = podcast?.count || 0;
             const discoveryCount = discovery?.count || 0;
-            const strategiesCount = strategy?.count || 0;
+            const strategyToClose = strategiesCount > 0 ? (closedCount / strategiesCount * 100) : 0;
             const closedCount = closed?.count || 0;
 
             const podcastToDiscovery = podcastCount > 0 ? (discoveryCount / podcastCount * 100) : 0;
-            const discoveryToStrategy = discoveryCount > 0 ? (strategyCount / discoveryCount * 100) : 0;
-            const strategyToClose = strategyCount > 0 ? (closedCount / strategyCount * 100) : 0;
+            const discoveryToStrategy = discoveryCount > 0 ? (strategiesCount / discoveryCount * 100) : 0;
+            const strategyToClose = strategiesCount > 0 ? (closedCount / strategiesCount * 100) : 0;
 
             document.getElementById('report-podcast-discovery').textContent = 
                 `${podcastToDiscovery.toFixed(1)}%`;
