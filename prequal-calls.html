@@ -549,8 +549,8 @@
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-        const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+        const supabaseUrl = 'https://fvyymurmkjafhteoyhys.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ2eXltdXJta2phZmh0ZW95aHlzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjk3MzY4MTMsImV4cCI6MjA0NTMxMjgxM30.cBB8bg-CqhgqNPF0EkHjnmrWC7pqp7vYPeLMVL_zqKo';
         const supabase = createClient(supabaseUrl, supabaseKey);
 
         let allCalls = [];
