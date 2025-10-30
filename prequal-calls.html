@@ -546,358 +546,359 @@
         </div>
     </div>
 
-    <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-
-        const supabaseUrl = 'https://fvyymurmkjafhteoyhys.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ2eXltdXJta2phZmh0ZW95aHlzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjk3MzY4MTMsImV4cCI6MjA0NTMxMjgxM30.cBB8bg-CqhgqNPF0EkHjnmrWC7pqp7vYPeLMVL_zqKo';
-        const supabase = createClient(supabaseUrl, supabaseKey);
-
-        let allCalls = [];
-        let filteredCalls = [];
-
-        // Load data on page load
-        window.addEventListener('DOMContentLoaded', () => {
-            loadCalls();
-        });
-
-        async function loadCalls() {
-    try {
-        updateConnectionStatus('connecting');
-        console.log('[Pre-Qual Calls] Fetching from:', `${API_BASE}/api/pre-qualification-calls`);
-        
-        const response = await fetch(`${API_BASE}/api/pre-qualification-calls`);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
-
-        const result = await response.json();
-        console.log('[Pre-Qual Calls] Response:', result);
-        
-        if (result.success && result.data) {
-            allCalls = result.data.calls || [];
-            filteredCalls = [...allCalls];
-            updateStats();
-            renderTable();
-            updateConnectionStatus('connected');
-            console.log('[Pre-Qual Calls] ✅ Loaded', allCalls.length, 'calls');
-        } else {
-            throw new Error('Invalid response format');
-        }
-
-    } catch (error) {
-        console.error('[Pre-Qual Calls] ❌ Error loading calls:', error);
-        updateConnectionStatus('error', error.message);
-        renderErrorState(error.message);
-    }
-            function updateConnectionStatus(status, message = '') {
-    // Add connection status indicator if it doesn't exist
-    let statusDiv = document.getElementById('connection-status');
-    if (!statusDiv) {
-        statusDiv = document.createElement('div');
-        statusDiv.id = 'connection-status';
-        statusDiv.className = 'connection-status';
-        statusDiv.innerHTML = `
-            <div class="status-indicator" id="status-indicator"></div>
-            <span id="status-text"></span>
-        `;
-        document.body.appendChild(statusDiv);
-    }
+  <script>
+    const API_BASE = 'https://growthmanagerpro-backend.vercel.app';
     
-    const indicator = document.getElementById('status-indicator');
-    const statusText = document.getElementById('status-text');
+    let allCalls = [];
+    let filteredCalls = [];
 
-    if (status === 'connected') {
-        indicator.style.background = '#27ae60';
-        statusText.textContent = 'Live Connected';
-    } else if (status === 'error') {
-        indicator.style.background = '#e74c3c';
-        statusText.textContent = message || 'Connection Error';
-    } else if (status === 'connecting') {
-        indicator.style.background = '#f39c12';
-        statusText.textContent = 'Connecting...';
-    }
-}
+    // Load data on page load
+    window.addEventListener('DOMContentLoaded', () => {
+        console.log('[Pre-Qual Calls] Initializing...');
+        console.log('[Pre-Qual Calls] API Base:', API_BASE);
+        loadCalls();
+        
+        // Auto-refresh every 5 minutes
+        setInterval(loadCalls, 300000);
+    });
 
-function renderErrorState(message) {
-    const tbody = document.getElementById('calls-tbody');
-    tbody.innerHTML = `
-        <tr>
-            <td colspan="8" style="text-align: center; padding: 3rem;">
-                <p style="color: #e74c3c; font-size: 1.1rem; margin-bottom: 0.5rem;">⚠️ Connection Error</p>
-                <p style="color: #7f8c8d; margin-bottom: 1rem;">Could not connect to: ${API_BASE}/api/pre-qualification-calls</p>
-                <p style="color: #7f8c8d; font-size: 0.9rem;">${message}</p>
-                <button class="btn btn-primary" onclick="loadCalls()" style="margin-top: 1rem;">
-                    🔄 Retry Connection
-                </button>
-            </td>
-        </tr>
-    `;
-}}
-
-        function updateStats() {
-            const total = allCalls.length;
-            const qualified = allCalls.filter(c => c.ai_score >= 35).length;
-            const invitesSent = allCalls.filter(c => c.podcast_invitation_sent).length;
-            const scores = allCalls.filter(c => c.ai_score !== null).map(c => c.ai_score);
-            const avgScore = scores.length > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 0;
-
-            document.getElementById('stat-total').textContent = total;
-            document.getElementById('stat-qualified').textContent = qualified;
-            document.getElementById('stat-avg-score').textContent = avgScore || '-';
-            document.getElementById('stat-invites').textContent = invitesSent;
-        }
-
-        function renderTable() {
-            const tbody = document.getElementById('calls-tbody');
-
-            if (filteredCalls.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="8">
-                            <div class="empty-state">
-                                <div class="empty-state-icon">🔍</div>
-                                <div>No pre-qualification calls found</div>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-                return;
+    async function loadCalls() {
+        try {
+            updateConnectionStatus('connecting');
+            console.log('[Pre-Qual Calls] Fetching from:', `${API_BASE}/api/pre-qualification-calls`);
+            
+            const response = await fetch(`${API_BASE}/api/pre-qualification-calls`);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
 
-            tbody.innerHTML = filteredCalls.map(call => `
-                <tr onclick="showDetails('${call.id}')">
-                    <td>
-                        <div style="font-weight: 600;">${call.guest_name}</div>
-                        <div style="font-size: 12px; color: #64748b;">${call.guest_email}</div>
-                    </td>
-                    <td>${call.company || '-'}</td>
-                    <td>${call.scheduled_date ? new Date(call.scheduled_date).toLocaleDateString() : '-'}</td>
-                    <td>
-                        <span class="status-badge status-${call.call_status}">
-                            ${formatStatus(call.call_status)}
-                        </span>
-                    </td>
-                    <td>
-                        ${call.recording_url ? 
-                            `<span class="recording-indicator" onclick="event.stopPropagation(); window.open('${call.recording_url}', '_blank')" title="View Recording">🎥</span>` 
-                            : '-'}
-                    </td>
-                    <td>
-                        ${call.ai_score !== null ? 
-                            `<span class="score-badge ${getScoreClass(call.ai_score)}">
-                                ${call.ai_score}/50
-                            </span>`
-                         : '-'}
-                    </td>
-                    <td>
-                        ${call.podcast_invitation_sent 
-                            ? '✅ Sent' 
-                            : call.ai_score >= 35 
-                                ? '⏳ Pending' 
-                                : '-'}
-                    </td>
-                    <td>
-                        <button class="btn btn-secondary" onclick="event.stopPropagation(); showDetails('${call.id}')">
-                            View Details
-                        </button>
+            const result = await response.json();
+            console.log('[Pre-Qual Calls] Response:', result);
+            
+            if (result.success && result.data) {
+                allCalls = result.data.calls || [];
+                filteredCalls = [...allCalls];
+                updateStats();
+                renderTable();
+                updateConnectionStatus('connected');
+                console.log('[Pre-Qual Calls] ✅ Loaded', allCalls.length, 'calls');
+            } else {
+                throw new Error('Invalid response format');
+            }
+
+        } catch (error) {
+            console.error('[Pre-Qual Calls] ❌ Error loading calls:', error);
+            updateConnectionStatus('error', error.message);
+            renderErrorState(error.message);
+        }
+    }
+
+    function updateConnectionStatus(status, message = '') {
+        let statusDiv = document.getElementById('connection-status');
+        if (!statusDiv) {
+            statusDiv = document.createElement('div');
+            statusDiv.id = 'connection-status';
+            statusDiv.className = 'connection-status';
+            statusDiv.innerHTML = `
+                <div class="status-indicator" id="status-indicator"></div>
+                <span id="status-text"></span>
+            `;
+            document.body.appendChild(statusDiv);
+        }
+        
+        const indicator = document.getElementById('status-indicator');
+        const statusText = document.getElementById('status-text');
+
+        if (status === 'connected') {
+            indicator.style.background = '#27ae60';
+            statusText.textContent = 'Live Connected';
+        } else if (status === 'error') {
+            indicator.style.background = '#e74c3c';
+            statusText.textContent = message || 'Connection Error';
+        } else if (status === 'connecting') {
+            indicator.style.background = '#f39c12';
+            statusText.textContent = 'Connecting...';
+        }
+    }
+
+    function renderErrorState(message) {
+        const tbody = document.getElementById('calls-tbody');
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="8" style="text-align: center; padding: 3rem;">
+                    <p style="color: #e74c3c; font-size: 1.1rem; margin-bottom: 0.5rem;">⚠️ Connection Error</p>
+                    <p style="color: #7f8c8d; margin-bottom: 1rem;">Could not connect to: ${API_BASE}/api/pre-qualification-calls</p>
+                    <p style="color: #7f8c8d; font-size: 0.9rem;">${message}</p>
+                    <button class="btn btn-primary" onclick="loadCalls()" style="margin-top: 1rem;">
+                        🔄 Retry Connection
+                    </button>
+                </td>
+            </tr>
+        `;
+    }
+
+    function updateStats() {
+        const total = allCalls.length;
+        const qualified = allCalls.filter(c => c.aiScore >= 35).length;
+        const invitesSent = allCalls.filter(c => c.podcastInvitationSent).length;
+        const scores = allCalls.filter(c => c.aiScore !== null).map(c => c.aiScore);
+        const avgScore = scores.length > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 0;
+
+        document.getElementById('stat-total').textContent = total;
+        document.getElementById('stat-qualified').textContent = qualified;
+        document.getElementById('stat-avg-score').textContent = avgScore || '-';
+        document.getElementById('stat-invites').textContent = invitesSent;
+    }
+
+    function renderTable() {
+        const tbody = document.getElementById('calls-tbody');
+
+        if (filteredCalls.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="8">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">🔍</div>
+                            <div>No pre-qualification calls found</div>
+                        </div>
                     </td>
                 </tr>
-            `).join('');
-        }
-
-        window.applyFilters = function() {
-            const statusFilter = document.getElementById('filter-status').value;
-            const scoreFilter = document.getElementById('filter-score').value;
-            const searchTerm = document.getElementById('search-input').value.toLowerCase();
-
-            filteredCalls = allCalls.filter(call => {
-                // Status filter
-                if (statusFilter !== 'all' && call.call_status !== statusFilter) {
-                    return false;
-                }
-
-                // Score filter
-                if (scoreFilter !== 'all') {
-                    if (call.ai_score === null) return false;
-                    if (scoreFilter === 'high' && call.ai_score < 35) return false;
-                    if (scoreFilter === 'medium' && (call.ai_score < 20 || call.ai_score >= 35)) return false;
-                    if (scoreFilter === 'low' && call.ai_score >= 20) return false;
-                }
-
-                // Search filter
-                if (searchTerm) {
-                    const searchableText = [
-                        call.guest_name,
-                        call.guest_email,
-                        call.company
-                    ].filter(Boolean).join(' ').toLowerCase();
-
-                    if (!searchableText.includes(searchTerm)) return false;
-                }
-
-                return true;
-            });
-
-            renderTable();
-        };
-
-        window.showDetails = async function(callId) {
-            const call = allCalls.find(c => c.id === callId);
-            if (!call) return;
-
-            const modalBody = document.getElementById('modal-body');
-
-            modalBody.innerHTML = `
-                <div class="detail-group">
-                    <div class="detail-label">Guest Information</div>
-                    <div class="detail-value">
-                        <strong>${call.guest_name}</strong><br>
-                        ${call.guest_email}<br>
-                        ${call.company || 'No company'}
-                    </div>
-                </div>
-
-                <div class="detail-group">
-                    <div class="detail-label">Call Status</div>
-                    <div class="detail-value">
-                        <span class="status-badge status-${call.call_status}">
-                            ${formatStatus(call.call_status)}
-                        </span>
-                    </div>
-                </div>
-
-                ${call.recording_url ? `
-                    <div class="detail-group">
-                        <div class="detail-label">Recording</div>
-                        <div class="detail-value">
-                            <button class="btn btn-link" onclick="window.open('${call.recording_url}', '_blank')">
-                                🎥 Watch Recording
-                            </button>
-                        </div>
-                    </div>
-                ` : ''}
-
-                ${call.transcript ? `
-                    <div class="detail-group">
-                        <div class="detail-label">Full Transcript</div>
-                        <div class="transcript-box">${call.transcript}</div>
-                    </div>
-                ` : ''}
-
-                ${call.ai_score !== null ? `
-                    <div class="detail-group">
-                        <div class="detail-label">AI Qualification Score</div>
-                        <div class="detail-value">
-                            <span class="score-badge ${getScoreClass(call.ai_score)}" style="font-size: 18px;">
-                                ${call.ai_score}/50
-                            </span>
-                            ${call.ai_score >= 35 ? ' - ✅ Qualified for Podcast' : ' - ❌ Below threshold (need 35+)'}
-                        </div>
-                    </div>
-                ` : ''}
-
-                ${call.revenue_signals ? `
-                    <div class="detail-group">
-                        <div class="detail-label">Revenue Signals</div>
-                        <div class="detail-value">${call.revenue_signals}</div>
-                    </div>
-                ` : ''}
-
-                ${call.growth_challenges && call.growth_challenges.length > 0 ? `
-                    <div class="detail-group">
-                        <div class="detail-label">Growth Challenges</div>
-                        <div class="tags">
-                            ${call.growth_challenges.map(c => `<span class="tag">${c}</span>`).join('')}
-                        </div>
-                    </div>
-                ` : ''}
-
-                ${call.podcast_topics && call.podcast_topics.length > 0 ? `
-                    <div class="detail-group">
-                        <div class="detail-label">Potential Podcast Topics</div>
-                        <div class="tags">
-                            ${call.podcast_topics.map(t => `<span class="tag">${t}</span>`).join('')}
-                        </div>
-                    </div>
-                ` : ''}
-
-                ${call.strengths && call.strengths.length > 0 ? `
-                    <div class="detail-group">
-                        <div class="detail-label">Strengths</div>
-                        <div class="tags">
-                            ${call.strengths.map(s => `<span class="tag">${s}</span>`).join('')}
-                        </div>
-                    </div>
-                ` : ''}
-
-                ${call.red_flags && call.red_flags.length > 0 ? `
-                    <div class="detail-group">
-                        <div class="detail-label">Red Flags</div>
-                        <div class="tags">
-                            ${call.red_flags.map(f => `<span class="tag" style="background: #fee2e2; color: #991b1b;">${f}</span>`).join('')}
-                        </div>
-                    </div>
-                ` : ''}
-
-                ${call.notes ? `
-                    <div class="detail-group">
-                        <div class="detail-label">AI Summary</div>
-                        <div class="detail-value">${call.notes}</div>
-                    </div>
-                ` : ''}
-
-                ${call.ai_score >= 35 ? `
-                    <div class="invitation-status ${call.podcast_invitation_sent ? '' : 'not-sent'}">
-                        ${call.podcast_invitation_sent 
-                            ? '✅ Podcast invitation sent on ' + new Date(call.podcast_invitation_sent_at).toLocaleDateString()
-                            : '⏳ Podcast invitation pending'}
-                    </div>
-                ` : ''}
-
-                <div class="detail-group" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
-                    <div class="detail-label">Metadata</div>
-                    <div class="detail-value" style="font-size: 13px; color: #64748b;">
-                        ${call.zoom_meeting_id ? `Zoom Meeting ID: ${call.zoom_meeting_id}<br>` : ''}
-                        Created: ${new Date(call.created_at).toLocaleString()}<br>
-                        ${call.analyzed_at ? `Analyzed: ${new Date(call.analyzed_at).toLocaleString()}<br>` : ''}
-                        Source: ${call.source || 'Unknown'}
-                    </div>
-                </div>
             `;
-
-            document.getElementById('modal-title').textContent = `${call.guest_name} - Pre-Qual Call`;
-            document.getElementById('detail-modal').style.display = 'flex';
-        };
-
-        window.closeModal = function() {
-            document.getElementById('detail-modal').style.display = 'none';
-        };
-
-        window.refreshData = function() {
-            loadCalls();
-        };
-
-        function formatStatus(status) {
-            return status.split('_').map(word => 
-                word.charAt(0).toUpperCase() + word.slice(1)
-            ).join(' ');
+            return;
         }
 
-        function getScoreClass(score) {
-            if (score >= 35) return 'score-high';
-            if (score >= 20) return 'score-medium';
-            return 'score-low';
-        }
+        tbody.innerHTML = filteredCalls.map(call => `
+            <tr onclick="showDetails('${call.id}')">
+                <td>
+                    <div style="font-weight: 600;">${call.guestName}</div>
+                    <div style="font-size: 12px; color: #64748b;">${call.guestEmail}</div>
+                </td>
+                <td>${call.company || '-'}</td>
+                <td>${call.scheduledDate ? new Date(call.scheduledDate).toLocaleDateString() : '-'}</td>
+                <td>
+                    <span class="status-badge status-${call.callStatus}">
+                        ${formatStatus(call.callStatus)}
+                    </span>
+                </td>
+                <td>
+                    ${call.recordingUrl ? 
+                        `<span class="recording-indicator" onclick="event.stopPropagation(); window.open('${call.recordingUrl}', '_blank')" title="View Recording">🎥</span>` 
+                        : '-'}
+                </td>
+                <td>
+                    ${call.aiScore !== null ? 
+                        `<span class="score-badge ${getScoreClass(call.aiScore)}">
+                            ${call.aiScore}/50
+                        </span>`
+                     : '-'}
+                </td>
+                <td>
+                    ${call.podcastInvitationSent 
+                        ? '✅ Sent' 
+                        : call.aiScore >= 35 
+                            ? '⏳ Pending' 
+                            : '-'}
+                </td>
+                <td>
+                    <button class="btn btn-secondary" onclick="event.stopPropagation(); showDetails('${call.id}')">
+                        View Details
+                    </button>
+                </td>
+            </tr>
+        `).join('');
+    }
 
-        // Close modal on outside click
-        window.onclick = function(event) {
-            const modal = document.getElementById('detail-modal');
-            if (event.target === modal) {
-                closeModal();
+    window.applyFilters = function() {
+        const statusFilter = document.getElementById('filter-status').value;
+        const scoreFilter = document.getElementById('filter-score').value;
+        const searchTerm = document.getElementById('search-input').value.toLowerCase();
+
+        filteredCalls = allCalls.filter(call => {
+            if (statusFilter !== 'all' && call.callStatus !== statusFilter) {
+                return false;
             }
-        };
-    </script>
+
+            if (scoreFilter !== 'all') {
+                if (call.aiScore === null) return false;
+                if (scoreFilter === 'high' && call.aiScore < 35) return false;
+                if (scoreFilter === 'medium' && (call.aiScore < 20 || call.aiScore >= 35)) return false;
+                if (scoreFilter === 'low' && call.aiScore >= 20) return false;
+            }
+
+            if (searchTerm) {
+                const searchableText = [
+                    call.guestName,
+                    call.guestEmail,
+                    call.company
+                ].filter(Boolean).join(' ').toLowerCase();
+
+                if (!searchableText.includes(searchTerm)) return false;
+            }
+
+            return true;
+        });
+
+        renderTable();
+    };
+
+    window.showDetails = async function(callId) {
+        const call = allCalls.find(c => c.id === callId);
+        if (!call) return;
+
+        const modalBody = document.getElementById('modal-body');
+
+        modalBody.innerHTML = `
+            <div class="detail-group">
+                <div class="detail-label">Guest Information</div>
+                <div class="detail-value">
+                    <strong>${call.guestName}</strong><br>
+                    ${call.guestEmail}<br>
+                    ${call.company || 'No company'}
+                </div>
+            </div>
+
+            <div class="detail-group">
+                <div class="detail-label">Call Status</div>
+                <div class="detail-value">
+                    <span class="status-badge status-${call.callStatus}">
+                        ${formatStatus(call.callStatus)}
+                    </span>
+                </div>
+            </div>
+
+            ${call.recordingUrl ? `
+                <div class="detail-group">
+                    <div class="detail-label">Recording</div>
+                    <div class="detail-value">
+                        <button class="btn btn-link" onclick="window.open('${call.recordingUrl}', '_blank')">
+                            🎥 Watch Recording
+                        </button>
+                    </div>
+                </div>
+            ` : ''}
+
+            ${call.transcript ? `
+                <div class="detail-group">
+                    <div class="detail-label">Full Transcript</div>
+                    <div class="transcript-box">${call.transcript}</div>
+                </div>
+            ` : ''}
+
+            ${call.aiScore !== null ? `
+                <div class="detail-group">
+                    <div class="detail-label">AI Qualification Score</div>
+                    <div class="detail-value">
+                        <span class="score-badge ${getScoreClass(call.aiScore)}" style="font-size: 18px;">
+                            ${call.aiScore}/50
+                        </span>
+                        ${call.aiScore >= 35 ? ' - ✅ Qualified for Podcast' : ' - ❌ Below threshold (need 35+)'}
+                    </div>
+                </div>
+            ` : ''}
+
+            ${call.revenueSignals ? `
+                <div class="detail-group">
+                    <div class="detail-label">Revenue Signals</div>
+                    <div class="detail-value">${call.revenueSignals}</div>
+                </div>
+            ` : ''}
+
+            ${call.growthChallenges && call.growthChallenges.length > 0 ? `
+                <div class="detail-group">
+                    <div class="detail-label">Growth Challenges</div>
+                    <div class="tags">
+                        ${call.growthChallenges.map(c => `<span class="tag">${c}</span>`).join('')}
+                    </div>
+                </div>
+            ` : ''}
+
+            ${call.podcastTopics && call.podcastTopics.length > 0 ? `
+                <div class="detail-group">
+                    <div class="detail-label">Potential Podcast Topics</div>
+                    <div class="tags">
+                        ${call.podcastTopics.map(t => `<span class="tag">${t}</span>`).join('')}
+                    </div>
+                </div>
+            ` : ''}
+
+            ${call.strengths && call.strengths.length > 0 ? `
+                <div class="detail-group">
+                    <div class="detail-label">Strengths</div>
+                    <div class="tags">
+                        ${call.strengths.map(s => `<span class="tag">${s}</span>`).join('')}
+                    </div>
+                </div>
+            ` : ''}
+
+            ${call.redFlags && call.redFlags.length > 0 ? `
+                <div class="detail-group">
+                    <div class="detail-label">Red Flags</div>
+                    <div class="tags">
+                        ${call.redFlags.map(f => `<span class="tag" style="background: #fee2e2; color: #991b1b;">${f}</span>`).join('')}
+                    </div>
+                </div>
+            ` : ''}
+
+            ${call.notes ? `
+                <div class="detail-group">
+                    <div class="detail-label">AI Summary</div>
+                    <div class="detail-value">${call.notes}</div>
+                </div>
+            ` : ''}
+
+            ${call.aiScore >= 35 ? `
+                <div class="invitation-status ${call.podcastInvitationSent ? '' : 'not-sent'}">
+                    ${call.podcastInvitationSent 
+                        ? '✅ Podcast invitation sent on ' + new Date(call.podcastInvitationSentAt).toLocaleDateString()
+                        : '⏳ Podcast invitation pending'}
+                </div>
+            ` : ''}
+
+            <div class="detail-group" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
+                <div class="detail-label">Metadata</div>
+                <div class="detail-value" style="font-size: 13px; color: #64748b;">
+                    ${call.zoomMeetingId ? `Zoom Meeting ID: ${call.zoomMeetingId}<br>` : ''}
+                    Created: ${new Date(call.createdAt).toLocaleString()}<br>
+                    ${call.analyzedAt ? `Analyzed: ${new Date(call.analyzedAt).toLocaleString()}<br>` : ''}
+                    Source: ${call.source || 'Unknown'}
+                </div>
+            </div>
+        `;
+
+        document.getElementById('modal-title').textContent = `${call.guestName} - Pre-Qual Call`;
+        document.getElementById('detail-modal').style.display = 'flex';
+    };
+
+    window.closeModal = function() {
+        document.getElementById('detail-modal').style.display = 'none';
+    };
+
+    window.refreshData = function() {
+        loadCalls();
+    };
+
+    function formatStatus(status) {
+        return status.split('_').map(word => 
+            word.charAt(0).toUpperCase() + word.slice(1)
+        ).join(' ');
+    }
+
+    function getScoreClass(score) {
+        if (score >= 35) return 'score-high';
+        if (score >= 20) return 'score-medium';
+        return 'score-low';
+    }
+
+    window.onclick = function(event) {
+        const modal = document.getElementById('detail-modal');
+        if (event.target === modal) {
+            closeModal();
+        }
+    };
+    
+    console.log('[Pre-Qual Calls] System initialized');
+    console.log('[Pre-Qual Calls] API Endpoint:', API_BASE);
+</script>
 </body>
 </html>
