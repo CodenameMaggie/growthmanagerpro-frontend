@@ -980,7 +980,6 @@
 
             const podcastToDiscovery = podcastCount > 0 ? (discoveryCount / podcastCount * 100) : 0;
             const discoveryToStrategy = discoveryCount > 0 ? (strategiesCount / discoveryCount * 100) : 0;
-            const strategyToClose = strategiesCount > 0 ? (closedCount / strategiesCount * 100) : 0;
 
             document.getElementById('report-podcast-discovery').textContent = 
                 `${podcastToDiscovery.toFixed(1)}%`;
