@@ -591,7 +591,50 @@
         updateConnectionStatus('error', error.message);
         renderErrorState(error.message);
     }
+            function updateConnectionStatus(status, message = '') {
+    // Add connection status indicator if it doesn't exist
+    let statusDiv = document.getElementById('connection-status');
+    if (!statusDiv) {
+        statusDiv = document.createElement('div');
+        statusDiv.id = 'connection-status';
+        statusDiv.className = 'connection-status';
+        statusDiv.innerHTML = `
+            <div class="status-indicator" id="status-indicator"></div>
+            <span id="status-text"></span>
+        `;
+        document.body.appendChild(statusDiv);
+    }
+    
+    const indicator = document.getElementById('status-indicator');
+    const statusText = document.getElementById('status-text');
+
+    if (status === 'connected') {
+        indicator.style.background = '#27ae60';
+        statusText.textContent = 'Live Connected';
+    } else if (status === 'error') {
+        indicator.style.background = '#e74c3c';
+        statusText.textContent = message || 'Connection Error';
+    } else if (status === 'connecting') {
+        indicator.style.background = '#f39c12';
+        statusText.textContent = 'Connecting...';
+    }
 }
+
+function renderErrorState(message) {
+    const tbody = document.getElementById('calls-tbody');
+    tbody.innerHTML = `
+        <tr>
+            <td colspan="8" style="text-align: center; padding: 3rem;">
+                <p style="color: #e74c3c; font-size: 1.1rem; margin-bottom: 0.5rem;">⚠️ Connection Error</p>
+                <p style="color: #7f8c8d; margin-bottom: 1rem;">Could not connect to: ${API_BASE}/api/pre-qualification-calls</p>
+                <p style="color: #7f8c8d; font-size: 0.9rem;">${message}</p>
+                <button class="btn btn-primary" onclick="loadCalls()" style="margin-top: 1rem;">
+                    🔄 Retry Connection
+                </button>
+            </td>
+        </tr>
+    `;
+}}
 
         function updateStats() {
             const total = allCalls.length;
