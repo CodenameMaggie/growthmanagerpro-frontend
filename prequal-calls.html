@@ -595,19 +595,22 @@
     }
 
       async function retriggerAnalysis(callId) {
-        if (!confirm('Re-analyze this call and add to Instantly campaign?')) return;
+        if (!confirm('Re-analyze this call and send podcast invite if qualified?')) return;
         
         try {
-                const response = await fetch(`${API_BASE}/api/ai-analyze-prequal`, {  
+                const response = await fetch(`${API_BASE}/api/ai-analyzer`, {  
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ callId })
+                body: JSON.stringify({ 
+                    action: 'analyze-prequal',
+                    callId: callId 
+                })
             });
             
             const result = await response.json();
             
             if (result.success) {
-                alert('✅ Analysis complete! Lead added to campaign.');
+                alert('✅ Analysis complete! ' + result.message);
                 loadCalls();
             } else {
                 alert('❌ Error: ' + result.error);
@@ -653,19 +656,7 @@
                     <p style="color: #e74c3c; font-size: 1.1rem; margin-bottom: 0.5rem;">⚠️ Connection Error</p>
                     <p style="color: #7f8c8d; margin-bottom: 1rem;">Could not connect to: ${API_BASE}/api/pre-qualification-calls</p>
                     <p style="color: #7f8c8d; font-size: 0.9rem;">${message}</p>
-                    <td>
-                    <button class="btn btn-secondary" onclick="event.stopPropagation(); showDetails('${call.id}')">
-                        View Details
-                    </button>
-                    ${!call.aiScore ? `
-                        <button class="btn btn-primary" onclick="event.stopPropagation(); retriggerAnalysis('${call.id}')" style="margin-left: 5px;">
-                            🔄 Analyze
-                        </button>
-                    ` : call.aiScore >= 35 && !call.podcastInvitationSent ? `
-                        <button class="btn btn-primary" onclick="event.stopPropagation(); retriggerAnalysis('${call.id}')" style="margin-left: 5px;">
-                            📧 Send Invite
-                        </button>
-                    ` : ''}
+                    <button class="btn btn-primary" onclick="loadCalls()" style="margin-top: 1rem;">🔄 Retry</button>
                 </td>
             </tr>
         `;
