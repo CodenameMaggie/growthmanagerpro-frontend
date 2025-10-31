@@ -1149,302 +1149,333 @@
 <script src="auth-helper.js"></script>
     
 <script>
+    // ============================================
+    // AUTHENTICATION & USER CHECK (LIVE DATA ONLY)
+    // ============================================
     (function() {
-        if (!AuthHelper.protectPage('advisor-dashboard.html')) {  // ← NOW CORRECT
+        if (!AuthHelper.protectPage('advisor-dashboard.html')) {
             throw new Error('Unauthorized access');
         }
         AuthHelper.applyPermissions();
     })();
     
-    // Configuration
-        const API_BASE = 'https://growthmanagerpro-backend.vercel.app/api';
+    const API_BASE = 'https://growthmanagerpro-backend.vercel.app';
+    
+    // Check if user is logged in
+    const userData = localStorage.getItem('user');
+    if (!userData) {
+        window.location.href = 'login.html';
+        throw new Error('Not authenticated');
+    }
+
+    // Parse user data
+    const user = JSON.parse(userData);
+
+    // Check if this is a client (not admin)
+    if (user.type !== 'client' && user.role !== 'client') {
+        window.location.href = 'dashboard.html';
+        throw new Error('Not a client account');
+    }
+
+    // Get the client's UUID from logged-in user
+    const clientId = user.id;
+
+    console.log('[Client Dashboard] Logged in as', user.name, 'with ID', clientId);
+
+    // ============================================
+    // DATA LOADING & RENDERING (LIVE ONLY)
+    // ============================================
+    
+    let clientData = null;
+    const phaseNames = ['Discovery', 'Strategy', 'Implementation', 'Optimization'];
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('[Client Dashboard] Initializing...');
+        loadClientData();
         
-        // Get client ID from URL parameter
-        const urlParams = new URLSearchParams(window.location.search);
-        const clientId = urlParams.get('clientId') || urlParams.get('client_id'); // Accept both formats
+        // Auto-refresh every 2 minutes
+        setInterval(loadClientData, 2 * 60 * 1000);
+    });
 
-        // Global state
-        let clientData = null;
-
-        // Phase names
-        const phaseNames = ['Discovery', 'Strategy', 'Implementation', 'Optimization'];
-
-        // Navigation handling
-        function showSection(sectionId) {
-            // Update active states
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            event.currentTarget.classList.add('active');
+    // Fetch client data from API (LIVE ONLY - NO FALLBACK)
+    async function loadClientData() {
+        try {
+            updateConnectionStatus('connecting');
             
-            // Show the selected section
-            document.querySelectorAll('.content-section').forEach(section => {
-                section.classList.remove('active');
-            });
-            document.getElementById(sectionId).classList.add('active');
-        }
-
-        // Fetch client data from API or use demo data
-        async function fetchClientData() {
-            if (clientId) {
-                // Real API call
-                try {
-                    const response = await fetch(`${API_BASE}/client-dashboard?clientId=${clientId}`);
-                    
-                    if (!response.ok) {
-                        throw new Error(`API error: ${response.status}`);
-                    }
-                    
-                    const result = await response.json();
-                    
-                    if (!result.success) {
-                        throw new Error(result.error || 'Failed to load data');
-                    }
-                    
-                    // Map API response to expected structure
-                    clientData = {
-                        client: result.data.client,
-                        stats: {
-                            daysInProgram: result.data.program.daysInProgram,
-                            daysRemaining: result.data.program.daysRemaining,
-                            currentPhase: result.data.program.currentPhase,
-                            totalCalls: result.data.calls.total,
-                            progressPercent: result.data.program.completionPercentage,
-                            programStart: result.data.client.programStartDate
-                        },
-                        calls: result.data.calls.upcoming.map(call => ({
-                            type: call.type,
-                            scheduled_date: call.date,
-                            scheduled_time: call.time,
-                            status: call.status,
-                            notes: ''
-                        })),
-                        milestones: result.data.milestones,
-                        messages: result.data.messages,
-                        resources: result.data.resources
-                    };
-                    renderClientData();
-                    
-                } catch (error) {
-                    console.error('Error fetching client data:', error);
-                    useDemoData();
-                }
-            } else {
-                // Demo mode
-                useDemoData();
+            const response = await fetch(`${API_BASE}/api/client-dashboard?clientId=${clientId}`);
+            
+            if (!response.ok) {
+                throw new Error(`API error: ${response.status}`);
             }
-        }
-
-        // Use demo data for preview
-        function useDemoData() {
-            clientData = {
-                client: {
-                    name: 'Sarah Johnson',
-                    email: 'sarah@example.com'
-                },
-                stats: {
-                    daysInProgram: 35,
-                    daysRemaining: 55,
-                    currentPhase: 2,
-                    totalCalls: 6,
-                    progressPercent: 39,
-                    programStart: 'September 22, 2025'
-                },
-                calls: [
-                    {
-                        type: 'Discovery Call',
-                        scheduled_date: '2025-11-15',
-                        scheduled_time: '10:00 AM PST',
-                        status: 'scheduled',
-                        notes: 'Quarterly review and next phase planning'
-                    },
-                    {
-                        type: 'Strategy Session',
-                        scheduled_date: '2025-11-01',
-                        scheduled_time: '2:00 PM PST',
-                        status: 'completed',
-                        notes: 'Reviewed Q3 results and adjusted strategy'
-                    },
-                    {
-                        type: 'Kickoff Call',
-                        scheduled_date: '2025-09-22',
-                        scheduled_time: '11:00 AM PST',
-                        status: 'completed',
-                        notes: 'Initial program setup and goal alignment'
-                    }
-                ],
-                messages: []
-            };
-            renderClientData();
             
-            // Show preview banner
-            const banner = document.createElement('div');
-            banner.className = 'preview-banner';
-            banner.textContent = '👀 PREVIEW MODE - This is showing demo data. Deploy with a client_id parameter for live data.';
-            document.body.appendChild(banner);
+            const result = await response.json();
+            
+            if (!result.success) {
+                throw new Error(result.error || 'Failed to load data');
+            }
+            
+            // Map API response to expected structure
+            clientData = {
+                client: result.data.client,
+                stats: {
+                    daysInProgram: result.data.program.daysInProgram,
+                    daysRemaining: result.data.program.daysRemaining,
+                    currentPhase: result.data.program.currentPhase,
+                    totalCalls: result.data.calls.total,
+                    progressPercent: result.data.program.completionPercentage,
+                    programStart: result.data.client.programStartDate
+                },
+                calls: result.data.calls.upcoming.map(call => ({
+                    type: call.type,
+                    scheduled_date: call.date,
+                    scheduled_time: call.time,
+                    status: call.status,
+                    notes: ''
+                })),
+                milestones: result.data.milestones,
+                messages: result.data.messages,
+                resources: result.data.resources
+            };
+            
+            renderClientData();
+            updateConnectionStatus('connected');
+            
+        } catch (error) {
+            console.error('[Client Dashboard] Error loading data:', error);
+            updateConnectionStatus('error', error.message);
+            showErrorState(error.message);
         }
+    }
 
-        // Render all client data
-        function renderClientData() {
-            if (!clientData) return;
+    // Show error state (NO DEMO DATA)
+    function showErrorState(errorMessage) {
+        // Hide all content sections
+        document.querySelectorAll('.content-section').forEach(section => {
+            section.style.display = 'none';
+        });
+        
+        // Show error message in main content
+        const mainContent = document.querySelector('.main-content');
+        mainContent.innerHTML = `
+            <div class="page-header">
+                <h2>⚠️ Unable to Load Dashboard</h2>
+                <p class="page-subtitle" style="color: #e74c3c;">Connection error - please contact support</p>
+            </div>
+            
+            <div style="background: white; padding: 3rem; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); text-align: center;">
+                <div style="font-size: 4rem; margin-bottom: 1rem;">🔌</div>
+                <h3 style="color: #2c3e50; margin-bottom: 1rem;">Connection Failed</h3>
+                <p style="color: #7f8c8d; margin-bottom: 1.5rem;">
+                    Could not load your dashboard data from the server.
+                </p>
+                <p style="color: #e74c3c; font-family: monospace; font-size: 0.9rem; background: #f8f9fa; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                    ${errorMessage}
+                </p>
+                <p style="color: #7f8c8d; margin-bottom: 2rem;">
+                    <strong>API Endpoint:</strong> ${API_BASE}/api/client-dashboard<br>
+                    <strong>Client ID:</strong> ${clientId}
+                </p>
+                <button onclick="loadClientData()" style="padding: 1rem 2rem; background: linear-gradient(135deg, #3498db, #2980b9); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 1rem;">
+                    🔄 Retry Connection
+                </button>
+                <p style="color: #7f8c8d; margin-top: 2rem; font-size: 0.9rem;">
+                    Still having issues? Email <a href="mailto:maggie@maggieforbesstrategies.com" style="color: #3498db;">maggie@maggieforbesstrategies.com</a>
+                </p>
+            </div>
+        `;
+    }
 
-            const { client, stats, calls } = clientData;
+    // Update connection status indicator
+    function updateConnectionStatus(status, message = '') {
+        const indicator = document.getElementById('status-indicator');
+        const statusText = document.getElementById('status-text');
 
-            // Update client name in sidebar
-            document.getElementById('clientName').textContent = client.name || 'Client Portal';
+        if (!indicator || !statusText) return;
 
-            // Update program info
-            document.getElementById('program-start').textContent = stats.programStart || 'Sept 22, 2025';
-            document.getElementById('current-phase-text').textContent = `Phase ${stats.currentPhase}: ${phaseNames[stats.currentPhase - 1]}`;
-            document.getElementById('days-remaining').textContent = stats.daysRemaining || 90;
-            document.getElementById('progress-percent').textContent = `${stats.progressPercent}%`;
-
-            // Update stats cards
-            document.getElementById('stat-days-in').textContent = stats.daysInProgram || 0;
-            document.getElementById('stat-days-left').textContent = stats.daysRemaining || 90;
-            document.getElementById('stat-phase').textContent = stats.currentPhase || 1;
-            document.getElementById('phase-name-stat').textContent = phaseNames[(stats.currentPhase || 1) - 1];
-            document.getElementById('stat-calls').textContent = stats.totalCalls || 0;
-
-            // Update progress bar
-            const progressPercent = stats.progressPercent || 0;
-            document.getElementById('progress-bar-fill').style.width = `${progressPercent}%`;
-            document.getElementById('progress-percentage').textContent = `${progressPercent}%`;
-            document.getElementById('progress-text').textContent = getProgressText(progressPercent);
-
-            // Update phase tracker
-            updatePhaseTracker(stats.currentPhase || 1);
-
-            // Render calls
-            renderCalls(calls);
+        if (status === 'connected') {
+            indicator.className = 'status-indicator status-connected';
+            statusText.textContent = 'Live Connected';
+        } else if (status === 'error') {
+            indicator.className = 'status-indicator status-error';
+            statusText.textContent = message || 'Connection Error';
+        } else if (status === 'connecting') {
+            indicator.className = 'status-indicator';
+            indicator.style.background = '#f39c12';
+            statusText.textContent = 'Connecting...';
         }
+    }
 
-        // Get progress text based on percentage
-        function getProgressText(percent) {
-            if (percent < 25) return 'Getting started...';
-            if (percent < 50) return 'Building momentum...';
-            if (percent < 75) return 'Making great progress...';
-            if (percent < 100) return 'Almost there...';
-            return 'Program complete!';
-        }
+    // Render all client data (LIVE DATA ONLY)
+    function renderClientData() {
+        if (!clientData) return;
+
+        const { client, stats, calls } = clientData;
+
+        // Update client name in sidebar
+        document.getElementById('clientName').textContent = client.name || 'Client Portal';
+
+        // Update program info
+        document.getElementById('program-start').textContent = stats.programStart || 'Not set';
+        document.getElementById('current-phase-text').textContent = `Phase ${stats.currentPhase}: ${phaseNames[stats.currentPhase - 1]}`;
+        document.getElementById('days-remaining').textContent = stats.daysRemaining || 0;
+        document.getElementById('progress-percent').textContent = `${stats.progressPercent}%`;
+
+        // Update stats cards
+        document.getElementById('stat-days-in').textContent = stats.daysInProgram || 0;
+        document.getElementById('stat-days-left').textContent = stats.daysRemaining || 0;
+        document.getElementById('stat-phase').textContent = stats.currentPhase || 1;
+        document.getElementById('phase-name-stat').textContent = phaseNames[(stats.currentPhase || 1) - 1];
+        document.getElementById('stat-calls').textContent = stats.totalCalls || 0;
+
+        // Update progress bar
+        const progressPercent = stats.progressPercent || 0;
+        document.getElementById('progress-bar-fill').style.width = `${progressPercent}%`;
+        document.getElementById('progress-percentage').textContent = `${progressPercent}%`;
+        document.getElementById('progress-text').textContent = getProgressText(progressPercent);
 
         // Update phase tracker
-        function updatePhaseTracker(currentPhase) {
-            const phases = document.querySelectorAll('.phase-item');
-            phases.forEach((phase, index) => {
-                phase.classList.remove('completed', 'active');
-                
-                if (index + 1 < currentPhase) {
-                    phase.classList.add('completed');
-                } else if (index + 1 === currentPhase) {
-                    phase.classList.add('active');
-                }
-            });
-        }
+        updatePhaseTracker(stats.currentPhase || 1);
 
         // Render calls
-        function renderCalls(calls) {
-            if (!calls || calls.length === 0) {
-                const emptyHtml = `
-                    <div class="empty-state">
-                        <h3>No calls scheduled yet</h3>
-                        <p>Contact Maggie to schedule your first call</p>
-                    </div>
-                `;
-                document.getElementById('upcoming-calls-list').innerHTML = emptyHtml;
-                document.getElementById('all-calls-list').innerHTML = emptyHtml;
-                return;
-            }
+        renderCalls(calls);
+    }
 
-            // Render upcoming calls (next 3)
-            const upcomingCalls = calls.filter(c => c.status === 'scheduled').slice(0, 3);
-            const upcomingHtml = upcomingCalls.map(call => `
-                <div class="call-item">
-                    <div class="call-header">
-                        <div class="call-title">${call.type}</div>
-                        <span class="call-badge upcoming">Upcoming</span>
-                    </div>
-                    <div class="call-details">
-                        <strong>Date:</strong> ${formatDate(call.scheduled_date)}<br>
-                        <strong>Time:</strong> ${call.scheduled_time || 'TBD'}
-                        ${call.notes ? `<br><strong>Notes:</strong> ${call.notes}` : ''}
-                    </div>
-                </div>
-            `).join('');
+    // Navigation handling
+    function showSection(sectionId) {
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        event.currentTarget.classList.add('active');
+        
+        document.querySelectorAll('.content-section').forEach(section => {
+            section.classList.remove('active');
+        });
+        document.getElementById(sectionId).classList.add('active');
+    }
 
-            document.getElementById('upcoming-calls-list').innerHTML = upcomingHtml || `
-                <div class="empty-state">
-                    <h3>No upcoming calls</h3>
-                    <p>All caught up! Contact Maggie to schedule your next call</p>
-                </div>
-            `;
+    // Get progress text based on percentage
+    function getProgressText(percent) {
+        if (percent < 25) return 'Getting started...';
+        if (percent < 50) return 'Building momentum...';
+        if (percent < 75) return 'Making great progress...';
+        if (percent < 100) return 'Almost there...';
+        return 'Program complete!';
+    }
 
-            // Render all calls
-            const allCallsHtml = calls.map(call => `
-                <div class="call-item">
-                    <div class="call-header">
-                        <div class="call-title">${call.type}</div>
-                        <span class="call-badge ${call.status === 'completed' ? 'completed' : 'upcoming'}">
-                            ${call.status === 'completed' ? 'Completed' : 'Upcoming'}
-                        </span>
-                    </div>
-                    <div class="call-details">
-                        <strong>Date:</strong> ${formatDate(call.scheduled_date)}<br>
-                        <strong>Time:</strong> ${call.scheduled_time || 'TBD'}
-                        ${call.notes ? `<br><strong>Notes:</strong> ${call.notes}` : ''}
-                    </div>
-                </div>
-            `).join('');
-
-            document.getElementById('all-calls-list').innerHTML = allCallsHtml;
-        }
-
-        // Format date
-        function formatDate(dateString) {
-            if (!dateString) return 'Date TBD';
-            const date = new Date(dateString);
-            return date.toLocaleDateString('en-US', { 
-                month: 'long', 
-                day: 'numeric', 
-                year: 'numeric' 
-            });
-        }
-
-        // Handle message form submission
-        document.getElementById('message-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
+    // Update phase tracker
+    function updatePhaseTracker(currentPhase) {
+        const phases = document.querySelectorAll('.phase-item');
+        phases.forEach((phase, index) => {
+            phase.classList.remove('completed', 'active');
             
-            const messageText = document.getElementById('message-input').value.trim();
-            if (!messageText) return;
-
-            try {
-                const response = await fetch(`${API_BASE}/client-dashboard/messages`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        clientId: clientId,
-                        message: messageText
-                    })
-                });
-
-                if (!response.ok) throw new Error('Failed to send message');
-
-                // Clear form
-                document.getElementById('message-input').value = '';
-                
-                // Show success
-                alert('Message sent successfully!');
-                
-            } catch (error) {
-                console.error('Error sending message:', error);
-                alert('Failed to send message. Please try again or contact Maggie directly.');
+            if (index + 1 < currentPhase) {
+                phase.classList.add('completed');
+            } else if (index + 1 === currentPhase) {
+                phase.classList.add('active');
             }
         });
+    }
 
-        // Initialize
-        fetchClientData();
-    </script>
+    // Render calls
+    function renderCalls(calls) {
+        if (!calls || calls.length === 0) {
+            const emptyHtml = `
+                <div class="empty-state">
+                    <h3>No calls scheduled yet</h3>
+                    <p>Contact Maggie to schedule your first call</p>
+                </div>
+            `;
+            document.getElementById('upcoming-calls-list').innerHTML = emptyHtml;
+            document.getElementById('all-calls-list').innerHTML = emptyHtml;
+            return;
+        }
+
+        // Render upcoming calls
+        const upcomingCalls = calls.filter(c => c.status === 'scheduled').slice(0, 3);
+        const upcomingHtml = upcomingCalls.map(call => `
+            <div class="call-item">
+                <div class="call-header">
+                    <div class="call-title">${call.type}</div>
+                    <span class="call-badge upcoming">Upcoming</span>
+                </div>
+                <div class="call-details">
+                    <strong>Date:</strong> ${formatDate(call.scheduled_date)}<br>
+                    <strong>Time:</strong> ${call.scheduled_time || 'TBD'}
+                    ${call.notes ? `<br><strong>Notes:</strong> ${call.notes}` : ''}
+                </div>
+            </div>
+        `).join('');
+
+        document.getElementById('upcoming-calls-list').innerHTML = upcomingHtml || `
+            <div class="empty-state">
+                <h3>No upcoming calls</h3>
+                <p>All caught up! Contact Maggie to schedule your next call</p>
+            </div>
+        `;
+
+        // Render all calls
+        const allCallsHtml = calls.map(call => `
+            <div class="call-item">
+                <div class="call-header">
+                    <div class="call-title">${call.type}</div>
+                    <span class="call-badge ${call.status === 'completed' ? 'completed' : 'upcoming'}">
+                        ${call.status === 'completed' ? 'Completed' : 'Upcoming'}
+                    </span>
+                </div>
+                <div class="call-details">
+                    <strong>Date:</strong> ${formatDate(call.scheduled_date)}<br>
+                    <strong>Time:</strong> ${call.scheduled_time || 'TBD'}
+                    ${call.notes ? `<br><strong>Notes:</strong> ${call.notes}` : ''}
+                </div>
+            </div>
+        `).join('');
+
+        document.getElementById('all-calls-list').innerHTML = allCallsHtml;
+    }
+
+    // Format date
+    function formatDate(dateString) {
+        if (!dateString) return 'Date TBD';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', { 
+            month: 'long', 
+            day: 'numeric', 
+            year: 'numeric' 
+        });
+    }
+
+    // Handle message form submission
+    document.getElementById('message-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const messageText = document.getElementById('message-input').value.trim();
+        if (!messageText) return;
+
+        try {
+            const response = await fetch(`${API_BASE}/api/client-dashboard/messages`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    clientId: clientId,
+                    message: messageText
+                })
+            });
+
+            if (!response.ok) throw new Error('Failed to send message');
+
+            document.getElementById('message-input').value = '';
+            alert('Message sent successfully!');
+            loadClientData(); // Reload to show new message
+            
+        } catch (error) {
+            console.error('Error sending message:', error);
+            alert('Failed to send message. Please try again.');
+        }
+    });
+
+    console.log('[Client Dashboard] System initialized - LIVE DATA ONLY');
+    console.log('[Client Dashboard] API Endpoint:', API_BASE);
+</script>
 </body>
 </html>
