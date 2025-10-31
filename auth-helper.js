@@ -239,7 +239,6 @@ const AuthHelper = {
   AuthHelper.initSupabase('YOUR_SUPABASE_URL', 'YOUR_SUPABASE_ANON_KEY');
   
   // Protect this page - only allow users with proper permissions
-  AuthHelper.protectPage('dashboard.html'); // Change to match your page name
   
   // Apply permissions to UI elements
   AuthHelper.applyPermissions();
