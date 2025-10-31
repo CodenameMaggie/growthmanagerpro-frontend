@@ -921,6 +921,32 @@
             }
         }
 
+        // Activate client portal
+async function activateClientPortal(dealId, clientName) {
+    if (!confirm(`Activate client portal for ${clientName}? This will give them dashboard access.`)) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE}/api/activate-client-portal`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ dealId: dealId })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            alert(`✅ ${result.message}`);
+            loadDeals(); // Refresh the deals list
+        } else {
+            alert(`❌ Error: ${result.error}`);
+        }
+    } catch (error) {
+        console.error('Error activating portal:', error);
+        alert('Failed to activate portal. Please try again.');
+    }
+}
     </script>  
 </body>
 </html>
