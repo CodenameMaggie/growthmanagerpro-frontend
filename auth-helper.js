@@ -98,7 +98,7 @@ const AuthHelper = {
       'podcast-calls.html': 'calls.view',
       'podcast-interviews.html': 'calls.view',
       'discovery-calls.html': 'calls.view',
-      'sales-calls.html': 'calls.view',
+      'strategy-calls.html': 'calls.view',
       'pipeline.html': 'pipeline.view',
       'deals.html': 'deals.view',
       'cash-flow.html': 'financials.view',
