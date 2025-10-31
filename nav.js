@@ -35,7 +35,7 @@ function addNavBar() {
         { name: 'Dashboard', url: 'dashboard.html', icon: '📊' },
         { name: 'Podcast Calls', url: 'podcast-calls.html', icon: '🎙️' },
         { name: 'Discovery Calls', url: 'discovery-calls.html', icon: '📞' },
-        { name: 'Sales Calls', url: 'sales-calls.html', icon: '💼' },
+        { name: 'strategy Calls', url: 'strategy-calls.html', icon: '💼' },
         { name: 'Pipeline', url: 'pipeline.html', icon: '🔄' },
         { name: 'Contacts', url: 'contacts.html', icon: '👥' },
         { name: 'Deals', url: 'deals.html', icon: '💰' },
