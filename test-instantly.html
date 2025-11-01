@@ -146,17 +146,10 @@
             <p>This will call <span class="code">/api/instantly-manager</span> with action: <span class="code">send-podcast</span></p>
             
             <label>Lead Name:</label>
-            <input type="text" id="leadName" value="Marcus Chen Test" />
+            <input type="text" id="leadName" value="Maggie Test" />
             
             <label>Lead Email:</label>
-            <input type="text" id="leadEmail" value="marcus.test@example.com" />
-            
-            <label>Sender Pool:</label>
-            <select id="senderPool">
-                <option value="A">Pool A</option>
-                <option value="B">Pool B</option>
-                <option value="C">Pool C</option>
-            </select>
+            <input type="text" id="leadEmail" value="wrayfamily30@gmail.com" />
             
             <br><br>
             <button onclick="testPodcastInvite()">🚀 Send Podcast Invitation</button>
@@ -183,7 +176,6 @@
             
             const leadName = document.getElementById('leadName').value;
             const leadEmail = document.getElementById('leadEmail').value;
-            const senderPool = document.getElementById('senderPool').value;
             
             btn.disabled = true;
             btn.textContent = '⏳ Sending...';
@@ -195,8 +187,7 @@
                 const payload = {
                     action: 'send-podcast',
                     leadEmail: leadEmail,
-                    leadName: leadName,
-                    senderPool: senderPool
+                    leadName: leadName
                 };
 
                 console.log('Sending payload:', payload);
