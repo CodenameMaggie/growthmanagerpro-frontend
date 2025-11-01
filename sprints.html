@@ -904,548 +904,552 @@
 <script src="auth-helper.js"></script>
     
 <script>
+    // ====== ROLE-AWARE INITIALIZATION ======
     (function() {
-        if (!AuthHelper.protectPage('advisor-dashboard.html')) {  // ← NOW CORRECT
+        if (!AuthHelper.protectPage('advisor-dashboard.html')) {
             throw new Error('Unauthorized access');
         }
         AuthHelper.applyPermissions();
     })();
     
     const API_URL = 'https://growthmanagerpro-backend.vercel.app';
-        
-        // Data stores
-        let tasksData = {
-            podcast: [],
-            discovery: [],
-            strategy: [],
-            client: []
-        };
-        
-        let clientsData = [];
-        let messagesData = {};
-        let activeClientId = null;
+    const userRole = localStorage.getItem('userRole') || 'client';
+    const userId = localStorage.getItem('userId');
+    
+    // Data stores
+    let tasksData = {
+        podcast: [],
+        discovery: [],
+        strategy: [],
+        client: []
+    };
+    
+    let clientsData = [];
+    let messagesData = {};
+    let activeClientId = null;
 
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('[Sprints] Initializing...');
+    // Initialize based on role
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('[Sprints] Initializing for role:', userRole);
+        
+        // Update header based on role
+        updateHeaderForRole();
+        
+        if (userRole === 'client') {
+            // REDIRECT CLIENTS TO THEIR DASHBOARD
+            console.log('[Sprints] Client detected - redirecting to client dashboard');
+            window.location.href = 'client-dashboard.html';
+        } else {
+            // Load admin/advisor view
             loadAllData();
-            
-            // Auto-refresh every 2 minutes
             setInterval(loadAllData, 2 * 60 * 1000);
-        });
-
-        async function loadAllData() {
-            try {
-                await Promise.all([
-                    loadTasks(),
-                    loadClients(),
-                    loadMessages()
-                ]);
-                updateTaskBadge();
-            } catch (error) {
-                console.error('[Sprints] Error loading data:', error);
-                // Load demo data
-                loadDemoData();
-            }
         }
+    });
 
-        async function loadTasks() {
-            try {
-                const response = await fetch(`${API_URL}/api/sprints/action-items`);
-                if (!response.ok) throw new Error('Failed to load tasks');
-                
-                const result = await response.json();
-                tasksData = result.tasks || tasksData;
-                renderAllTasks();
-            } catch (error) {
-                console.error('[Sprints] Error loading tasks:', error);
-                loadDemoTasks();
-            }
+    function updateHeaderForRole() {
+        const headerTitle = document.querySelector('.page-header h2');
+        const headerSubtitle = document.querySelector('.page-subtitle');
+        const sidebarTitle = document.querySelector('.sidebar-header p');
+        
+        if (userRole === 'client') {
+            headerTitle.textContent = 'My Sprint Tasks';
+            headerSubtitle.textContent = 'Your weekly deliverables and progress tracking';
+            sidebarTitle.textContent = 'Client Workspace';
+        } else {
+            headerTitle.textContent = 'My Tasks & Client Workspace';
+            headerSubtitle.textContent = 'Action items needing your attention and private client communication';
+            sidebarTitle.textContent = 'Admin Workspace';
         }
+    }
 
-        function loadDemoTasks() {
-            tasksData = {
-                podcast: [
-                    {
-                        id: 'p1',
-                        title: 'Sarah Johnson - Score 28, Requested Discovery',
-                        details: 'Despite low score, prospect is very interested. Review recording to assess fit.',
-                        date: '2 hours ago',
-                        completed: false
-                    }
-                ],
-                discovery: [
-                    {
-                        id: 'd1',
-                        title: 'Create Growth Plan for Jonathan (Brewer & Company)',
-                        details: 'Discovery call completed Oct 23. Prospect agreed to see offer. Build custom 7x ROI strategy.',
-                        date: 'Yesterday',
-                        client: 'Jonathan Brewer',
-                        completed: false
-                    },
-                    {
-                        id: 'd2',
-                        title: 'Prepare Strategy Call for Tye (TWS Construction)',
-                        details: 'Discovery went great! Build custom proposal focusing on contractor lead generation.',
-                        date: '2 days ago',
-                        client: 'Tye Shumway',
-                        completed: false
-                    }
-                ],
-                strategy: [
-                    {
-                        id: 's1',
-                        title: 'Onboard New Client: Sarah (Design Co)',
-                        details: 'Contract signed Oct 24. Set up in systems, send welcome materials, schedule kickoff.',
-                        date: 'Today',
-                        client: 'Sarah',
-                        completed: false
-                    }
-                ],
-                client: [
-                    {
-                        id: 'c1',
-                        title: 'Weekly Check-in with Jonathan',
-                        details: 'Review progress, discuss Q4 goals, address any blockers.',
-                        date: 'Tomorrow',
-                        client: 'Jonathan Brewer',
-                        completed: false
-                    },
-                    {
-                        id: 'c2',
-                        title: 'Review Q4 Results with Tye',
-                        details: 'Scheduled for Friday. Prepare performance report and recommendations.',
-                        date: 'Friday',
-                        client: 'Tye Shumway',
-                        completed: false
-                    }
-                ]
-            };
+    async function loadAllData() {
+        try {
+            await Promise.all([
+                loadTasks(),
+                loadClients(),
+                loadMessages()
+            ]);
+            updateTaskBadge();
+        } catch (error) {
+            console.error('[Sprints] Error loading data:', error);
+            loadDemoData();
+        }
+    }
+
+    async function loadTasks() {
+        try {
+            const response = await fetch(`${API_URL}/api/sprints/action-items`);
+            if (!response.ok) throw new Error('Failed to load tasks');
+            
+            const result = await response.json();
+            tasksData = result.tasks || tasksData;
             renderAllTasks();
+        } catch (error) {
+            console.error('[Sprints] Error loading tasks:', error);
+            loadDemoTasks();
         }
+    }
 
-        function renderAllTasks() {
-            renderTaskCategory('podcast', tasksData.podcast, 'podcast-tasks', 'podcast-count');
-            renderTaskCategory('discovery', tasksData.discovery, 'discovery-tasks', 'discovery-count');
-            renderTaskCategory('strategy', tasksData.strategy, 'strategy-tasks', 'strategy-count');
-            renderTaskCategory('client', tasksData.client, 'client-tasks', 'client-count');
-        }
-
-        function renderTaskCategory(category, tasks, containerId, countId) {
-            const container = document.getElementById(containerId);
-            const countEl = document.getElementById(countId);
-            
-            const incompleteTasks = tasks.filter(t => !t.completed);
-            countEl.textContent = incompleteTasks.length;
-            
-            if (tasks.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-category">
-                        ✅ No ${category} tasks - all clear!
-                    </div>
-                `;
-                return;
-            }
-
-            container.innerHTML = tasks.map(task => `
-                <div class="task-item ${task.completed ? 'completed' : ''}" data-task-id="${task.id}">
-                    <div class="task-checkbox ${task.completed ? 'checked' : ''}" onclick="toggleTask('${task.id}', '${category}')">
-                        ${task.completed ? '✓' : ''}
-                    </div>
-                    <div class="task-content">
-                        <div class="task-title">${task.title}</div>
-                        <div class="task-details">${task.details}</div>
-                        <div class="task-meta">
-                            <span>📅 ${task.date}</span>
-                            ${task.client ? `<span>👤 ${task.client}</span>` : ''}
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function toggleTask(taskId, category) {
-            const categoryTasks = tasksData[category];
-            const task = categoryTasks.find(t => t.id === taskId);
-            
-            if (task) {
-                task.completed = !task.completed;
-                
-                // In production, save to database
-                // await saveTaskStatus(taskId, task.completed);
-                
-                renderAllTasks();
-                updateTaskBadge();
-            }
-        }
-
-        function updateTaskBadge() {
-            const totalIncomplete = 
-                tasksData.podcast.filter(t => !t.completed).length +
-                tasksData.discovery.filter(t => !t.completed).length +
-                tasksData.strategy.filter(t => !t.completed).length +
-                tasksData.client.filter(t => !t.completed).length;
-            
-            const badge = document.getElementById('tasks-badge');
-            if (badge) {
-                badge.textContent = totalIncomplete;
-                badge.style.display = totalIncomplete > 0 ? 'block' : 'none';
-            }
-        }
-
-        async function loadClients() {
-            try {
-                const response = await fetch(`${API_URL}/api/clients/active`);
-                if (!response.ok) throw new Error('Failed to load clients');
-                
-                const result = await response.json();
-                clientsData = result.clients || [];
-                renderClientTabs();
-            } catch (error) {
-                console.error('[Sprints] Error loading clients:', error);
-                loadDemoClients();
-            }
-        }
-
-        function loadDemoClients() {
-            clientsData = [
+    function loadDemoTasks() {
+        tasksData = {
+            podcast: [
+                {
+                    id: 'p1',
+                    title: 'Sarah Johnson - Score 28, Requested Discovery',
+                    details: 'Despite low score, prospect is very interested. Review recording to assess fit.',
+                    date: '2 hours ago',
+                    completed: false
+                }
+            ],
+            discovery: [
+                {
+                    id: 'd1',
+                    title: 'Create Growth Plan for Jonathan (Brewer & Company)',
+                    details: 'Discovery call completed Oct 23. Prospect agreed to see offer. Build custom 7x ROI strategy.',
+                    date: 'Yesterday',
+                    client: 'Jonathan Brewer',
+                    completed: false
+                },
+                {
+                    id: 'd2',
+                    title: 'Prepare Strategy Call for Tye (TWS Construction)',
+                    details: 'Discovery went great! Build custom proposal focusing on contractor lead generation.',
+                    date: '2 days ago',
+                    client: 'Tye Shumway',
+                    completed: false
+                }
+            ],
+            strategy: [
+                {
+                    id: 's1',
+                    title: 'Onboard New Client: Sarah (Design Co)',
+                    details: 'Contract signed Oct 24. Set up in systems, send welcome materials, schedule kickoff.',
+                    date: 'Today',
+                    client: 'Sarah',
+                    completed: false
+                }
+            ],
+            client: [
                 {
                     id: 'c1',
-                    name: 'Jonathan Brewer',
-                    company: 'Brewer & Company',
-                    stage: 'Discovery',
-                    unreadCount: 3
+                    title: 'Weekly Check-in with Jonathan',
+                    details: 'Review progress, discuss Q4 goals, address any blockers.',
+                    date: 'Tomorrow',
+                    client: 'Jonathan Brewer',
+                    completed: false
                 },
                 {
                     id: 'c2',
-                    name: 'Tye Shumway',
-                    company: 'TWS Construction',
-                    stage: 'Strategy',
-                    unreadCount: 0
-                },
-                {
-                    id: 'c3',
-                    name: 'Sarah Johnson',
-                    company: 'Design Co',
-                    stage: 'Client',
-                    unreadCount: 1
+                    title: 'Review Q4 Results with Tye',
+                    details: 'Scheduled for Friday. Prepare performance report and recommendations.',
+                    date: 'Friday',
+                    client: 'Tye Shumway',
+                    completed: false
                 }
-            ];
+            ]
+        };
+        renderAllTasks();
+    }
+
+    function renderAllTasks() {
+        renderTaskCategory('podcast', tasksData.podcast, 'podcast-tasks', 'podcast-count');
+        renderTaskCategory('discovery', tasksData.discovery, 'discovery-tasks', 'discovery-count');
+        renderTaskCategory('strategy', tasksData.strategy, 'strategy-tasks', 'strategy-count');
+        renderTaskCategory('client', tasksData.client, 'client-tasks', 'client-count');
+    }
+
+    function renderTaskCategory(category, tasks, containerId, countId) {
+        const container = document.getElementById(containerId);
+        const countEl = document.getElementById(countId);
+        
+        const incompleteTasks = tasks.filter(t => !t.completed);
+        countEl.textContent = incompleteTasks.length;
+        
+        if (tasks.length === 0) {
+            container.innerHTML = `
+                <div class="empty-category">
+                    ✅ No ${category} tasks - all clear!
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = tasks.map(task => `
+            <div class="task-item ${task.completed ? 'completed' : ''}" data-task-id="${task.id}">
+                <div class="task-checkbox ${task.completed ? 'checked' : ''}" onclick="toggleTask('${task.id}', '${category}')">
+                    ${task.completed ? '✓' : ''}
+                </div>
+                <div class="task-content">
+                    <div class="task-title">${task.title}</div>
+                    <div class="task-details">${task.details}</div>
+                    <div class="task-meta">
+                        <span>📅 ${task.date}</span>
+                        ${task.client ? `<span>👤 ${task.client}</span>` : ''}
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function toggleTask(taskId, category) {
+        const categoryTasks = tasksData[category];
+        const task = categoryTasks.find(t => t.id === taskId);
+        
+        if (task) {
+            task.completed = !task.completed;
+            renderAllTasks();
+            updateTaskBadge();
+        }
+    }
+
+    function updateTaskBadge() {
+        const totalIncomplete = 
+            tasksData.podcast.filter(t => !t.completed).length +
+            tasksData.discovery.filter(t => !t.completed).length +
+            tasksData.strategy.filter(t => !t.completed).length +
+            tasksData.client.filter(t => !t.completed).length;
+        
+        const badge = document.getElementById('tasks-badge');
+        if (badge) {
+            badge.textContent = totalIncomplete;
+            badge.style.display = totalIncomplete > 0 ? 'block' : 'none';
+        }
+    }
+
+    async function loadClients() {
+        try {
+            const response = await fetch(`${API_URL}/api/clients/active`);
+            if (!response.ok) throw new Error('Failed to load clients');
+            
+            const result = await response.json();
+            clientsData = result.clients || [];
             renderClientTabs();
-        }
-
-        function renderClientTabs() {
-            const tabsContainer = document.getElementById('client-tabs');
-            const contentsContainer = document.getElementById('client-contents');
-            
-            if (clientsData.length === 0) {
-                tabsContainer.innerHTML = '<p style="padding: 1rem; color: #7f8c8d;">No active clients yet</p>';
-                contentsContainer.innerHTML = '';
-                return;
-            }
-
-            // Render tabs
-            tabsContainer.innerHTML = clientsData.map((client, index) => `
-                <button 
-                    class="client-tab ${index === 0 ? 'active' : ''}" 
-                    onclick="switchClient('${client.id}')"
-                    data-client-id="${client.id}"
-                >
-                    ${client.name}
-                    ${client.unreadCount > 0 ? `
-                        <span class="client-tab-badge">${client.unreadCount}</span>
-                        <span class="attention-indicator"></span>
-                    ` : ''}
-                </button>
-            `).join('');
-
-            // Render content areas
-            contentsContainer.innerHTML = clientsData.map((client, index) => `
-                <div class="client-content ${index === 0 ? 'active' : ''}" data-client-id="${client.id}">
-                    <div class="client-info-bar">
-                        <div class="client-info">
-                            <div class="client-avatar">${client.name.split(' ').map(n => n[0]).join('')}</div>
-                            <div class="client-details">
-                                <h4>${client.name}</h4>
-                                <p>${client.company}</p>
-                            </div>
-                        </div>
-                        <div class="client-status">Stage: ${client.stage}</div>
-                    </div>
-
-                    <div class="message-thread" id="messages-${client.id}">
-                        <div class="loading">
-                            <div class="loading-spinner"></div>
-                            <p>Loading messages...</p>
-                        </div>
-                    </div>
-
-                    <div class="message-input-container">
-                        <textarea 
-                            class="message-input" 
-                            id="input-${client.id}"
-                            placeholder="Type your message to ${client.name}..."
-                        ></textarea>
-                        <div class="message-actions">
-                            <button class="btn btn-primary" onclick="sendMessage('${client.id}')">
-                                📤 Send
-                            </button>
-                            <button class="btn btn-icon" onclick="attachFile('${client.id}')" title="Attach File">
-                                📎
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-
-            // Load messages for first client
-            if (clientsData.length > 0) {
-                activeClientId = clientsData[0].id;
-                loadClientMessages(activeClientId);
-            }
-        }
-
-        function switchClient(clientId) {
-            // Update active tab
-            document.querySelectorAll('.client-tab').forEach(tab => {
-                if (tab.dataset.clientId === clientId) {
-                    tab.classList.add('active');
-                } else {
-                    tab.classList.remove('active');
-                }
-            });
-
-            // Update active content
-            document.querySelectorAll('.client-content').forEach(content => {
-                if (content.dataset.clientId === clientId) {
-                    content.classList.add('active');
-                } else {
-                    content.classList.remove('active');
-                }
-            });
-
-            activeClientId = clientId;
-            
-            // Load messages if not already loaded
-            if (!messagesData[clientId]) {
-                loadClientMessages(clientId);
-            }
-
-            // Mark messages as read
-            markMessagesRead(clientId);
-        }
-
-        async function loadMessages() {
-            // Load messages for all clients
-            for (const client of clientsData) {
-                await loadClientMessages(client.id);
-            }
-        }
-
-        async function loadClientMessages(clientId) {
-            try {
-                const response = await fetch(`${API_URL}/api/clients/${clientId}/messages`);
-                if (!response.ok) throw new Error('Failed to load messages');
-                
-                const result = await response.json();
-                messagesData[clientId] = result.messages || [];
-                renderMessages(clientId);
-            } catch (error) {
-                console.error('[Sprints] Error loading messages:', error);
-                loadDemoMessages(clientId);
-            }
-        }
-
-        function loadDemoMessages(clientId) {
-            const demoMessages = {
-                'c1': [
-                    {
-                        id: 'm1',
-                        from: 'client',
-                        author: 'Jonathan',
-                        text: 'Hey Maggie, here\'s our company logo and brand colors as requested!',
-                        time: '2 hours ago',
-                        attachments: [
-                            { name: 'brewer-logo.png', type: 'image' },
-                            { name: 'brand-guidelines.pdf', type: 'pdf' }
-                        ]
-                    },
-                    {
-                        id: 'm2',
-                        from: 'you',
-                        author: 'You',
-                        text: 'Perfect! I\'ll incorporate these into your growth plan. Draft will be ready by Friday.',
-                        time: '1 hour ago',
-                        attachments: []
-                    },
-                    {
-                        id: 'm3',
-                        from: 'client',
-                        author: 'Jonathan',
-                        text: 'Great! Also, can we schedule our strategy call for next Tuesday afternoon?',
-                        time: '30 minutes ago',
-                        attachments: []
-                    }
-                ],
-                'c2': [
-                    {
-                        id: 'm4',
-                        from: 'you',
-                        author: 'You',
-                        text: 'Hi Tye! Your custom growth plan is attached. Let me know your thoughts!',
-                        time: 'Yesterday',
-                        attachments: [
-                            { name: 'TWS-Growth-Plan.pdf', type: 'pdf' }
-                        ]
-                    },
-                    {
-                        id: 'm5',
-                        from: 'client',
-                        author: 'Tye',
-                        text: 'This looks amazing, Maggie! Love the ROI projections. Let\'s discuss implementation on our call.',
-                        time: '12 hours ago',
-                        attachments: []
-                    }
-                ],
-                'c3': [
-                    {
-                        id: 'm6',
-                        from: 'client',
-                        author: 'Sarah',
-                        text: 'Quick question - can we adjust the timeline for phase 2 by a week?',
-                        time: '3 hours ago',
-                        attachments: []
-                    }
-                ]
-            };
-
-            messagesData[clientId] = demoMessages[clientId] || [];
-            renderMessages(clientId);
-        }
-
-        function renderMessages(clientId) {
-            const container = document.getElementById(`messages-${clientId}`);
-            const messages = messagesData[clientId] || [];
-            
-            if (messages.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <p>No messages yet. Start the conversation!</p>
-                    </div>
-                `;
-                return;
-            }
-
-            container.innerHTML = messages.map(msg => `
-                <div class="message from-${msg.from}">
-                    <div class="message-avatar">${msg.author[0]}</div>
-                    <div class="message-content">
-                        <div class="message-header">
-                            <span class="message-author">${msg.author}</span>
-                            <span class="message-time">${msg.time}</span>
-                        </div>
-                        <div class="message-text">${msg.text}</div>
-                        ${msg.attachments && msg.attachments.length > 0 ? `
-                            <div class="message-attachments">
-                                ${msg.attachments.map(att => `
-                                    <div class="attachment" onclick="downloadAttachment('${att.name}')">
-                                        <span>📎</span>
-                                        <span>${att.name}</span>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        ` : ''}
-                    </div>
-                </div>
-            `).join('');
-
-            // Scroll to bottom
-            container.scrollTop = container.scrollHeight;
-        }
-
-        function sendMessage(clientId) {
-            const input = document.getElementById(`input-${clientId}`);
-            const text = input.value.trim();
-            
-            if (!text) {
-                alert('Please enter a message');
-                return;
-            }
-
-            // Add message to data
-            if (!messagesData[clientId]) {
-                messagesData[clientId] = [];
-            }
-
-            messagesData[clientId].push({
-                id: 'm' + Date.now(),
-                from: 'you',
-                author: 'You',
-                text: text,
-                time: 'Just now',
-                attachments: []
-            });
-
-            // Clear input
-            input.value = '';
-
-            // Re-render
-            renderMessages(clientId);
-
-            // In production: Save to database
-            console.log('Sending message to', clientId, ':', text);
-        }
-
-        function attachFile(clientId) {
-            // Trigger file input
-            const input = document.getElementById('file-input');
-            input.dataset.clientId = clientId;
-            input.click();
-        }
-
-        function handleFileUpload() {
-            const input = document.getElementById('file-input');
-            const clientId = input.dataset.clientId;
-            const files = input.files;
-            
-            if (files.length === 0) return;
-
-            alert(`📤 Uploading ${files[0].name} to ${clientsData.find(c => c.id === clientId)?.name}...`);
-            
-            // In production: Upload file and add to messages
-            console.log('Uploading file to', clientId, ':', files[0].name);
-            
-            input.value = '';
-        }
-
-        function downloadAttachment(filename) {
-            alert(`📥 Downloading ${filename}...`);
-            console.log('Downloading:', filename);
-        }
-
-        function markMessagesRead(clientId) {
-            const client = clientsData.find(c => c.id === clientId);
-            if (client) {
-                client.unreadCount = 0;
-                renderClientTabs();
-            }
-        }
-
-        function refreshTasks() {
-            loadTasks();
-        }
-
-        function refreshMessages() {
-            loadMessages();
-        }
-
-        function loadDemoData() {
-            loadDemoTasks();
+        } catch (error) {
+            console.error('[Sprints] Error loading clients:', error);
             loadDemoClients();
         }
+    }
 
-        console.log('[Sprints] System initialized');
-        console.log('[Sprints] API Endpoint:', API_URL);
-    </script>
+    function loadDemoClients() {
+        clientsData = [
+            {
+                id: 'c1',
+                name: 'Jonathan Brewer',
+                company: 'Brewer & Company',
+                stage: 'Discovery',
+                unreadCount: 3
+            },
+            {
+                id: 'c2',
+                name: 'Tye Shumway',
+                company: 'TWS Construction',
+                stage: 'Strategy',
+                unreadCount: 0
+            },
+            {
+                id: 'c3',
+                name: 'Sarah Johnson',
+                company: 'Design Co',
+                stage: 'Client',
+                unreadCount: 1
+            }
+        ];
+        renderClientTabs();
+    }
+
+    function renderClientTabs() {
+        const tabsContainer = document.getElementById('client-tabs');
+        const contentsContainer = document.getElementById('client-contents');
+        
+        if (clientsData.length === 0) {
+            tabsContainer.innerHTML = '<p style="padding: 1rem; color: #7f8c8d;">No active clients yet</p>';
+            contentsContainer.innerHTML = '';
+            return;
+        }
+
+        tabsContainer.innerHTML = clientsData.map((client, index) => `
+            <button 
+                class="client-tab ${index === 0 ? 'active' : ''}" 
+                onclick="switchClient('${client.id}')"
+                data-client-id="${client.id}"
+            >
+                ${client.name}
+                ${client.unreadCount > 0 ? `
+                    <span class="client-tab-badge">${client.unreadCount}</span>
+                    <span class="attention-indicator"></span>
+                ` : ''}
+            </button>
+        `).join('');
+
+        contentsContainer.innerHTML = clientsData.map((client, index) => `
+            <div class="client-content ${index === 0 ? 'active' : ''}" data-client-id="${client.id}">
+                <div class="client-info-bar">
+                    <div class="client-info">
+                        <div class="client-avatar">${client.name.split(' ').map(n => n[0]).join('')}</div>
+                        <div class="client-details">
+                            <h4>${client.name}</h4>
+                            <p>${client.company}</p>
+                        </div>
+                    </div>
+                    <div class="client-status">Stage: ${client.stage}</div>
+                </div>
+
+                <div class="message-thread" id="messages-${client.id}">
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                        <p>Loading messages...</p>
+                    </div>
+                </div>
+
+                <div class="message-input-container">
+                    <textarea 
+                        class="message-input" 
+                        id="input-${client.id}"
+                        placeholder="Type your message to ${client.name}..."
+                    ></textarea>
+                    <div class="message-actions">
+                        <button class="btn btn-primary" onclick="sendMessage('${client.id}')">
+                            📤 Send
+                        </button>
+                        <button class="btn btn-icon" onclick="attachFile('${client.id}')" title="Attach File">
+                            📎
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+
+        if (clientsData.length > 0) {
+            activeClientId = clientsData[0].id;
+            loadClientMessages(activeClientId);
+        }
+    }
+
+    function switchClient(clientId) {
+        document.querySelectorAll('.client-tab').forEach(tab => {
+            if (tab.dataset.clientId === clientId) {
+                tab.classList.add('active');
+            } else {
+                tab.classList.remove('active');
+            }
+        });
+
+        document.querySelectorAll('.client-content').forEach(content => {
+            if (content.dataset.clientId === clientId) {
+                content.classList.add('active');
+            } else {
+                content.classList.remove('active');
+            }
+        });
+
+        activeClientId = clientId;
+        
+        if (!messagesData[clientId]) {
+            loadClientMessages(clientId);
+        }
+
+        markMessagesRead(clientId);
+    }
+
+    async function loadMessages() {
+        for (const client of clientsData) {
+            await loadClientMessages(client.id);
+        }
+    }
+
+    async function loadClientMessages(clientId) {
+        try {
+            const response = await fetch(`${API_URL}/api/clients/${clientId}/messages`);
+            if (!response.ok) throw new Error('Failed to load messages');
+            
+            const result = await response.json();
+            messagesData[clientId] = result.messages || [];
+            renderMessages(clientId);
+        } catch (error) {
+            console.error('[Sprints] Error loading messages:', error);
+            loadDemoMessages(clientId);
+        }
+    }
+
+    function loadDemoMessages(clientId) {
+        const demoMessages = {
+            'c1': [
+                {
+                    id: 'm1',
+                    from: 'client',
+                    author: 'Jonathan',
+                    text: 'Hey Maggie, here\'s our company logo and brand colors as requested!',
+                    time: '2 hours ago',
+                    attachments: [
+                        { name: 'brewer-logo.png', type: 'image' },
+                        { name: 'brand-guidelines.pdf', type: 'pdf' }
+                    ]
+                },
+                {
+                    id: 'm2',
+                    from: 'you',
+                    author: 'You',
+                    text: 'Perfect! I\'ll incorporate these into your growth plan. Draft will be ready by Friday.',
+                    time: '1 hour ago',
+                    attachments: []
+                },
+                {
+                    id: 'm3',
+                    from: 'client',
+                    author: 'Jonathan',
+                    text: 'Great! Also, can we schedule our strategy call for next Tuesday afternoon?',
+                    time: '30 minutes ago',
+                    attachments: []
+                }
+            ],
+            'c2': [
+                {
+                    id: 'm4',
+                    from: 'you',
+                    author: 'You',
+                    text: 'Hi Tye! Your custom growth plan is attached. Let me know your thoughts!',
+                    time: 'Yesterday',
+                    attachments: [
+                        { name: 'TWS-Growth-Plan.pdf', type: 'pdf' }
+                    ]
+                },
+                {
+                    id: 'm5',
+                    from: 'client',
+                    author: 'Tye',
+                    text: 'This looks amazing, Maggie! Love the ROI projections. Let\'s discuss implementation on our call.',
+                    time: '12 hours ago',
+                    attachments: []
+                }
+            ],
+            'c3': [
+                {
+                    id: 'm6',
+                    from: 'client',
+                    author: 'Sarah',
+                    text: 'Quick question - can we adjust the timeline for phase 2 by a week?',
+                    time: '3 hours ago',
+                    attachments: []
+                }
+            ]
+        };
+
+        messagesData[clientId] = demoMessages[clientId] || [];
+        renderMessages(clientId);
+    }
+
+    function renderMessages(clientId) {
+        const container = document.getElementById(`messages-${clientId}`);
+        const messages = messagesData[clientId] || [];
+        
+        if (messages.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <p>No messages yet. Start the conversation!</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = messages.map(msg => `
+            <div class="message from-${msg.from}">
+                <div class="message-avatar">${msg.author[0]}</div>
+                <div class="message-content">
+                    <div class="message-header">
+                        <span class="message-author">${msg.author}</span>
+                        <span class="message-time">${msg.time}</span>
+                    </div>
+                    <div class="message-text">${msg.text}</div>
+                    ${msg.attachments && msg.attachments.length > 0 ? `
+                        <div class="message-attachments">
+                            ${msg.attachments.map(att => `
+                                <div class="attachment" onclick="downloadAttachment('${att.name}')">
+                                    <span>📎</span>
+                                    <span>${att.name}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                </div>
+            </div>
+        `).join('');
+
+        container.scrollTop = container.scrollHeight;
+    }
+
+    function sendMessage(clientId) {
+        const input = document.getElementById(`input-${clientId}`);
+        const text = input.value.trim();
+        
+        if (!text) {
+            alert('Please enter a message');
+            return;
+        }
+
+        if (!messagesData[clientId]) {
+            messagesData[clientId] = [];
+        }
+
+        messagesData[clientId].push({
+            id: 'm' + Date.now(),
+            from: 'you',
+            author: 'You',
+            text: text,
+            time: 'Just now',
+            attachments: []
+        });
+
+        input.value = '';
+        renderMessages(clientId);
+        console.log('Sending message to', clientId, ':', text);
+    }
+
+    function attachFile(clientId) {
+        const input = document.getElementById('file-input');
+        input.dataset.clientId = clientId;
+        input.click();
+    }
+
+    function handleFileUpload() {
+        const input = document.getElementById('file-input');
+        const clientId = input.dataset.clientId;
+        const files = input.files;
+        
+        if (files.length === 0) return;
+
+        alert(`📤 Uploading ${files[0].name} to ${clientsData.find(c => c.id === clientId)?.name}...`);
+        console.log('Uploading file to', clientId, ':', files[0].name);
+        input.value = '';
+    }
+
+    function downloadAttachment(filename) {
+        alert(`📥 Downloading ${filename}...`);
+        console.log('Downloading:', filename);
+    }
+
+    function markMessagesRead(clientId) {
+        const client = clientsData.find(c => c.id === clientId);
+        if (client) {
+            client.unreadCount = 0;
+            renderClientTabs();
+        }
+    }
+
+    function refreshTasks() {
+        loadTasks();
+    }
+
+    function refreshMessages() {
+        loadMessages();
+    }
+
+    function loadDemoData() {
+        loadDemoTasks();
+        loadDemoClients();
+    }
+
+    console.log('[Sprints] System initialized');
+    console.log('[Sprints] API Endpoint:', API_URL);
+</script>
 </body>
 </html>
