@@ -1,903 +1,182 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Client Partnerships - Growth Manager Pro</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --primary: #3498db;
-            --primary-dark: #2980b9;
-            --secondary: #2c3e50;
-            --success: #27ae60;
-            --warning: #f39c12;
-            --danger: #e74c3c;
-            --light: #ecf0f1;
-            --dark: #2c3e50;
-            --white: #ffffff;
-            --shadow: 0 8px 32px rgba(0,0,0,0.1);
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
-            min-height: 100vh;
-            color: var(--dark);
-        }
-
-        /* Sidebar */
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 280px;
-            height: 100vh;
-            background: var(--white);
-            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-            overflow-y: auto;
-            z-index: 100;
-        }
-
-        .logo {
-            padding: 2rem;
-            text-align: center;
-            border-bottom: 1px solid var(--light);
-        }
-
-        .logo h1 {
-            font-size: 1.5rem;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .nav-links {
-            padding: 1rem 0;
-        }
-
-        .nav-links a {
-            display: flex;
-            align-items: center;
-            padding: 1rem 2rem;
-            color: var(--dark);
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-
-        .nav-links a:hover,
-        .nav-links a.active {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: var(--white);
-        }
-
-        /* Main Content */
-        .main-content {
-            margin-left: 280px;
-            padding: 2rem;
-            min-height: 100vh;
-        }
-
-        .header {
-            background: var(--white);
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: var(--shadow);
-            margin-bottom: 2rem;
-        }
-
-        .header h1 {
-            font-size: 2rem;
-            color: var(--dark);
-            margin-bottom: 0.5rem;
-        }
-
-        .header p {
-            color: #7f8c8d;
-        }
-
-        /* Stats Cards */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: var(--white);
-            padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: var(--shadow);
-        }
-
-        .stat-label {
-            font-size: 0.875rem;
-            color: #7f8c8d;
-            margin-bottom: 0.5rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .stat-change {
-            font-size: 0.875rem;
-            margin-top: 0.5rem;
-        }
-
-        .stat-change.positive {
-            color: var(--success);
-        }
-
-        /* Controls */
-        .controls {
-            background: var(--white);
-            padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: var(--shadow);
-            margin-bottom: 2rem;
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .search-box {
-            flex: 1;
-            min-width: 250px;
-        }
-
-        .search-box input {
-            width: 100%;
-            padding: 0.75rem;
-            border: 2px solid var(--light);
-            border-radius: 8px;
-            font-size: 1rem;
-        }
-
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 600;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: var(--white);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(52, 152, 219, 0.4);
-        }
-
-        .filter-group {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .filter-btn {
-            padding: 0.5rem 1rem;
-            border: 2px solid var(--light);
-            background: var(--white);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .filter-btn.active {
-            background: var(--primary);
-            color: var(--white);
-            border-color: var(--primary);
-        }
-
-        /* Deals Grid */
-        .deals-grid {
-            display: grid;
-            gap: 1.5rem;
-        }
-
-        .deal-card {
-            background: var(--white);
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: var(--shadow);
-            border-left: 4px solid var(--primary);
-            transition: all 0.3s ease;
-        }
-
-        .deal-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
-        }
-
-        .deal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: start;
-            margin-bottom: 1.5rem;
-        }
-
-        .deal-title {
-            flex: 1;
-        }
-
-        .deal-title h3 {
-            font-size: 1.5rem;
-            color: var(--dark);
-            margin-bottom: 0.25rem;
-        }
-
-        .deal-title .company {
-            color: #7f8c8d;
-            font-size: 0.875rem;
-        }
-
-        .deal-value {
-            text-align: right;
-        }
-
-        .deal-value .amount {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .deal-value .type {
-            font-size: 0.75rem;
-            color: #7f8c8d;
-            text-transform: uppercase;
-        }
-
-        .tier-badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            margin-top: 0.5rem;
-        }
-
-        .tier-foundations {
-            background: #e8f4fd;
-            color: #2e86de;
-        }
-
-        .tier-architecture {
-            background: #d4f4dd;
-            color: #27ae60;
-        }
-
-        .tier-alliance {
-            background: #ffeaa7;
-            color: #fdcb6e;
-        }
-
-        /* Timeline */
-        .timeline {
-            margin: 1.5rem 0;
-            padding-top: 1rem;
-            border-top: 2px solid var(--light);
-        }
-
-        .timeline-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 1rem;
-        }
-
-        .timeline-label {
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--dark);
-        }
-
-        .timeline-date {
-            font-size: 0.875rem;
-            color: #7f8c8d;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: var(--light);
-            border-radius: 10px;
-            overflow: hidden;
-            margin-bottom: 0.5rem;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary) 0%, var(--primary-dark) 100%);
-            transition: width 0.3s ease;
-        }
-
-        .milestone {
-            font-size: 0.875rem;
-            color: #7f8c8d;
-        }
-
-        /* Systems Delivered */
-        .systems-section {
-            margin: 1.5rem 0;
-            padding-top: 1rem;
-            border-top: 2px solid var(--light);
-        }
-
-        .systems-header {
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--dark);
-            margin-bottom: 1rem;
-        }
-
-        .systems-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 0.75rem;
-        }
-
-        .system-tag {
-            padding: 0.5rem 0.75rem;
-            background: var(--light);
-            border-radius: 6px;
-            font-size: 0.875rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .system-tag.delivered {
-            background: #d4f4dd;
-            color: var(--success);
-        }
-
-        .system-tag.in-progress {
-            background: #ffeaa7;
-            color: var(--warning);
-        }
-
-        .system-tag.pending {
-            background: var(--light);
-            color: #7f8c8d;
-        }
-
-        .system-icon {
-            font-weight: 700;
-        }
-
-        /* Metrics */
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1rem;
-            margin: 1.5rem 0;
-            padding-top: 1rem;
-            border-top: 2px solid var(--light);
-        }
-
-        .metric {
-            text-align: center;
-        }
-
-        .metric-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .metric-label {
-            font-size: 0.75rem;
-            color: #7f8c8d;
-            text-transform: uppercase;
-            margin-top: 0.25rem;
-        }
-
-        /* Actions */
-        .deal-actions {
-            display: flex;
-            gap: 0.75rem;
-            margin-top: 1.5rem;
-            padding-top: 1.5rem;
-            border-top: 2px solid var(--light);
-        }
-
-        .btn-action {
-            flex: 1;
-            padding: 0.75rem;
-            border: 2px solid var(--light);
-            background: var(--white);
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.875rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .btn-action:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-
-        /* Status Badges */
-        .status-badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .status-active {
-            background: #d4f4dd;
-            color: var(--success);
-        }
-
-        .status-pending {
-            background: #ffeaa7;
-            color: var(--warning);
-        }
-
-        .status-renewal {
-            background: #e8f4fd;
-            color: #2e86de;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-
-            .main-content {
-                margin-left: 0;
-            }
-
-            .controls {
-                flex-direction: column;
-            }
-
-            .filter-group {
-                width: 100%;
-            }
-
-            .filter-btn {
-                flex: 1;
-            }
-        }
-
-        /* Loading State */
-        .loading {
-            text-align: center;
-            padding: 3rem;
-            color: #7f8c8d;
-        }
-    </style>
-</head>
-<body>
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <div class="logo">
-            <h1>Growth Manager Pro</h1>
-            <p>Strategic Intelligence</p>
-        </div>
-        <nav class="nav-links">
-            <a href="/dashboard.html">📊 Dashboard</a>
-            <a href="/contacts.html">👥 Contacts</a>
-            <a href="/podcast-interviews.html">🎙️ Podcast Interviews</a>
-            <a href="/discovery-calls.html">🔍 Discovery Calls</a>
-            <a href="/strategy-calls.html">💼 Strategy Calls</a>
-            <a href="/pipeline.html">📈 Pipeline</a>
-            <a href="/deals.html" class="active">🤝 Client Partnerships</a>
-            <a href="/campaigns.html">📧 Campaigns</a>
-            <a href="/cash-flow.html">💰 Cash Flow</a>
-            <a href="/availability.html">📅 Availability</a>
-            <a href="/user-management.html">⚙️ Settings</a>
-        </nav>
-    </div>
-
-    <!-- Main Content -->
-    <div class="main-content">
-        <!-- Header -->
-        <div class="header">
-            <h1>Client Partnerships</h1>
-            <p>Track active engagements, system implementations, and partnership performance</p>
-        </div>
-
-        <!-- Stats -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-label">Active Partnerships</div>
-                <div class="stat-value" id="activePartnerships">0</div>
-                <div class="stat-change positive">↑ 2 this quarter</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Total ARR</div>
-                <div class="stat-value" id="totalARR">$0</div>
-                <div class="stat-change positive">↑ 15% MoM</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Systems Deployed</div>
-                <div class="stat-value" id="systemsDeployed">0</div>
-                <div class="stat-change positive">↑ 8 this month</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Avg Deal Value</div>
-                <div class="stat-value" id="avgDealValue">$0</div>
-                <div class="stat-change positive">↑ $25K</div>
-            </div>
-        </div>
-
-        <!-- Controls -->
-        <div class="controls">
-            <div class="search-box">
-                <input type="text" id="searchInput" placeholder="Search partnerships...">
-            </div>
-            <div class="filter-group">
-                <button class="filter-btn active" data-filter="all">All</button>
-                <button class="filter-btn" data-filter="foundations">Foundations</button>
-                <button class="filter-btn" data-filter="architecture">Architecture</button>
-                <button class="filter-btn" data-filter="alliance">Alliance</button>
-            </div>
-            <button class="btn btn-primary" onclick="addNewDeal()">+ New Partnership</button>
-        </div>
-
-        <!-- Deals Grid -->
-        <div class="deals-grid" id="dealsGrid">
-            <div class="loading">Loading partnerships...</div>
-        </div>
-    </div>
-
-    <script>
-        // API Configuration
-        const API_BASE = 'https://growthmanagerpro-backend.vercel.app';
-
-        // Sample data structure - will be replaced with API calls
-        let dealsData = [];
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            loadDeals();
-            setupFilters();
-            setupSearch();
-        });
-
-      async function loadDeals() {
+const { createClient } = require('@supabase/supabase-js');
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+module.exports = async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
+  // ==================== GET - Fetch deals from pipeline ====================
+  if (req.method === 'GET') {
     try {
-        console.log('[Deals] Loading real data from API...');
+      console.log('[Deals API] Fetching deals from pipeline...');
+
+      // Get all contacts in "Active Deals" or "Closed Won" stages
+      const { data: contacts, error: contactsError } = await supabase
+        .from('contacts')
+        .select('*')
+        .in('stage', ['active_deals', 'closed_won', 'active', 'deal'])
+        .order('updated_at', { ascending: false });
+
+      if (contactsError) {
+        console.error('[Deals API] Error fetching contacts:', contactsError);
+        throw contactsError;
+      }
+
+      console.log('[Deals API] Found', contacts?.length || 0, 'contacts in deal stages');
+
+      // Transform contacts to deal format
+      const deals = (contacts || []).map(contact => {
+        // Determine tier based on contract value or other criteria
+        let tier = 'foundations';
+        const contractValue = contact.contract_value || contact.deal_value || 0;
         
-        // Fetch real deals from backend
-        const response = await fetch(`${API_BASE}/api/deals`);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
+        if (contractValue >= 300000) {
+          tier = 'alliance';
+        } else if (contractValue >= 100000) {
+          tier = 'architecture';
         }
-        
-        const result = await response.json();
-        
-        if (result.success && result.data) {
-            dealsData = result.data.deals || [];
-            console.log('[Deals] ✅ Loaded', dealsData.length, 'real deals');
-            
-            renderDeals(dealsData);
-            
-            // Update stats with real data
-            if (result.data.stats) {
-                updateStatsFromAPI(result.data.stats);
-            } else {
-                updateStats(dealsData);
-            }
-        } else {
-            throw new Error('Invalid response format');
+
+        // Determine status
+        let status = 'active';
+        if (contact.stage === 'closed_won' || contact.status === 'active') {
+          status = 'active';
+        } else if (contact.status === 'pending' || contact.stage === 'pending') {
+          status = 'pending';
         }
-        
+
+        return {
+          id: contact.id,
+          clientName: contact.name,
+          company: contact.company,
+          email: contact.email,
+          tier: tier,
+          dealValue: contractValue,
+          contractValue: contractValue,
+          type: contact.payment_model || 'Annual',
+          paymentModel: contact.payment_model || 'fixed',
+          status: status,
+          startDate: contact.deal_start_date || contact.created_at,
+          renewalDate: contact.renewal_date,
+          currentPhase: contact.current_phase || 'Phase 1: Foundation',
+          progress: contact.progress_percentage || 0,
+          
+          // Systems/deliverables (if stored)
+          systemsDelivered: contact.systems_delivered || [],
+          
+          // Metrics
+          metrics: {
+            leadsGenerated: contact.leads_generated || 0,
+            qualificationRate: contact.qualification_rate || 0,
+            pipelineValue: contact.pipeline_value || 0,
+            revenueGenerated: contact.revenue_generated || 0,
+            roi: contact.roi || 0
+          },
+          
+          // Additional fields
+          leadsGenerated: contact.leads_generated || 0,
+          revenueGenerated: contact.revenue_generated || 0,
+          roi: contact.roi || 0,
+          commissionEarned: contact.commission_earned || 0,
+          
+          created: contact.created_at,
+          updated: contact.updated_at
+        };
+      });
+
+      // Calculate stats
+      const activeDeals = deals.filter(d => d.status === 'active');
+      const totalValue = deals.reduce((sum, d) => sum + (parseFloat(d.contractValue) || 0), 0);
+      const totalSystems = deals.reduce((sum, d) => sum + (d.systemsDelivered?.length || 0), 0);
+      const avgDealSize = activeDeals.length > 0 ? totalValue / activeDeals.length : 0;
+
+      const stats = {
+        activeDeals: activeDeals.length,
+        totalValue: totalValue,
+        systemsDeployed: totalSystems,
+        avgDealSize: avgDealSize
+      };
+
+      console.log('[Deals API] ✅ Returning', deals.length, 'deals');
+
+      return res.status(200).json({
+        success: true,
+        data: {
+          deals: deals,
+          stats: stats
+        },
+        timestamp: new Date().toISOString()
+      });
+
     } catch (error) {
-        console.error('[Deals] Error loading deals:', error);
-        
-        // Show empty state instead of fake data
-        dealsData = [];
-        renderDeals(dealsData);
-        updateStats(dealsData);
+      console.error('[Deals API] GET Error:', error);
+      return res.status(500).json({
+        success: false,
+        error: error.message
+      });
     }
-}
+  }
 
-// Helper function to update stats from API response
-function updateStatsFromAPI(stats) {
-    document.getElementById('activePartnerships').textContent = stats.activeDeals || 0;
-    document.getElementById('totalARR').textContent = '$' + formatNumber(stats.totalValue || 0);
-    document.getElementById('systemsDeployed').textContent = stats.systemsDeployed || 0;
-    document.getElementById('avgDealValue').textContent = '$' + formatNumber(Math.round(stats.avgDealSize || 0));
-}
-
-        function renderDeals(deals) {
-            const grid = document.getElementById('dealsGrid');
-            
-            if (deals.length === 0) {
-                grid.innerHTML = '<div class="loading">No partnerships found.</div>';
-                return;
-            }
-
-            grid.innerHTML = deals.map(deal => `
-                <div class="deal-card" data-tier="${deal.tier}">
-                    <div class="deal-header">
-                        <div class="deal-title">
-                            <h3>${deal.clientName}</h3>
-                            <div class="company">${deal.company}</div>
-                            <span class="tier-badge tier-${deal.tier}">${getTierName(deal.tier)}</span>
-                        </div>
-                        <div class="deal-value">
-                            <div class="amount">$${formatNumber(deal.dealValue)}</div>
-                            <div class="type">${deal.type}</div>
-                            <span class="status-badge status-${deal.status}">${deal.status}</span>
-                        </div>
-                    </div>
-
-                    <div class="timeline">
-                        <div class="timeline-header">
-                            <span class="timeline-label">${deal.currentPhase}</span>
-                            <span class="timeline-date">${formatDate(deal.startDate)} - ${deal.renewalDate ? formatDate(deal.renewalDate) : 'Ongoing'}</span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: ${deal.progress}%"></div>
-                        </div>
-                        <div class="milestone">${deal.progress}% Complete</div>
-                    </div>
-
-                    <div class="systems-section">
-                        <div class="systems-header">Systems & Deliverables</div>
-                        <div class="systems-grid">
-                            ${deal.systemsDelivered.map(system => `
-                                <div class="system-tag ${system.status}">
-                                    <span class="system-icon">${getSystemIcon(system.status)}</span>
-                                    ${system.name}
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-
-                    <div class="metrics-grid">
-                        ${renderMetrics(deal.metrics)}
-                    </div>
-
-                    <div class="deal-actions">
-    ${deal.status === 'pending' ? `
-        <button class="btn-action" onclick="activatePartnership(${deal.id})" style="background: #27ae60; color: white; border-color: #27ae60;">
-            ✓ Activate Client Portal
-        </button>
-        <button class="btn-action" onclick="rejectSignup(${deal.id})">Reject</button>
-    ` : `
-        <button class="btn-action" onclick="viewDetails(${deal.id})">View Details</button>
-        <button class="btn-action" onclick="updateProgress(${deal.id})">Update Progress</button>
-        <button class="btn-action" onclick="generateReport(${deal.id})">Generate Report</button>
-
-`}
-
-</div>
-            `).join('');
-        }
-
-        function renderMetrics(metrics) {
-            return Object.entries(metrics).map(([key, value]) => `
-                <div class="metric">
-                    <div class="metric-value">${formatMetricValue(value)}</div>
-                    <div class="metric-label">${formatMetricLabel(key)}</div>
-                </div>
-            `).join('');
-        }
-
-        function getTierName(tier) {
-            const names = {
-                'foundations': 'Strategic Foundations',
-                'architecture': 'Growth Architecture',
-                'alliance': 'Strategic Alliance'
-            };
-            return names[tier] || tier;
-        }
-
-        function getSystemIcon(status) {
-            const icons = {
-                'delivered': '✓',
-                'in-progress': '⟳',
-                'pending': '○'
-            };
-            return icons[status] || '○';
-        }
-
-        function formatNumber(num) {
-            return num.toLocaleString();
-        }
-
-        function formatDate(dateString) {
-            if (!dateString) return 'Ongoing';
-            const date = new Date(dateString);
-            return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-        }
-
-        function formatMetricValue(value) {
-            if (typeof value === 'number' && value > 100000) {
-                return '$' + (value / 1000) + 'K';
-            }
-            return value.toLocaleString();
-        }
-
-        function formatMetricLabel(key) {
-            return key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
-        }
-
-        function updateStats(deals) {
-            const activeCount = deals.filter(d => d.status === 'active').length;
-            const totalARR = deals.reduce((sum, d) => {
-                if (d.type.includes('Annual')) return sum + d.dealValue;
-                return sum;
-            }, 0);
-            const totalSystems = deals.reduce((sum, d) => sum + d.systemsDelivered.filter(s => s.status === 'delivered').length, 0);
-            const avgValue = deals.length > 0 ? deals.reduce((sum, d) => sum + d.dealValue, 0) / deals.length : 0;
-
-            document.getElementById('activePartnerships').textContent = activeCount;
-            document.getElementById('totalARR').textContent = '$' + formatNumber(totalARR);
-            document.getElementById('systemsDeployed').textContent = totalSystems;
-            document.getElementById('avgDealValue').textContent = '$' + formatNumber(Math.round(avgValue));
-        }
-
-        function setupFilters() {
-            const filterBtns = document.querySelectorAll('.filter-btn');
-            filterBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    filterBtns.forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    
-                    const filter = btn.dataset.filter;
-                    filterDeals(filter);
-                });
-            });
-        }
-
-        function filterDeals(filter) {
-            if (filter === 'all') {
-                renderDeals(dealsData);
-            } else {
-                const filtered = dealsData.filter(deal => deal.tier === filter);
-                renderDeals(filtered);
-            }
-        }
-
-        function setupSearch() {
-            const searchInput = document.getElementById('searchInput');
-            searchInput.addEventListener('input', (e) => {
-                const query = e.target.value.toLowerCase();
-                const filtered = dealsData.filter(deal => 
-                    deal.clientName.toLowerCase().includes(query) ||
-                    deal.company.toLowerCase().includes(query)
-                );
-                renderDeals(filtered);
-            });
-        }
-
-        // Action Functions
-        function addNewDeal() {
-            alert('Add New Partnership functionality - opens modal or redirects to form');
-            // In production, this would open a modal or redirect to a form
-        }
-
-        function viewDetails(dealId) {
-            alert(`View details for deal ${dealId}`);
-            // In production, this would open a detailed view
-        }
-
-        function updateProgress(dealId) {
-            alert(`Update progress for deal ${dealId}`);
-            // In production, this would open a progress update modal
-        }
-
-        function generateReport(dealId) {
-            alert(`Generate report for deal ${dealId}`);
-            // In production, this would generate a PDF or detailed report
-        }
-        function generateReport(dealId) {
-            alert(`Generate report for deal ${dealId}`);
-            // In production, this would generate a PDF or detailed report
-        }
-
-        // ==================== ADD YOUR NEW CODE HERE ====================
-        
-        async function activatePartnership(dealId) {
-            if (!confirm('Activate client portal for this partnership?\n\nThis will:\n- Grant full dashboard access\n- Set program start date to today\n- Send welcome email to client')) {
-                return;
-            }
-            
-            try {
-                const response = await fetch(`${API_BASE}/api/activate-client-portal`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ dealId })
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    alert('✓ Client portal activated successfully!\n\nClient: ' + data.client.name + '\nEmail sent to: ' + data.client.email);
-                    loadDeals(); // Reload to show updated status
-                } else {
-                    alert('❌ Error: ' + data.error);
-                }
-            } catch (error) {
-                console.error('Error activating partnership:', error);
-                alert('❌ Failed to activate. Please try again.');
-            }
-        }
-
-        async function rejectSignup(dealId) {
-            if (!confirm('Reject this client signup?\n\nThis will update the status to rejected.')) {
-                return;
-            }
-            
-            try {
-                const response = await fetch(`${API_BASE}/api/deals`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        id: dealId,
-                        status: 'rejected'
-                    })
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    alert('Signup rejected.');
-                    loadDeals();
-                } else {
-                    alert('Error: ' + data.error);
-                }
-            } catch (error) {
-                console.error('Error rejecting signup:', error);
-                alert('Failed to reject. Please try again.');
-            }
-        }
-
-        // Activate client portal
-async function activateClientPortal(dealId, clientName) {
-    if (!confirm(`Activate client portal for ${clientName}? This will give them dashboard access.`)) {
-        return;
-    }
-
+  // ==================== PUT - Update deal/contact ====================
+  if (req.method === 'PUT') {
     try {
-        const response = await fetch(`${API_BASE}/api/activate-client-portal`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ dealId: dealId })
+      const { id, status, ...updateData } = req.body;
+
+      if (!id) {
+        return res.status(400).json({
+          success: false,
+          error: 'Deal ID is required'
         });
+      }
 
-        const result = await response.json();
+      // Map frontend field names to database field names
+      const dbUpdateData = {
+        updated_at: new Date().toISOString()
+      };
 
-        if (result.success) {
-            alert(`✅ ${result.message}`);
-            loadDeals(); // Refresh the deals list
-        } else {
-            alert(`❌ Error: ${result.error}`);
-        }
+      if (status) dbUpdateData.status = status;
+      if (updateData.contractValue) dbUpdateData.contract_value = updateData.contractValue;
+      if (updateData.currentPhase) dbUpdateData.current_phase = updateData.currentPhase;
+      if (updateData.progress) dbUpdateData.progress_percentage = updateData.progress;
+      if (updateData.leadsGenerated) dbUpdateData.leads_generated = updateData.leadsGenerated;
+      if (updateData.revenueGenerated) dbUpdateData.revenue_generated = updateData.revenueGenerated;
+      if (updateData.roi) dbUpdateData.roi = updateData.roi;
+
+      const { data, error } = await supabase
+        .from('contacts')
+        .update(dbUpdateData)
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      console.log('[Deals API] ✅ Deal updated:', id);
+
+      return res.status(200).json({
+        success: true,
+        data: data,
+        message: 'Deal updated successfully'
+      });
+
     } catch (error) {
-        console.error('Error activating portal:', error);
-        alert('Failed to activate portal. Please try again.');
+      console.error('[Deals API] PUT Error:', error);
+      return res.status(500).json({
+        success: false,
+        error: error.message
+      });
     }
-}
-    </script>  
-</body>
-</html>
+  }
+
+  return res.status(405).json({ 
+    success: false,
+    error: 'Method not allowed' 
+  });
+};
