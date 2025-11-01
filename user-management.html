@@ -494,6 +494,141 @@
             font-size: 0.95rem;
             line-height: 1.5;
         }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h3 {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-header p {
+            color: #7f8c8d;
+            font-size: 0.95rem;
+        }
+
+        .modal-body {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-field {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-field label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .form-field input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .form-field input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .role-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        .role-option {
+            padding: 1rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: #f8f9fa;
+        }
+
+        .role-option:hover {
+            border-color: #3498db;
+            background: #e8f4f8;
+        }
+
+        .role-option.selected {
+            border-color: #3498db;
+            background: linear-gradient(135deg, #e8f4f8 0%, #d6eaf8 100%);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
+        }
+
+        .role-option .icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .role-option .name {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.25rem;
+        }
+
+        .role-option .desc {
+            font-size: 0.8rem;
+            color: #7f8c8d;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .modal-footer .btn {
+            flex: 1;
+        }
     </style>
 </head>
 <body>
@@ -763,285 +898,397 @@
             <div class="status-indicator status-connected" id="status-indicator"></div>
             <span id="status-text">Live Connected</span>
         </div>
+
+        <!-- Invite User Modal -->
+        <div class="modal-overlay" id="inviteModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>✉️ Invite New User</h3>
+                    <p>Send an invitation to join Growth Manager Pro</p>
+                </div>
+                
+                <div class="modal-body">
+                    <div class="form-field">
+                        <label for="inviteEmail">Email Address</label>
+                        <input type="email" id="inviteEmail" placeholder="user@example.com" required>
+                    </div>
+                    
+                    <div class="form-field">
+                        <label>Select Role</label>
+                        <div class="role-selector">
+                            <div class="role-option" data-role="admin" onclick="selectRole('admin')">
+                                <div class="icon">👑</div>
+                                <div class="name">Admin</div>
+                                <div class="desc">Full access</div>
+                            </div>
+                            
+                            <div class="role-option" data-role="advisor" onclick="selectRole('advisor')">
+                                <div class="icon">🎯</div>
+                                <div class="name">Advisor</div>
+                                <div class="desc">Monitor & guide</div>
+                            </div>
+                            
+                            <div class="role-option" data-role="client" onclick="selectRole('client')">
+                                <div class="icon">👤</div>
+                                <div class="name">Client</div>
+                                <div class="desc">View their data</div>
+                            </div>
+                            
+                            <div class="role-option" data-role="saas" onclick="selectRole('saas')">
+                                <div class="icon">🚀</div>
+                                <div class="name">SaaS Client</div>
+                                <div class="desc">Full platform</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeInviteModal()">Cancel</button>
+                    <button class="btn btn-primary" id="sendInviteBtn" onclick="sendInvitation()">Send Invitation</button>
+                </div>
+            </div>
+        </div>
     </div>
 
 <script src="auth-helper.js"></script>
     
 <script>
     (function() {
-        if (!AuthHelper.protectPage('advisor-dashboard.html')) {  // ← NOW CORRECT
+        if (!AuthHelper.protectPage('advisor-dashboard.html')) {
             throw new Error('Unauthorized access');
         }
         AuthHelper.applyPermissions();
     })();
     
     const API_URL = 'https://growthmanagerpro-backend.vercel.app';
-        let usersData = [];
+    let usersData = [];
 
-        // Sample data for demonstration (will be replaced with API data)
-        const sampleUsers = [
-            {
-                id: 1,
-                name: 'Maggie Forbes',
-                email: 'maggie@growthmanagerpro.com',
-                role: 'admin',
-                status: 'active',
-                joined: '2024-01-15',
-                last_active: new Date().toISOString()
-            },
-            {
-                id: 2,
-                name: 'John Advisor',
-                email: 'advisor@example.com',
-                role: 'advisor',
-                status: 'active',
-                joined: '2024-02-01',
-                last_active: '2025-01-20'
-            },
-            {
-                id: 3,
-                name: 'Jonathan Brewer',
-                email: 'jonathan@brewerco.com',
-                role: 'client',
-                status: 'active',
-                joined: '2024-08-15',
-                last_active: '2025-01-19'
-            },
-            {
-                id: 4,
-                name: 'Tye Shumway',
-                email: 'tye@twsconstruction.com',
-                role: 'client',
-                status: 'active',
-                joined: '2024-09-01',
-                last_active: '2025-01-18'
-            }
-        ];
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('[User Management] Initializing...');
-            loadUsers();
-        });
-
-        async function loadUsers() {
-            try {
-                updateConnectionStatus('connecting');
-                
-                // Try to load from API
-                const response = await fetch(`${API_URL}/api/users`);
-                
-                if (!response.ok) {
-                    // Use sample data if API not ready
-                    console.log('[User Management] Using sample data');
-                    usersData = sampleUsers;
-                } else {
-                    const result = await response.json();
-                    usersData = result.users || sampleUsers;
-                }
-                
-                updateStats();
-                renderUsersTable();
-                updateConnectionStatus('connected');
-                console.log('[User Management] ✅ Loaded', usersData.length, 'users');
-                
-            } catch (error) {
-                console.log('[User Management] Using sample data:', error);
-                usersData = sampleUsers;
-                updateStats();
-                renderUsersTable();
-                updateConnectionStatus('connected');
-            }
+    // Sample data for demonstration (will be replaced with API data)
+    const sampleUsers = [
+        {
+            id: 1,
+            name: 'Maggie Forbes',
+            email: 'maggie@growthmanagerpro.com',
+            role: 'admin',
+            status: 'active',
+            joined: '2024-01-15',
+            last_active: new Date().toISOString()
+        },
+        {
+            id: 2,
+            name: 'John Advisor',
+            email: 'advisor@example.com',
+            role: 'advisor',
+            status: 'active',
+            joined: '2024-02-01',
+            last_active: '2025-01-20'
+        },
+        {
+            id: 3,
+            name: 'Jonathan Brewer',
+            email: 'jonathan@brewerco.com',
+            role: 'client',
+            status: 'active',
+            joined: '2024-08-15',
+            last_active: '2025-01-19'
+        },
+        {
+            id: 4,
+            name: 'Tye Shumway',
+            email: 'tye@twsconstruction.com',
+            role: 'client',
+            status: 'active',
+            joined: '2024-09-01',
+            last_active: '2025-01-18'
         }
+    ];
 
-        function updateStats() {
-            const adminCount = usersData.filter(u => u.role === 'admin').length;
-            const advisorCount = usersData.filter(u => u.role === 'advisor').length;
-            const clientCount = usersData.filter(u => u.role === 'client').length;
-            const saasCount = usersData.filter(u => u.role === 'saas').length;
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('[User Management] Initializing...');
+        loadUsers();
+    });
+
+    async function loadUsers() {
+        try {
+            updateConnectionStatus('connecting');
             
-            document.getElementById('total-users').textContent = usersData.length;
-            document.getElementById('admin-count').textContent = adminCount;
-            document.getElementById('advisor-count').textContent = advisorCount;
-            document.getElementById('client-count').textContent = clientCount;
-            document.getElementById('saas-count').textContent = saasCount;
-        }
-
-        function renderUsersTable() {
-            const tbody = document.getElementById('users-body');
-            document.getElementById('user-count').textContent = usersData.length;
-
-            if (usersData.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="6" style="text-align: center; padding: 3rem; color: #7f8c8d;">
-                            <p style="font-size: 1.1rem; margin-bottom: 0.5rem;">👥 No users yet</p>
-                            <p>Invite your first user to get started!</p>
-                        </td>
-                    </tr>
-                `;
-                return;
+            // Try to load from API
+            const response = await fetch(`${API_URL}/api/users`);
+            
+            if (!response.ok) {
+                // Use sample data if API not ready
+                console.log('[User Management] Using sample data');
+                usersData = sampleUsers;
+            } else {
+                const result = await response.json();
+                usersData = result.users || sampleUsers;
             }
-
-            tbody.innerHTML = usersData.map(user => {
-                const roleClass = `role-${user.role}`;
-                const roleName = {
-                    'admin': '👑 Admin',
-                    'advisor': '🎯 Advisor',
-                    'client': '👤 Client',
-                    'saas': '🚀 SaaS Client'
-                }[user.role] || user.role;
-                
-                const statusClass = `status-${user.status}`;
-                const initials = user.name.split(' ').map(n => n[0]).join('').toUpperCase();
-                
-                return `
-                    <tr>
-                        <td>
-                            <div class="user-info">
-                                <div class="user-avatar">${initials}</div>
-                                <div class="user-details">
-                                    <h4>${user.name}</h4>
-                                    <p>${user.email}</p>
-                                </div>
-                            </div>
-                        </td>
-                        <td><span class="role-badge ${roleClass}">${roleName}</span></td>
-                        <td><span class="status-badge ${statusClass}">${user.status}</span></td>
-                        <td>${formatDate(user.joined)}</td>
-                        <td>${formatRelativeTime(user.last_active)}</td>
-                        <td>
-                            <button class="btn btn-small btn-secondary" onclick="editUser('${user.id}')">
-                                ✏️ Edit
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
+            
+            updateStats();
+            renderUsersTable();
+            updateConnectionStatus('connected');
+            console.log('[User Management] ✅ Loaded', usersData.length, 'users');
+            
+        } catch (error) {
+            console.log('[User Management] Using sample data:', error);
+            usersData = sampleUsers;
+            updateStats();
+            renderUsersTable();
+            updateConnectionStatus('connected');
         }
-
-        async function inviteUser() {
-    const email = prompt('Enter email address to invite:');
-    if (!email) return;
-    
-    const role = prompt('Select role:\n1. Admin\n2. Advisor\n3. Client\n4. SaaS Client\n\nEnter number (1-4):');
-    const roleMap = { '1': 'admin', '2': 'advisor', '3': 'client', '4': 'saas' };
-    const selectedRole = roleMap[role];
-    
-    if (!selectedRole) {
-        alert('Invalid role selection');
-        return;
     }
 
-    try {
-        // Create invitation
-        const response = await fetch(`${API_URL}/api/invitations`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                email: email,
-                role: selectedRole
-            })
-        });
+    function updateStats() {
+        const adminCount = usersData.filter(u => u.role === 'admin').length;
+        const advisorCount = usersData.filter(u => u.role === 'advisor').length;
+        const clientCount = usersData.filter(u => u.role === 'client').length;
+        const saasCount = usersData.filter(u => u.role === 'saas').length;
+        
+        document.getElementById('total-users').textContent = usersData.length;
+        document.getElementById('admin-count').textContent = adminCount;
+        document.getElementById('advisor-count').textContent = advisorCount;
+        document.getElementById('client-count').textContent = clientCount;
+        document.getElementById('saas-count').textContent = saasCount;
+    }
 
-        const result = await response.json();
+    function renderUsersTable() {
+        const tbody = document.getElementById('users-body');
+        document.getElementById('user-count').textContent = usersData.length;
 
-        if (!result.success) {
-            alert('❌ Error: ' + result.error);
+        if (usersData.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" style="text-align: center; padding: 3rem; color: #7f8c8d;">
+                        <p style="font-size: 1.1rem; margin-bottom: 0.5rem;">👥 No users yet</p>
+                        <p>Invite your first user to get started!</p>
+                    </td>
+                </tr>
+            `;
             return;
         }
 
-        // Show the signup link
-        const signupLink = result.invitation.signupLink;
-        
-        // Create modal with link
-        const modal = document.createElement('div');
-        modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 9999;';
-        modal.innerHTML = `
-            <div style="background: white; padding: 2rem; border-radius: 12px; max-width: 600px; width: 90%;">
-                <h3 style="margin-bottom: 1rem; color: #2c3e50;">✉️ Invitation Created!</h3>
-                <p style="margin-bottom: 1rem; color: #7f8c8d;">Send this link to <strong>${email}</strong> (${selectedRole}):</p>
-                <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; word-break: break-all; font-size: 0.9rem;">
-                    ${signupLink}
-                </div>
-                <div style="display: flex; gap: 0.5rem;">
-                    <button onclick="navigator.clipboard.writeText('${signupLink}'); this.textContent='✅ Copied!'" style="flex: 1; padding: 0.75rem; background: linear-gradient(135deg, #3498db, #2980b9); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
-                        📋 Copy Link
-                    </button>
-                    <button onclick="this.closest('div').parentElement.remove()" style="flex: 1; padding: 0.75rem; background: white; color: #3498db; border: 2px solid #3498db; border-radius: 8px; font-weight: 600; cursor: pointer;">
-                        Close
-                    </button>
-                </div>
-                <p style="margin-top: 1rem; font-size: 0.85rem; color: #95a5a6;">💡 Link expires in 7 days</p>
-            </div>
-        `;
-        document.body.appendChild(modal);
-
-        // Reload users list
-        loadUsers();
-
-    } catch (error) {
-        console.error('Error creating invitation:', error);
-        alert('❌ Failed to create invitation. Please try again.');
+        tbody.innerHTML = usersData.map(user => {
+            const roleClass = `role-${user.role}`;
+            const roleName = {
+                'admin': '👑 Admin',
+                'advisor': '🎯 Advisor',
+                'client': '👤 Client',
+                'saas': '🚀 SaaS Client'
+            }[user.role] || user.role;
+            
+            const statusClass = `status-${user.status}`;
+            const initials = user.name.split(' ').map(n => n[0]).join('').toUpperCase();
+            
+            return `
+                <tr>
+                    <td>
+                        <div class="user-info">
+                            <div class="user-avatar">${initials}</div>
+                            <div class="user-details">
+                                <h4>${user.name}</h4>
+                                <p>${user.email}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span class="role-badge ${roleClass}">${roleName}</span></td>
+                    <td><span class="status-badge ${statusClass}">${user.status}</span></td>
+                    <td>${formatDate(user.joined)}</td>
+                    <td>${formatRelativeTime(user.last_active)}</td>
+                    <td>
+                        <button class="btn btn-small btn-secondary" onclick="editUser('${user.id}')">
+                            ✏️ Edit
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
     }
-}
 
-        function exportUsers() {
-            alert('📋 Exporting users list...\n\nThis will download a CSV file with all user data.');
-            console.log('Exporting users:', usersData);
+    // Modal Functions
+    let selectedRole = null;
+
+    function inviteUser() {
+        // Open modal
+        document.getElementById('inviteModal').classList.add('show');
+        document.getElementById('inviteEmail').value = '';
+        selectedRole = null;
+        // Remove selected class from all options
+        document.querySelectorAll('.role-option').forEach(opt => {
+            opt.classList.remove('selected');
+        });
+    }
+
+    function closeInviteModal() {
+        document.getElementById('inviteModal').classList.remove('show');
+    }
+
+    function selectRole(role) {
+        selectedRole = role;
+        // Update UI
+        document.querySelectorAll('.role-option').forEach(opt => {
+            opt.classList.remove('selected');
+        });
+        document.querySelector(`[data-role="${role}"]`).classList.add('selected');
+    }
+
+    async function sendInvitation() {
+        const email = document.getElementById('inviteEmail').value.trim();
+        const btn = document.getElementById('sendInviteBtn');
+        
+        if (!email) {
+            alert('Please enter an email address');
+            return;
+        }
+        
+        if (!selectedRole) {
+            alert('Please select a role');
+            return;
         }
 
-        function updateConnectionStatus(status, message = '') {
-            const indicator = document.getElementById('status-indicator');
-            const statusText = document.getElementById('status-text');
+        // Disable button
+        btn.disabled = true;
+        btn.textContent = '⏳ Sending...';
 
-            if (status === 'connected') {
-                indicator.className = 'status-indicator status-connected';
-                statusText.textContent = 'Live Connected';
-            } else if (status === 'error') {
-                indicator.className = 'status-indicator status-error';
-                statusText.textContent = message || 'Connection Error';
-            } else if (status === 'connecting') {
-                indicator.className = 'status-indicator';
-                indicator.style.background = '#f39c12';
-                statusText.textContent = 'Connecting...';
-            }
-        }
-
-        function formatDate(dateString) {
-            if (!dateString) return '';
-            const date = new Date(dateString);
-            return date.toLocaleDateString('en-US', { 
-                month: 'short', 
-                day: 'numeric',
-                year: 'numeric'
+        try {
+            const response = await fetch(`${API_URL}/api/invitations`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: email,
+                    role: selectedRole
+                })
             });
-        }
 
-        function formatRelativeTime(dateString) {
-            if (!dateString) return '';
-            const date = new Date(dateString);
-            const now = new Date();
-            const diff = now - date;
-            const hours = Math.floor(diff / 3600000);
-            
-            if (hours < 1) return 'Just now';
-            if (hours < 24) return `${hours}h ago`;
-            if (hours < 48) return 'Yesterday';
-            
-            const days = Math.floor(hours / 24);
-            if (days < 7) return `${days}d ago`;
-            if (days < 30) return `${Math.floor(days / 7)}w ago`;
-            
-            return formatDate(dateString);
-        }
+            const result = await response.json();
 
-        // Log system info
-        console.log('[User Management] System initialized');
-        console.log('[User Management] API Endpoint:', API_URL);
-        console.log('[User Management] 4 Role Types: Admin, Advisor, Client, SaaS Client');
-    </script>
+            if (!result.success) {
+                alert('❌ Error: ' + result.error);
+                btn.disabled = false;
+                btn.textContent = 'Send Invitation';
+                return;
+            }
+
+            // Close invite modal
+            closeInviteModal();
+
+            // Show success modal with link
+            const signupLink = result.invitation.signupLink;
+            const roleNames = {
+                'admin': '👑 Admin',
+                'advisor': '🎯 Advisor',
+                'client': '👤 Client',
+                'saas': '🚀 SaaS Client'
+            };
+            
+            const successModal = document.createElement('div');
+            successModal.className = 'modal-overlay show';
+            successModal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>✅ Invitation Sent!</h3>
+                        <p>Share this link with ${email}</p>
+                    </div>
+                    <div class="modal-body">
+                        <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                            <div style="margin-bottom: 0.5rem;">
+                                <strong>Email:</strong> ${email}<br>
+                                <strong>Role:</strong> ${roleNames[selectedRole]}
+                            </div>
+                        </div>
+                        <div style="background: #e8f4f8; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; word-break: break-all; font-size: 0.9rem; border: 2px solid #3498db;">
+                            ${signupLink}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" onclick="navigator.clipboard.writeText('${signupLink}'); this.textContent='✅ Copied!'">
+                            📋 Copy Link
+                        </button>
+                        <button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove(); loadUsers();">
+                            Close
+                        </button>
+                    </div>
+                    <p style="text-align: center; margin-top: 1rem; font-size: 0.85rem; color: #95a5a6;">💡 Link expires in 7 days</p>
+                </div>
+            `;
+            document.body.appendChild(successModal);
+
+            // Reset button
+            btn.disabled = false;
+            btn.textContent = 'Send Invitation';
+
+        } catch (error) {
+            console.error('Error creating invitation:', error);
+            alert('❌ Failed to create invitation. Please try again.');
+            btn.disabled = false;
+            btn.textContent = 'Send Invitation';
+        }
+    }
+
+    // Close modal when clicking outside
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('modal-overlay')) {
+            e.target.classList.remove('show');
+        }
+    });
+
+    function exportUsers() {
+        alert('📋 Exporting users list...\n\nThis will download a CSV file with all user data.');
+        console.log('Exporting users:', usersData);
+    }
+
+    function updateConnectionStatus(status, message = '') {
+        const indicator = document.getElementById('status-indicator');
+        const statusText = document.getElementById('status-text');
+
+        if (status === 'connected') {
+            indicator.className = 'status-indicator status-connected';
+            statusText.textContent = 'Live Connected';
+        } else if (status === 'error') {
+            indicator.className = 'status-indicator status-error';
+            statusText.textContent = message || 'Connection Error';
+        } else if (status === 'connecting') {
+            indicator.className = 'status-indicator';
+            indicator.style.background = '#f39c12';
+            statusText.textContent = 'Connecting...';
+        }
+    }
+
+    function formatDate(dateString) {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', { 
+            month: 'short', 
+            day: 'numeric',
+            year: 'numeric'
+        });
+    }
+
+    function formatRelativeTime(dateString) {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        const now = new Date();
+        const diff = now - date;
+        const hours = Math.floor(diff / 3600000);
+        
+        if (hours < 1) return 'Just now';
+        if (hours < 24) return `${hours}h ago`;
+        if (hours < 48) return 'Yesterday';
+        
+        const days = Math.floor(hours / 24);
+        if (days < 7) return `${days}d ago`;
+        if (days < 30) return `${Math.floor(days / 7)}w ago`;
+        
+        return formatDate(dateString);
+    }
+
+    // Log system info
+    console.log('[User Management] System initialized');
+    console.log('[User Management] API Endpoint:', API_URL);
+    console.log('[User Management] 4 Role Types: Admin, Advisor, Client, SaaS Client');
+</script>
 </body>
 </html>
