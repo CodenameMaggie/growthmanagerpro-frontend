@@ -151,6 +151,9 @@
             <label>Lead Email:</label>
             <input type="text" id="leadEmail" value="wrayfamily30@gmail.com" />
             
+            <label>Call ID (from Supabase):</label>
+            <input type="text" id="callId" value="5cda5222-3acd-49ca-8f0a-ce4f2464c353" />
+            
             <br><br>
             <button onclick="testPodcastInvite()">🚀 Send Podcast Invitation</button>
             
@@ -183,6 +186,7 @@
             
             const leadName = document.getElementById('leadName').value;
             const leadEmail = document.getElementById('leadEmail').value;
+            const callId = document.getElementById('callId').value;
             
             btn.disabled = true;
             btn.textContent = '⏳ Sending...';
@@ -194,7 +198,8 @@
                 const payload = {
                     action: 'send-podcast',
                     leadEmail: leadEmail,
-                    leadName: leadName
+                    leadName: leadName,
+                    callId: callId
                 };
 
                 console.log('Sending payload:', payload);
