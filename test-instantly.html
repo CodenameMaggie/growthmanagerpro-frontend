@@ -161,10 +161,17 @@
         <div class="info-box">
             <strong>Valid Actions for /api/instantly-manager:</strong>
             <ul>
-                <li><code>sync</code> - Sync sender pools</li>
                 <li><code>send-podcast</code> - Send podcast invitation ✅</li>
                 <li><code>send-discovery</code> - Send discovery call invitation</li>
                 <li><code>send-strategy</code> - Send strategy call invitation</li>
+            </ul>
+            <br>
+            <strong>Environment Variables:</strong>
+            <ul>
+                <li><code>INSTANTLY_API_KEY</code></li>
+                <li><code>INSTANTLY_PODCAST_CAMPAIGN_ID</code></li>
+                <li><code>INSTANTLY_DISCOVERY_CAMPAIGN_ID</code></li>
+                <li><code>INSTANTLY_STRATEGY_CAMPAIGN_ID</code></li>
             </ul>
         </div>
     </div>
@@ -221,7 +228,7 @@
                         <strong>🔍 Now check Instantly:</strong>
                         <ol>
                             <li>Log into Instantly.ai</li>
-                            <li>Go to your Podcast Invitation Campaign (Pool ${senderPool})</li>
+                            <li>Go to your Podcast Invitation Campaign</li>
                             <li>Look for lead: <strong>${leadEmail}</strong></li>
                             <li>Verify it was added successfully</li>
                         </ol>
@@ -239,7 +246,7 @@
                         <strong>Possible Issues:</strong>
                         <ul>
                             <li>INSTANTLY_API_KEY missing in Vercel</li>
-                            <li>Campaign ID for Pool ${senderPool} incorrect</li>
+                            <li>INSTANTLY_PODCAST_CAMPAIGN_ID incorrect</li>
                             <li>Instantly account issue</li>
                             <li>Lead already exists in campaign</li>
                         </ul>
