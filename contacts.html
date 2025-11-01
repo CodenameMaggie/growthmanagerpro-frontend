@@ -1118,12 +1118,14 @@
                 
                 console.log('[Contacts] Starting Instantly sync...');
                 
-                const response = await fetch(`${API_BASE}/api/instantly-sync`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
+               // ✅ CORRECT - Use instantly-manager with action body
+            const response = await fetch(`${API_BASE}/api/instantly-manager`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+            },
+                body: JSON.stringify({ action: 'sync' })  // ← Add this!
+        });
                 
                 const result = await response.json();
                 
