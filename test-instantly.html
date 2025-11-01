@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Instantly Integration - Growth Manager Pro</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2563eb;
+            margin-top: 0;
+        }
+        h2 {
+            color: #1e40af;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 10px;
+            margin-top: 30px;
+        }
+        .warning-box {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .info-box {
+            background: #eff6ff;
+            border-left: 4px solid #2563eb;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .test-section {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 1px solid #e2e8f0;
+        }
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+            margin-right: 10px;
+        }
+        button:hover {
+            background: #1d4ed8;
+        }
+        button:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+        }
+        button.secondary {
+            background: #64748b;
+        }
+        button.secondary:hover {
+            background: #475569;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            display: none;
+        }
+        .result.success {
+            background: #dcfce7;
+            border: 1px solid #22c55e;
+            color: #166534;
+            display: block;
+        }
+        .result.error {
+            background: #fee2e2;
+            border: 1px solid #ef4444;
+            color: #991b1b;
+            display: block;
+        }
+        .result.loading {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            color: #92400e;
+            display: block;
+        }
+        pre {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-size: 13px;
+            max-height: 400px;
+        }
+        .code {
+            font-family: 'Courier New', monospace;
+            background: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 13px;
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: 600;
+            color: #334155;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Test Instantly Integration</h1>
+        
+        <div class="warning-box">
+            <strong>⚠️ Issue Found:</strong> AI analysis scored the call (48 points) but didn't send the podcast invitation email. This tool will help us test if the Instantly API is working.
+        </div>
+
+        <h2>Test 1: Send Podcast Invitation</h2>
+        <div class="test-section">
+            <p>This will directly call the <span class="code">/api/instantly-manager</span> endpoint to send a podcast invitation.</p>
+            
+            <label>Lead Name:</label>
+            <input type="text" id="leadName" value="Marcus Chen Test" />
+            
+            <label>Lead Email:</label>
+            <input type="text" id="leadEmail" value="marcus.test@example.com" />
+            
+            <label>Sender Pool:</label>
+            <select id="senderPool">
+                <option value="A">Pool A</option>
+                <option value="B">Pool B</option>
+                <option value="C">Pool C</option>
+            </select>
+            
+            <br><br>
+            <button onclick="testPodcastInvite()">🚀 Send Podcast Invitation</button>
+            
+            <div id="result1" class="result"></div>
+        </div>
+
+        <h2>Test 2: Check Sender Assignment</h2>
+        <div class="test-section">
+            <p>Check which sender email is assigned to a specific lead (for thread continuity).</p>
+            
+            <label>Lead Email to Check:</label>
+            <input type="text" id="checkEmail" value="marcus.test@example.com" />
+            
+            <br><br>
+            <button class="secondary" onclick="checkSender()">🔍 Check Sender</button>
+            
+            <div id="result2" class="result"></div>
+        </div>
+
+        <h2>Test 3: Manual Database Update</h2>
+        <div class="test-section">
+            <p>If the Instantly API works but the automation doesn't, we can manually update the database to mark the invitation as sent.</p>
+            
+            <div class="info-box">
+                <strong>Call ID:</strong> <span class="code">5cda5222-3acd-49ca-8f0a-ce4f2464c353</span><br>
+                <strong>Score:</strong> 48 points<br>
+                <strong>Current Status:</strong> podcast_invitation_sent = FALSE
+            </div>
+            
+            <p><strong>SQL Command to run in Supabase SQL Editor:</strong></p>
+            <pre>UPDATE pre_qualification_calls
+SET podcast_invitation_sent = true
+WHERE id = '5cda5222-3acd-49ca-8f0a-ce4f2464c353';</pre>
+            
+            <p><em>Only use this if Tests 1 & 2 show the Instantly API is working - this will sync the database with reality.</em></p>
+        </div>
+
+        <h2>📋 Diagnosis Checklist</h2>
+        <div class="info-box">
+            <strong>Run these tests in order:</strong>
+            <ol>
+                <li>✅ AI Analysis works (Score: 48) - <strong>CONFIRMED ✓</strong></li>
+                <li>❓ Instantly API credentials are valid - <strong>TEST THIS</strong></li>
+                <li>❓ Instantly endpoint can send emails - <strong>TEST THIS</strong></li>
+                <li>❓ AI analyzer calls Instantly after scoring - <strong>BROKEN</strong></li>
+            </ol>
+            
+            <strong>Expected Fix:</strong> Modify <span class="code">/api/ai-analyzer</span> to call <span class="code">/api/instantly-manager</span> when score ≥ 35
+        </div>
+    </div>
+
+    <script>
+        async function testPodcastInvite() {
+            const btn = event.target;
+            const resultDiv = document.getElementById('result1');
+            
+            const leadName = document.getElementById('leadName').value;
+            const leadEmail = document.getElementById('leadEmail').value;
+            const senderPool = document.getElementById('senderPool').value;
+            
+            btn.disabled = true;
+            btn.textContent = '⏳ Sending...';
+            
+            resultDiv.className = 'result loading';
+            resultDiv.textContent = '⏳ Calling Instantly API...';
+
+            try {
+                const response = await fetch('https://growthmanagerpro-backend.vercel.app/api/instantly-manager', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'send-podcast-invite',
+                        leadEmail: leadEmail,
+                        leadName: leadName,
+                        senderPool: senderPool
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    resultDiv.className = 'result success';
+                    resultDiv.innerHTML = `
+                        <strong>✅ Success! Instantly API is working!</strong><br><br>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                        <br>
+                        <strong>This means:</strong>
+                        <ul>
+                            <li>✅ Instantly API credentials are valid</li>
+                            <li>✅ Campaign IDs are configured correctly</li>
+                            <li>✅ The endpoint can send invitations</li>
+                            <li>❌ But the AI analyzer isn't calling this endpoint after scoring</li>
+                        </ul>
+                        <strong>Next Step:</strong> We need to fix the <code>/api/ai-analyzer</code> to call <code>/api/instantly-manager</code> when score ≥ 35
+                    `;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.innerHTML = `
+                        <strong>❌ Instantly API Error</strong><br><br>
+                        <strong>Status:</strong> ${response.status}<br>
+                        <strong>Response:</strong>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                        <br>
+                        <strong>Possible Issues:</strong>
+                        <ul>
+                            <li>INSTANTLY_API_KEY not set in Vercel environment</li>
+                            <li>Campaign IDs incorrect or missing</li>
+                            <li>Instantly account issue</li>
+                        </ul>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `
+                    <strong>❌ Network Error</strong><br><br>
+                    ${error.message}
+                `;
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '🚀 Send Podcast Invitation';
+            }
+        }
+
+        async function checkSender() {
+            const btn = event.target;
+            const resultDiv = document.getElementById('result2');
+            
+            const checkEmail = document.getElementById('checkEmail').value;
+            
+            btn.disabled = true;
+            btn.textContent = '⏳ Checking...';
+            
+            resultDiv.className = 'result loading';
+            resultDiv.textContent = '⏳ Checking sender assignment...';
+
+            try {
+                const response = await fetch('https://growthmanagerpro-backend.vercel.app/api/instantly-manager', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'get-sender-for-lead',
+                        leadEmail: checkEmail
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    resultDiv.className = 'result success';
+                    resultDiv.innerHTML = `
+                        <strong>✅ Sender Check Complete</strong><br><br>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.innerHTML = `
+                        <strong>❌ Error</strong><br><br>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `
+                    <strong>❌ Network Error</strong><br><br>
+                    ${error.message}
+                `;
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '🔍 Check Sender';
+            }
+        }
+    </script>
+</body>
+</html>
