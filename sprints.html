@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Tasks & Clients</title>
+    <title>Sprints Workspace - Growth Manager Pro</title>
     <style>
         * {
             margin: 0;
@@ -728,7 +728,7 @@
         <aside class="sidebar">
             <div class="sidebar-header">
                 <h1>Growth Manager Pro</h1>
-                <p>Admin Workspace</p>
+                <p>Sprints Workspace</p>
             </div>
 
             <nav>
@@ -742,32 +742,43 @@
                     </a>
                     <a href="sprints.html" class="nav-item active">
                         <div class="nav-item-content">
-                            <span class="nav-icon">✅</span>
-                            <span class="nav-item-text">My Tasks</span>
+                            <span class="nav-icon">⚡</span>
+                            <span class="nav-item-text">Sprints Workspace</span>
                         </div>
                         <span class="notification-badge" id="tasks-badge">5</span>
                     </a>
-                   <a href="client-dashboard.html" class="nav-item">
-    <div class="nav-item-content">
-        <span class="nav-icon">👤</span>
-        <span class="nav-item-text">Client Dashboard</span>
-    </div>
-</a>
-<a href="advisor-dashboard.html" class="nav-item">
-    <div class="nav-item-content">
-        <span class="nav-icon">🎯</span>
-        <span class="nav-item-text">Advisor Dashboard</span>
-    </div>
-</a>
-</div>
-<div class="nav-section">
-    <div class="nav-section-title">System</div>
-    <a href="pipeline.html" class="nav-item">
-        <div class="nav-item-content">
-            <span class="nav-icon">💼</span>
-            <span class="nav-item-text">Pipeline</span>
-        </div>
-    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Dashboards</div>
+                    <a href="advisor-dashboard.html" class="nav-item">
+                        <div class="nav-item-content">
+                            <span class="nav-icon">🎯</span>
+                            <span class="nav-item-text">Advisor Dashboard</span>
+                        </div>
+                    </a>
+                    <a href="client-dashboard.html" class="nav-item">
+                        <div class="nav-item-content">
+                            <span class="nav-icon">👤</span>
+                            <span class="nav-item-text">Client Dashboard</span>
+                        </div>
+                    </a>
+                    <a href="client-success.html" class="nav-item">
+                        <div class="nav-item-content">
+                            <span class="nav-icon">🎯</span>
+                            <span class="nav-item-text">Client Success</span>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">System</div>
+                    <a href="pipeline.html" class="nav-item">
+                        <div class="nav-item-content">
+                            <span class="nav-icon">💼</span>
+                            <span class="nav-item-text">Pipeline</span>
+                        </div>
+                    </a>
                     <a href="user-management.html" class="nav-item">
                         <div class="nav-item-content">
                             <span class="nav-icon">⚙️</span>
@@ -792,7 +803,7 @@
         <main class="main-content">
             <!-- Page Header -->
             <div class="page-header">
-                <h2>My Tasks & Client Workspace</h2>
+                <h2>⚡ Sprints Workspace</h2>
                 <p class="page-subtitle">Action items needing your attention and private client communication</p>
             </div>
 
@@ -904,16 +915,16 @@
 <script src="auth-helper.js"></script>
     
 <script>
-    // ====== ROLE-AWARE INITIALIZATION ======
+    // ====== AUTHENTICATION ======
     (function() {
-        if (!AuthHelper.protectPage('advisor-dashboard.html')) {
+        if (!AuthHelper.protectPage('sprints.html')) {
             throw new Error('Unauthorized access');
         }
         AuthHelper.applyPermissions();
     })();
     
     const API_URL = 'https://growthmanagerpro-backend.vercel.app';
-    const userRole = localStorage.getItem('userRole') || 'client';
+    const userRole = localStorage.getItem('userRole') || 'admin';
     const userId = localStorage.getItem('userId');
     
     // Data stores
@@ -928,39 +939,12 @@
     let messagesData = {};
     let activeClientId = null;
 
-    // Initialize based on role
+    // Initialize
     document.addEventListener('DOMContentLoaded', () => {
         console.log('[Sprints] Initializing for role:', userRole);
-        
-        // Update header based on role
-        updateHeaderForRole();
-        
-        if (userRole === 'client') {
-            // REDIRECT CLIENTS TO THEIR DASHBOARD
-            console.log('[Sprints] Client detected - redirecting to client dashboard');
-            window.location.href = 'client-dashboard.html';
-        } else {
-            // Load admin/advisor view
-            loadAllData();
-            setInterval(loadAllData, 2 * 60 * 1000);
-        }
+        loadAllData();
+        setInterval(loadAllData, 2 * 60 * 1000);
     });
-
-    function updateHeaderForRole() {
-        const headerTitle = document.querySelector('.page-header h2');
-        const headerSubtitle = document.querySelector('.page-subtitle');
-        const sidebarTitle = document.querySelector('.sidebar-header p');
-        
-        if (userRole === 'client') {
-            headerTitle.textContent = 'My Sprint Tasks';
-            headerSubtitle.textContent = 'Your weekly deliverables and progress tracking';
-            sidebarTitle.textContent = 'Client Workspace';
-        } else {
-            headerTitle.textContent = 'My Tasks & Client Workspace';
-            headerSubtitle.textContent = 'Action items needing your attention and private client communication';
-            sidebarTitle.textContent = 'Admin Workspace';
-        }
-    }
 
     async function loadAllData() {
         try {
