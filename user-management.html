@@ -920,31 +920,73 @@
             }).join('');
         }
 
-        function inviteUser() {
-            const email = prompt('Enter email address to invite:');
-            if (!email) return;
-            
-            const role = prompt('Select role:\n1. Admin\n2. Advisor\n3. Client\n4. SaaS Client\n\nEnter number (1-4):');
-            const roleMap = { '1': 'admin', '2': 'advisor', '3': 'client', '4': 'saas' };
-            const selectedRole = roleMap[role];
-            
-            if (!selectedRole) {
-                alert('Invalid role selection');
-                return;
-            }
+        async function inviteUser() {
+    const email = prompt('Enter email address to invite:');
+    if (!email) return;
+    
+    const role = prompt('Select role:\n1. Admin\n2. Advisor\n3. Client\n4. SaaS Client\n\nEnter number (1-4):');
+    const roleMap = { '1': 'admin', '2': 'advisor', '3': 'client', '4': 'saas' };
+    const selectedRole = roleMap[role];
+    
+    if (!selectedRole) {
+        alert('Invalid role selection');
+        return;
+    }
 
-            alert(`✉️ Invitation sent to ${email} as ${selectedRole}!\n\nThey will receive an email to set up their account.`);
-            
-            // TODO: Implement actual invitation logic
-            console.log('Inviting user:', email, 'as', selectedRole);
+    try {
+        // Create invitation
+        const response = await fetch(`${API_URL}/api/invitations`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: email,
+                role: selectedRole
+            })
+        });
+
+        const result = await response.json();
+
+        if (!result.success) {
+            alert('❌ Error: ' + result.error);
+            return;
         }
 
-        function editUser(userId) {
-            const user = usersData.find(u => u.id == userId);
-            if (user) {
-                alert(`Editing ${user.name}\n\nRole: ${user.role}\nStatus: ${user.status}\n\nFull edit functionality coming soon!`);
-            }
-        }
+        // Show the signup link
+        const signupLink = result.invitation.signupLink;
+        
+        // Create modal with link
+        const modal = document.createElement('div');
+        modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 9999;';
+        modal.innerHTML = `
+            <div style="background: white; padding: 2rem; border-radius: 12px; max-width: 600px; width: 90%;">
+                <h3 style="margin-bottom: 1rem; color: #2c3e50;">✉️ Invitation Created!</h3>
+                <p style="margin-bottom: 1rem; color: #7f8c8d;">Send this link to <strong>${email}</strong> (${selectedRole}):</p>
+                <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; word-break: break-all; font-size: 0.9rem;">
+                    ${signupLink}
+                </div>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button onclick="navigator.clipboard.writeText('${signupLink}'); this.textContent='✅ Copied!'" style="flex: 1; padding: 0.75rem; background: linear-gradient(135deg, #3498db, #2980b9); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                        📋 Copy Link
+                    </button>
+                    <button onclick="this.closest('div').parentElement.remove()" style="flex: 1; padding: 0.75rem; background: white; color: #3498db; border: 2px solid #3498db; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                        Close
+                    </button>
+                </div>
+                <p style="margin-top: 1rem; font-size: 0.85rem; color: #95a5a6;">💡 Link expires in 7 days</p>
+            </div>
+        `;
+        document.body.appendChild(modal);
+
+        // Reload users list
+        loadUsers();
+
+    } catch (error) {
+        console.error('Error creating invitation:', error);
+        alert('❌ Failed to create invitation. Please try again.');
+    }
+}
 
         function exportUsers() {
             alert('📋 Exporting users list...\n\nThis will download a CSV file with all user data.');
