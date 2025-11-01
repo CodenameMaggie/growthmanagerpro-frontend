@@ -907,9 +907,37 @@
         document.getElementById('detail-modal').style.display = 'none';
     };
 
-    window.refreshData = function() {
-        loadCalls();
-    };
+window.refreshData = async function() {
+    const refreshBtn = event.target; // Get the button that was clicked
+    const originalText = refreshBtn.innerHTML;
+    
+    try {
+        // Show loading state
+        refreshBtn.disabled = true;
+        refreshBtn.innerHTML = '⏳ Refreshing...';
+        refreshBtn.style.opacity = '0.7';
+        
+        // Reload the data
+        await loadCalls();
+        
+        // Show success briefly
+        refreshBtn.innerHTML = '✅ Refreshed!';
+        setTimeout(() => {
+            refreshBtn.innerHTML = originalText;
+            refreshBtn.disabled = false;
+            refreshBtn.style.opacity = '1';
+        }, 1500);
+        
+    } catch (error) {
+        console.error('[Pre-Qual Calls] Refresh error:', error);
+        refreshBtn.innerHTML = '❌ Error';
+        setTimeout(() => {
+            refreshBtn.innerHTML = originalText;
+            refreshBtn.disabled = false;
+            refreshBtn.style.opacity = '1';
+        }, 2000);
+    }
+};
 
     function formatStatus(status) {
         return status.split('_').map(word => 
