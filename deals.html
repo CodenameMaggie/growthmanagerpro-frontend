@@ -579,103 +579,52 @@
             setupSearch();
         });
 
-        async function loadDeals() {
-            try {
-                // In production, this would fetch from your backend
-                // const response = await fetch(`${API_BASE}/api/deals`);
-                // const data = await response.json();
-                
-                // For now, using sample data structure
-                dealsData = [
-                    {
-                        id: 1,
-                        clientName: 'Michael Thompson',
-                        company: 'Thompson Construction Co.',
-                        tier: 'architecture',
-                        dealValue: 150000,
-                        type: 'Annual',
-                        status: 'active',
-                        startDate: '2025-01-15',
-                        renewalDate: '2026-01-15',
-                        progress: 45,
-                        currentPhase: 'Phase 2: Scale',
-                        systemsDelivered: [
-                            { name: 'Intent Prospecting', status: 'delivered' },
-                            { name: 'AI Personalization', status: 'delivered' },
-                            { name: 'Interactive Assessments', status: 'delivered' },
-                            { name: 'Multi-Channel Orchestration', status: 'in-progress' },
-                            { name: 'Content Atomization', status: 'pending' },
-                            { name: 'Partnership Program', status: 'pending' }
-                        ],
-                        metrics: {
-                            leadsGenerated: 247,
-                            qualificationRate: 68,
-                            pipelineValue: 425000
-                        }
-                    },
-                    {
-                        id: 2,
-                        clientName: 'Sarah Chen',
-                        company: 'TechVision Solutions',
-                        tier: 'alliance',
-                        dealValue: 350000,
-                        type: 'Annual + Rev Share',
-                        status: 'active',
-                        startDate: '2024-09-01',
-                        renewalDate: '2025-09-01',
-                        progress: 75,
-                        currentPhase: 'Phase 3: Domination',
-                        systemsDelivered: [
-                            { name: 'Intent Prospecting', status: 'delivered' },
-                            { name: 'AI Personalization', status: 'delivered' },
-                            { name: 'Interactive Assessments', status: 'delivered' },
-                            { name: 'Multi-Channel Orchestration', status: 'delivered' },
-                            { name: 'Agentic AI SDR', status: 'delivered' },
-                            { name: 'Content Atomization', status: 'delivered' },
-                            { name: 'Partnership Program', status: 'delivered' },
-                            { name: 'ABM Orchestration', status: 'in-progress' },
-                            { name: 'AI Video System', status: 'in-progress' },
-                            { name: 'Executive Community', status: 'pending' }
-                        ],
-                        metrics: {
-                            leadsGenerated: 892,
-                            qualificationRate: 82,
-                            pipelineValue: 1850000
-                        }
-                    },
-                    {
-                        id: 3,
-                        clientName: 'David Rodriguez',
-                        company: 'Summit Consulting Group',
-                        tier: 'foundations',
-                        dealValue: 45000,
-                        type: 'One-time',
-                        status: 'active',
-                        startDate: '2025-10-01',
-                        renewalDate: null,
-                        progress: 65,
-                        currentPhase: 'Strategic Mapping',
-                        systemsDelivered: [
-                            { name: 'Tech Stack Audit', status: 'delivered' },
-                            { name: 'Data Intelligence Setup', status: 'delivered' },
-                            { name: 'Growth Systems Design', status: 'in-progress' },
-                            { name: 'ROI Framework', status: 'pending' }
-                        ],
-                        metrics: {
-                            systemsAudited: 12,
-                            bottlenecksIdentified: 8,
-                            prioritiesSet: 5
-                        }
-                    }
-                ];
-
-                renderDeals(dealsData);
-                updateStats(dealsData);
-            } catch (error) {
-                console.error('Error loading deals:', error);
-                document.getElementById('dealsGrid').innerHTML = '<div class="loading">Error loading partnerships. Please refresh.</div>';
-            }
+      async function loadDeals() {
+    try {
+        console.log('[Deals] Loading real data from API...');
+        
+        // Fetch real deals from backend
+        const response = await fetch(`${API_BASE}/api/deals`);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
         }
+        
+        const result = await response.json();
+        
+        if (result.success && result.data) {
+            dealsData = result.data.deals || [];
+            console.log('[Deals] ✅ Loaded', dealsData.length, 'real deals');
+            
+            renderDeals(dealsData);
+            
+            // Update stats with real data
+            if (result.data.stats) {
+                updateStatsFromAPI(result.data.stats);
+            } else {
+                updateStats(dealsData);
+            }
+        } else {
+            throw new Error('Invalid response format');
+        }
+        
+    } catch (error) {
+        console.error('[Deals] Error loading deals:', error);
+        
+        // Show empty state instead of fake data
+        dealsData = [];
+        renderDeals(dealsData);
+        updateStats(dealsData);
+    }
+}
+
+// Helper function to update stats from API response
+function updateStatsFromAPI(stats) {
+    document.getElementById('activePartnerships').textContent = stats.activeDeals || 0;
+    document.getElementById('totalARR').textContent = '$' + formatNumber(stats.totalValue || 0);
+    document.getElementById('systemsDeployed').textContent = stats.systemsDeployed || 0;
+    document.getElementById('avgDealValue').textContent = '$' + formatNumber(Math.round(stats.avgDealSize || 0));
+}
 
         function renderDeals(deals) {
             const grid = document.getElementById('dealsGrid');
