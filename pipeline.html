@@ -261,43 +261,54 @@
             transition: all 0.2s ease;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
-        .contact-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-        }
-        .contact-name {
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 0.25rem;
-            font-size: 0.95rem;
-        }
-        .contact-company {
-            color: #7f8c8d;
-            font-size: 0.85rem;
-            margin-bottom: 0.5rem;
-        }
-        .contact-email {
-            color: #3498db;
-            font-size: 0.8rem;
-            margin-bottom: 0.5rem;
-        }
-        .contact-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.75rem;
-            color: #95a5a6;
-            margin-top: 0.5rem;
-            padding-top: 0.5rem;
-            border-top: 1px solid #e1e5e9;
-        }
-        .contact-score {
-            background: #27ae60;
-            color: white;
-            padding: 0.2rem 0.5rem;
-            border-radius: 4px;
-            font-weight: 600;
-        }
+  .contact-card {
+    background: white;
+    border-radius: 6px;
+    padding: 0.75rem;  /* ← Reduced from 1rem */
+    border-left: 3px solid;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.contact-name {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.2rem;  /* ← Reduced from 0.25rem */
+    font-size: 0.85rem;  /* ← Reduced from 0.95rem */
+}
+
+.contact-company {
+    color: #7f8c8d;
+    font-size: 0.75rem;  /* ← Reduced from 0.85rem */
+    margin-bottom: 0.35rem;  /* ← Reduced from 0.5rem */
+}
+
+.contact-email {
+    color: #3498db;
+    font-size: 0.7rem;  /* ← Reduced from 0.8rem */
+    margin-bottom: 0.35rem;  /* ← Reduced from 0.5rem */
+}
+
+.contact-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.7rem;  /* ← Reduced from 0.75rem */
+    color: #95a5a6;
+    margin-top: 0.35rem;  /* ← Reduced from 0.5rem */
+    padding-top: 0.35rem;  /* ← Reduced from 0.5rem */
+    border-top: 1px solid #e1e5e9;
+}
+
+.contact-score {
+    background: #27ae60;
+    color: white;
+    padding: 0.15rem 0.4rem;  /* ← Reduced from 0.2rem 0.5rem */
+    border-radius: 3px;  /* ← Reduced from 4px */
+    font-weight: 600;
+    font-size: 0.7rem;  /* ← Added smaller font */
+}
         /* Analytics & Reports Sections */
         .expandable-section {
             background: white;
