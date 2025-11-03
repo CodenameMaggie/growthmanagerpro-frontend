@@ -678,6 +678,14 @@
                 <!-- Filters Bar -->
                 <div class="filters-bar">
                     <div class="filter-group">
+                        <label>View:</label>
+                        <button class="btn" id="campaignToggleBtn" onclick="toggleCampaignFilter()" 
+                                style="padding: 0.5rem 1rem; font-size: 0.85rem; background: linear-gradient(135deg, #9b59b6, #8e44ad);">
+                            📧 Campaign Contacts Only
+                        </button>
+                    </div>
+                    
+                    <div class="filter-group">
                         <label>Search:</label>
                         <input type="text" class="search-input" id="searchInput" placeholder="Search by name, email, or company...">
                     </div>
@@ -823,6 +831,7 @@
         let contactsData = [];
         let filteredContacts = [];
         let editingContactId = null;
+        let showOnlyCampaigns = true; // Default to showing only campaign contacts
         
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
@@ -916,16 +925,37 @@
             return 'none'; // Not in campaigns yet
         }
         
+        // Toggle between campaign contacts only and all contacts
+        function toggleCampaignFilter() {
+            showOnlyCampaigns = !showOnlyCampaigns;
+            
+            const toggleBtn = document.getElementById('campaignToggleBtn');
+            if (showOnlyCampaigns) {
+                toggleBtn.innerHTML = '📧 Campaign Contacts Only';
+                toggleBtn.style.background = 'linear-gradient(135deg, #9b59b6, #8e44ad)';
+            } else {
+                toggleBtn.innerHTML = '👥 Show All Contacts';
+                toggleBtn.style.background = 'linear-gradient(135deg, #95a5a6, #7f8c8d)';
+            }
+            
+            updateContactsDisplay();
+        }
+        
         // Update contacts display
         function updateContactsDisplay() {
-            filteredContacts = [...contactsData];
+            // Apply campaign filter first
+            let baseContacts = showOnlyCampaigns 
+                ? contactsData.filter(c => c.current_campaign) 
+                : contactsData;
             
-            // Calculate stats
-            const totalContacts = contactsData.length;
-            const highEngagement = contactsData.filter(c => getEngagementLevel(c) === 'hot').length;
-            const replied = contactsData.filter(c => c.has_replied).length;
-            const inCampaigns = contactsData.filter(c => c.current_campaign).length;
-            const noEngagement = contactsData.filter(c => c.current_campaign && getEngagementLevel(c) === 'cold').length;
+            filteredContacts = [...baseContacts];
+            
+            // Calculate stats based on filtered set
+            const totalContacts = baseContacts.length;
+            const highEngagement = baseContacts.filter(c => getEngagementLevel(c) === 'hot').length;
+            const replied = baseContacts.filter(c => c.has_replied).length;
+            const inCampaigns = baseContacts.filter(c => c.current_campaign).length;
+            const noEngagement = baseContacts.filter(c => c.current_campaign && getEngagementLevel(c) === 'cold').length;
             
             // Update stats
             document.getElementById('total-contacts').textContent = totalContacts;
@@ -946,13 +976,25 @@
             const tbody = document.getElementById('contacts-table-body');
             
             if (filteredContacts.length === 0) {
+                const emptyMessage = showOnlyCampaigns 
+                    ? `<div class="empty-state">
+                        <h3>No contacts in campaigns yet</h3>
+                        <p>Contacts will appear here after they receive Podcast/Discovery/Strategy invitations</p>
+                        <p style="margin-top: 1rem; font-size: 0.9rem;">
+                            <button class="btn secondary" onclick="toggleCampaignFilter()" style="padding: 0.5rem 1rem;">
+                                👥 Show All ${contactsData.length} Contacts
+                            </button>
+                        </p>
+                    </div>`
+                    : `<div class="empty-state">
+                        <h3>No contacts found</h3>
+                        <p>Add your first contact or adjust filters</p>
+                    </div>`;
+                
                 tbody.innerHTML = `
                     <tr>
                         <td colspan="7">
-                            <div class="empty-state">
-                                <h3>No contacts found</h3>
-                                <p>Add your first contact or adjust filters</p>
-                            </div>
+                            ${emptyMessage}
                         </td>
                     </tr>
                 `;
@@ -1059,7 +1101,12 @@
             const campaignFilter = document.getElementById('campaignFilter').value;
             const statusFilter = document.getElementById('statusFilter').value;
             
-            filteredContacts = contactsData.filter(contact => {
+            // Start with base set (campaign contacts only or all)
+            let baseContacts = showOnlyCampaigns 
+                ? contactsData.filter(c => c.current_campaign) 
+                : contactsData;
+            
+            filteredContacts = baseContacts.filter(contact => {
                 // Search filter
                 const matchesSearch = !searchTerm || 
                     (contact.name && contact.name.toLowerCase().includes(searchTerm)) ||
@@ -1099,7 +1146,7 @@
             document.getElementById('engagementFilter').value = '';
             document.getElementById('campaignFilter').value = '';
             document.getElementById('statusFilter').value = '';
-            filterContacts();
+            updateContactsDisplay();
         }
         
         // Modal functions
