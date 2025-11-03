@@ -213,6 +213,64 @@
         .email-count.active {
             display: block;
         }
+        /* Legal Agreements Section */
+        .legal-agreements {
+            background: #fff9e6;
+            border: 2px solid #ffc107;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        .legal-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            background: white;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .checkbox-group:hover {
+            border-color: #3498db;
+            background: #f8f9fa;
+        }
+        .checkbox-group input[type="checkbox"] {
+            margin-top: 0.25rem;
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+        }
+        .checkbox-label {
+            flex: 1;
+            color: #2c3e50;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        .checkbox-label a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .checkbox-label a:hover {
+            text-decoration: underline;
+        }
+        .checkbox-group.error {
+            border-color: #e74c3c;
+            background: #fee;
+        }
         /* Button */
         .submit-btn {
             width: 100%;
@@ -420,6 +478,30 @@
                 </div>
             </div>
 
+            <hr class="section-divider">
+
+            <!-- Legal Agreements Section -->
+            <div class="legal-agreements">
+                <div class="legal-title">
+                    <span>📋</span>
+                    <span>Legal Agreements</span>
+                </div>
+
+                <div class="checkbox-group" id="terms-checkbox-group">
+                    <input type="checkbox" id="termsAccepted" required>
+                    <label for="termsAccepted" class="checkbox-label">
+                        I have read and agree to the <a href="/terms-and-conditions.html" target="_blank">Terms & Conditions</a>
+                    </label>
+                </div>
+
+                <div class="checkbox-group" id="privacy-checkbox-group">
+                    <input type="checkbox" id="privacyAccepted" required>
+                    <label for="privacyAccepted" class="checkbox-label">
+                        I have read and agree to the <a href="/privacy-policy.html" target="_blank">Privacy Policy</a>
+                    </label>
+                </div>
+            </div>
+
             <button type="submit" class="submit-btn" id="submit-btn">
                 Submit Advisor Application
             </button>
@@ -475,6 +557,30 @@
             const submitBtn = document.getElementById('submit-btn');
             const messageDiv = document.getElementById('message');
 
+            // Validate legal checkboxes
+            const termsAccepted = document.getElementById('termsAccepted').checked;
+            const privacyAccepted = document.getElementById('privacyAccepted').checked;
+
+            if (!termsAccepted || !privacyAccepted) {
+                showMessage('⚠️ Please accept the Terms & Conditions and Privacy Policy to continue', 'error');
+                
+                // Highlight unchecked boxes
+                if (!termsAccepted) {
+                    document.getElementById('terms-checkbox-group').classList.add('error');
+                }
+                if (!privacyAccepted) {
+                    document.getElementById('privacy-checkbox-group').classList.add('error');
+                }
+                
+                // Remove error styling after 3 seconds
+                setTimeout(() => {
+                    document.getElementById('terms-checkbox-group').classList.remove('error');
+                    document.getElementById('privacy-checkbox-group').classList.remove('error');
+                }, 3000);
+                
+                return;
+            }
+
             // Disable button
             submitBtn.disabled = true;
             submitBtn.textContent = 'Submitting Application...';
@@ -511,7 +617,9 @@
                         specialization,
                         password,
                         hasClients,
-                        clientEmails
+                        clientEmails,
+                        termsAccepted: termsAccepted,
+                        privacyAccepted: privacyAccepted
                     })
                 });
 
