@@ -308,6 +308,120 @@
             color: white;
         }
 
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h3 {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-header p {
+            color: #7f8c8d;
+            font-size: 0.95rem;
+        }
+
+        .modal-body {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-field {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-field label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .form-field label span {
+            color: #e74c3c;
+        }
+
+        .form-field input,
+        .form-field select,
+        .form-field textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+
+        .form-field input:focus,
+        .form-field select:focus,
+        .form-field textarea:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .form-field textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .modal-footer .btn {
+            flex: 1;
+        }
+
         /* Connection Status */
         .connection-status {
             position: fixed;
@@ -377,19 +491,28 @@
             font-weight: 600;
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
+        /* Alert Box */
+        .alert {
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+        }
 
-            .main-content {
-                margin-left: 0;
-            }
+        .alert.show {
+            display: block;
+        }
 
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
         }
     </style>
 </head>
@@ -431,7 +554,7 @@
             </div>
 
             <div class="nav-section">
-                <div class="nav-section-title">strategy & Revenue</div>
+                <div class="nav-section-title">Strategy & Revenue</div>
                 <a href="pipeline.html" class="nav-item">
                     <span class="nav-icon">📈</span>
                     <span>Pipeline</span>
@@ -486,8 +609,8 @@
                 <h2>💰 Cash Flow</h2>
                 <p>Track Income & Expenses</p>
                 <div class="header-actions">
-                    <button class="btn btn-income" onclick="addIncome()">+ Add Income</button>
-                    <button class="btn btn-expense" onclick="addExpense()">+ Add Expense</button>
+                    <button class="btn btn-income" onclick="openAddIncomeModal()">+ Add Income</button>
+                    <button class="btn btn-expense" onclick="openAddExpenseModal()">+ Add Expense</button>
                     <button class="btn btn-secondary" onclick="refreshData()">🔄 Refresh</button>
                 </div>
             </div>
@@ -554,235 +677,520 @@
         </div>
     </div>
 
+    <!-- Add Income Modal -->
+    <div class="modal-overlay" id="incomeModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>💰 Add Income</h3>
+                <p>Record a new income transaction</p>
+            </div>
+            
+            <div id="income-alert" class="alert"></div>
+            
+            <div class="modal-body">
+                <form id="incomeForm">
+                    <div class="form-field">
+                        <label for="incomeDescription">Description <span>*</span></label>
+                        <input type="text" id="incomeDescription" placeholder="e.g., Client payment, Consulting fee" required>
+                    </div>
+                    
+                    <div class="form-field">
+                        <label for="incomeAmount">Amount <span>*</span></label>
+                        <input type="number" id="incomeAmount" placeholder="0.00" step="0.01" min="0" required>
+                    </div>
+                    
+                    <div class="form-field">
+                        <label for="incomeCategory">Category</label>
+                        <select id="incomeCategory">
+                            <option value="Consulting">Consulting</option>
+                            <option value="Contract">Contract Payment</option>
+                            <option value="Retainer">Retainer</option>
+                            <option value="Commission">Commission</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-field">
+                        <label for="incomeDate">Date</label>
+                        <input type="date" id="incomeDate">
+                    </div>
+                    
+                    <div class="form-field">
+                        <label for="incomeNotes">Notes</label>
+                        <textarea id="incomeNotes" placeholder="Optional notes about this income..."></textarea>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeIncomeModal()">Cancel</button>
+                <button class="btn btn-income" id="saveIncomeBtn" onclick="saveIncome()">💰 Add Income</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Expense Modal -->
+    <div class="modal-overlay" id="expenseModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>💸 Add Expense</h3>
+                <p>Record a new expense transaction</p>
+            </div>
+            
+            <div id="expense-alert" class="alert"></div>
+            
+            <div class="modal-body">
+                <form id="expenseForm">
+                    <div class="form-field">
+                        <label for="expenseDescription">Description <span>*</span></label>
+                        <input type="text" id="expenseDescription" placeholder="e.g., Software subscription, Marketing expense" required>
+                    </div>
+                    
+                    <div class="form-field">
+                        <label for="expenseAmount">Amount <span>*</span></label>
+                        <input type="number" id="expenseAmount" placeholder="0.00" step="0.01" min="0" required>
+                    </div>
+                    
+                    <div class="form-field">
+                        <label for="expenseCategory">Category</label>
+                        <select id="expenseCategory">
+                            <option value="Software">Software</option>
+                            <option value="Marketing">Marketing</option>
+                            <option value="Tools">Tools</option>
+                            <option value="Services">Services</option>
+                            <option value="Subscriptions">Subscriptions</option>
+                            <option value="Office">Office</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-field">
+                        <label for="expenseDate">Date</label>
+                        <input type="date" id="expenseDate">
+                    </div>
+                    
+                    <div class="form-field">
+                        <label for="expenseNotes">Notes</label>
+                        <textarea id="expenseNotes" placeholder="Optional notes about this expense..."></textarea>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeExpenseModal()">Cancel</button>
+                <button class="btn btn-expense" id="saveExpenseBtn" onclick="saveExpense()">💸 Add Expense</button>
+            </div>
+        </div>
+    </div>
+
 <script src="auth-helper.js"></script>
     
 <script>
     (function() {
-        if (!AuthHelper.protectPage('advisor-dashboard.html')) {  // ← NOW CORRECT
+        if (!AuthHelper.protectPage('advisor-dashboard.html')) {
             throw new Error('Unauthorized access');
         }
         AuthHelper.applyPermissions();
     })();
     
     const API_BASE = 'https://growthmanagerpro-backend.vercel.app';
-        let transactionsData = [];
+    let transactionsData = [];
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('[Cash Flow] Initializing...');
-            console.log('[Cash Flow] API Base:', API_BASE);
-            loadTransactions();
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('[Cash Flow] Initializing...');
+        console.log('[Cash Flow] API Base:', API_BASE);
+        loadTransactions();
+        
+        // Set today's date as default in forms
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('incomeDate').value = today;
+        document.getElementById('expenseDate').value = today;
+        
+        // Auto-refresh every 5 minutes
+        setInterval(loadTransactions, 300000);
+    });
+
+    // Load transactions from API
+    async function loadTransactions() {
+        try {
+            updateConnectionStatus('connecting');
             
-            // Auto-refresh every 5 minutes
-            setInterval(loadTransactions, 300000);
+            const response = await fetch(`${API_BASE}/api/cash-flow`);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+
+            const result = await response.json();
+            
+            if (result.success && result.data) {
+                transactionsData = result.data.transactions || [];
+                updateStats(result.data.stats);
+                renderTransactionsTable();
+                updateConnectionStatus('connected');
+                console.log('[Cash Flow] ✅ Loaded', transactionsData.length, 'transactions');
+            } else {
+                throw new Error('Invalid response format');
+            }
+
+        } catch (error) {
+            console.error('[Cash Flow] ❌ Error loading transactions:', error);
+            updateConnectionStatus('error', error.message);
+            renderErrorState(error.message);
+        }
+    }
+
+    // Update statistics
+    function updateStats(stats) {
+        if (!stats) {
+            stats = calculateStats();
+        }
+        
+        document.getElementById('total-income').textContent = `$${(stats.totalIncome || 0).toLocaleString()}`;
+        document.getElementById('total-expenses').textContent = `$${(stats.totalExpenses || 0).toLocaleString()}`;
+        
+        const netCash = (stats.totalIncome || 0) - (stats.totalExpenses || 0);
+        const netCashEl = document.getElementById('net-cash');
+        netCashEl.textContent = `$${netCash.toLocaleString()}`;
+        netCashEl.className = netCash >= 0 ? 'stat-value amount-positive' : 'stat-value amount-negative';
+        
+        document.getElementById('running-balance').textContent = `$${(stats.runningBalance || 0).toLocaleString()}`;
+    }
+
+    // Calculate stats from data
+    function calculateStats() {
+        const currentMonth = new Date().getMonth();
+        const currentYear = new Date().getFullYear();
+        
+        const thisMonth = transactionsData.filter(t => {
+            const date = new Date(t.date);
+            return date.getMonth() === currentMonth && date.getFullYear() === currentYear;
         });
+        
+        const totalIncome = thisMonth
+            .filter(t => t.type === 'income')
+            .reduce((sum, t) => sum + (parseFloat(t.amount) || 0), 0);
+        
+        const totalExpenses = thisMonth
+            .filter(t => t.type === 'expense')
+            .reduce((sum, t) => sum + (parseFloat(t.amount) || 0), 0);
+        
+        // Calculate running balance (all time)
+        const runningBalance = transactionsData.reduce((balance, t) => {
+            const amount = parseFloat(t.amount) || 0;
+            return t.type === 'income' ? balance + amount : balance - amount;
+        }, 0);
 
-        // Load transactions from API
-        async function loadTransactions() {
-            try {
-                updateConnectionStatus('connecting');
-                
-                const response = await fetch(`${API_BASE}/api/cash-flow`);
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}`);
-                }
+        return { 
+            totalIncome, 
+            totalExpenses, 
+            runningBalance
+        };
+    }
 
-                const result = await response.json();
-                
-                if (result.success && result.data) {
-                    transactionsData = result.data.transactions || [];
-                    updateStats(result.data.stats);
-                    renderTransactionsTable();
-                    updateConnectionStatus('connected');
-                    console.log('[Cash Flow] ✅ Loaded', transactionsData.length, 'transactions');
-                } else {
-                    throw new Error('Invalid response format');
-                }
+    // Render transactions table
+    function renderTransactionsTable() {
+        const tbody = document.getElementById('transactions-body');
+        document.getElementById('transaction-count').textContent = transactionsData.length;
 
-            } catch (error) {
-                console.error('[Cash Flow] ❌ Error loading transactions:', error);
-                updateConnectionStatus('error', error.message);
-                renderErrorState(error.message);
-            }
-        }
-
-        // Update statistics
-        function updateStats(stats) {
-            if (!stats) {
-                // Calculate from data if stats not provided
-                stats = calculateStats();
-            }
-            
-            document.getElementById('total-income').textContent = `$${(stats.totalIncome || 0).toLocaleString()}`;
-            document.getElementById('total-expenses').textContent = `$${(stats.totalExpenses || 0).toLocaleString()}`;
-            
-            const netCash = (stats.totalIncome || 0) - (stats.totalExpenses || 0);
-            const netCashEl = document.getElementById('net-cash');
-            netCashEl.textContent = `$${netCash.toLocaleString()}`;
-            netCashEl.className = netCash >= 0 ? 'stat-value amount-positive' : 'stat-value amount-negative';
-            
-            document.getElementById('running-balance').textContent = `$${(stats.runningBalance || 0).toLocaleString()}`;
-        }
-
-        // Calculate stats from data
-        function calculateStats() {
-            const currentMonth = new Date().getMonth();
-            const currentYear = new Date().getFullYear();
-            
-            const thisMonth = transactionsData.filter(t => {
-                const date = new Date(t.date);
-                return date.getMonth() === currentMonth && date.getFullYear() === currentYear;
-            });
-            
-            const totalIncome = thisMonth
-                .filter(t => t.type === 'income')
-                .reduce((sum, t) => sum + (parseFloat(t.amount) || 0), 0);
-            
-            const totalExpenses = thisMonth
-                .filter(t => t.type === 'expense')
-                .reduce((sum, t) => sum + (parseFloat(t.amount) || 0), 0);
-            
-            // Calculate running balance (all time)
-            const runningBalance = transactionsData.reduce((balance, t) => {
-                const amount = parseFloat(t.amount) || 0;
-                return t.type === 'income' ? balance + amount : balance - amount;
-            }, 0);
-
-            return { 
-                totalIncome, 
-                totalExpenses, 
-                runningBalance
-            };
-        }
-
-        // Render transactions table
-        function renderTransactionsTable() {
-            const tbody = document.getElementById('transactions-body');
-            document.getElementById('transaction-count').textContent = transactionsData.length;
-
-            if (transactionsData.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="7" style="text-align: center; padding: 3rem; color: #7f8c8d;">
-                            <p style="font-size: 1.1rem; margin-bottom: 0.5rem;">📭 No transactions yet</p>
-                            <p>Add your first income or expense to start tracking!</p>
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
-
-            // Calculate running balance for each transaction
-            let runningBalance = 0;
-            const transactionsWithBalance = transactionsData.map(t => {
-                const amount = parseFloat(t.amount) || 0;
-                runningBalance += t.type === 'income' ? amount : -amount;
-                return { ...t, balance: runningBalance };
-            });
-
-            tbody.innerHTML = transactionsWithBalance.map(transaction => {
-                const typeBadge = transaction.type === 'income' 
-                    ? '<span class="type-badge type-income">Income</span>'
-                    : '<span class="type-badge type-expense">Expense</span>';
-                
-                const amountClass = transaction.type === 'income' ? 'amount-positive' : 'amount-negative';
-                const amountSign = transaction.type === 'income' ? '+' : '-';
-                
-                return `
-                    <tr>
-                        <td>${formatDate(transaction.date)}</td>
-                        <td>${typeBadge}</td>
-                        <td>
-                            <span class="category-badge">${transaction.category || 'Uncategorized'}</span>
-                        </td>
-                        <td>${transaction.description || '—'}</td>
-                        <td class="${amountClass}">${amountSign}$${(transaction.amount || 0).toLocaleString()}</td>
-                        <td><strong>$${(transaction.balance || 0).toLocaleString()}</strong></td>
-                        <td>
-                            <button class="btn btn-small btn-secondary" onclick="viewTransaction('${transaction.id}')">
-                                View
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        // Render error state
-        function renderErrorState(message) {
-            const tbody = document.getElementById('transactions-body');
+        if (transactionsData.length === 0) {
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="7" style="text-align: center; padding: 3rem;">
-                        <p style="color: #e74c3c; font-size: 1.1rem; margin-bottom: 0.5rem;">⚠️ Connection Error</p>
-                        <p style="color: #7f8c8d; margin-bottom: 1rem;">Could not connect to: ${API_BASE}/api/cash-flow</p>
-                        <p style="color: #7f8c8d; font-size: 0.9rem;">${message}</p>
-                        <button class="btn btn-primary" onclick="loadTransactions()" style="margin-top: 1rem;">
-                            🔄 Retry Connection
+                    <td colspan="7" style="text-align: center; padding: 3rem; color: #7f8c8d;">
+                        <p style="font-size: 1.1rem; margin-bottom: 0.5rem;">📭 No transactions yet</p>
+                        <p>Add your first income or expense to start tracking!</p>
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        // Calculate running balance for each transaction
+        let runningBalance = 0;
+        const transactionsWithBalance = transactionsData.map(t => {
+            const amount = parseFloat(t.amount) || 0;
+            runningBalance += t.type === 'income' ? amount : -amount;
+            return { ...t, balance: runningBalance };
+        });
+
+        tbody.innerHTML = transactionsWithBalance.map(transaction => {
+            const typeBadge = transaction.type === 'income' 
+                ? '<span class="type-badge type-income">Income</span>'
+                : '<span class="type-badge type-expense">Expense</span>';
+            
+            const amountClass = transaction.type === 'income' ? 'amount-positive' : 'amount-negative';
+            const amountSign = transaction.type === 'income' ? '+' : '-';
+            
+            return `
+                <tr>
+                    <td>${formatDate(transaction.date)}</td>
+                    <td>${typeBadge}</td>
+                    <td>
+                        <span class="category-badge">${transaction.category || 'Uncategorized'}</span>
+                    </td>
+                    <td>${transaction.description || '—'}</td>
+                    <td class="${amountClass}">${amountSign}$${(transaction.amount || 0).toLocaleString()}</td>
+                    <td><strong>$${(transaction.balance || 0).toLocaleString()}</strong></td>
+                    <td>
+                        <button class="btn btn-small btn-secondary" onclick="viewTransaction('${transaction.id}')">
+                            View
                         </button>
                     </td>
                 </tr>
             `;
+        }).join('');
+    }
+
+    // Render error state
+    function renderErrorState(message) {
+        const tbody = document.getElementById('transactions-body');
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7" style="text-align: center; padding: 3rem;">
+                    <p style="color: #e74c3c; font-size: 1.1rem; margin-bottom: 0.5rem;">⚠️ Connection Error</p>
+                    <p style="color: #7f8c8d; margin-bottom: 1rem;">Could not connect to: ${API_BASE}/api/cash-flow</p>
+                    <p style="color: #7f8c8d; font-size: 0.9rem;">${message}</p>
+                    <button class="btn btn-primary" onclick="loadTransactions()" style="margin-top: 1rem;">
+                        🔄 Retry Connection
+                    </button>
+                </td>
+            </tr>
+        `;
+    }
+
+    // Update connection status indicator
+    function updateConnectionStatus(status, message = '') {
+        const indicator = document.getElementById('status-indicator');
+        const statusText = document.getElementById('status-text');
+
+        if (status === 'connected') {
+            indicator.className = 'status-indicator status-connected';
+            statusText.textContent = 'Live Connected';
+        } else if (status === 'error') {
+            indicator.className = 'status-indicator status-error';
+            statusText.textContent = message || 'Connection Error';
+        } else if (status === 'connecting') {
+            indicator.className = 'status-indicator';
+            indicator.style.background = '#f39c12';
+            statusText.textContent = 'Connecting...';
+        }
+    }
+
+    // ==================== MODAL FUNCTIONS ====================
+
+    // Open Add Income Modal
+    function openAddIncomeModal() {
+        document.getElementById('incomeModal').classList.add('show');
+        document.getElementById('incomeForm').reset();
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('incomeDate').value = today;
+        hideAlert('income-alert');
+    }
+
+    // Close Income Modal
+    function closeIncomeModal() {
+        document.getElementById('incomeModal').classList.remove('show');
+        document.getElementById('incomeForm').reset();
+        hideAlert('income-alert');
+    }
+
+    // Open Add Expense Modal
+    function openAddExpenseModal() {
+        document.getElementById('expenseModal').classList.add('show');
+        document.getElementById('expenseForm').reset();
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('expenseDate').value = today;
+        hideAlert('expense-alert');
+    }
+
+    // Close Expense Modal
+    function closeExpenseModal() {
+        document.getElementById('expenseModal').classList.remove('show');
+        document.getElementById('expenseForm').reset();
+        hideAlert('expense-alert');
+    }
+
+    // Save Income
+    async function saveIncome() {
+        const description = document.getElementById('incomeDescription').value.trim();
+        const amount = parseFloat(document.getElementById('incomeAmount').value);
+        const category = document.getElementById('incomeCategory').value;
+        const date = document.getElementById('incomeDate').value;
+        const notes = document.getElementById('incomeNotes').value.trim();
+
+        // Validation
+        if (!description) {
+            showAlert('income-alert', 'Please enter a description', 'error');
+            return;
         }
 
-        // Update connection status indicator
-        function updateConnectionStatus(status, message = '') {
-            const indicator = document.getElementById('status-indicator');
-            const statusText = document.getElementById('status-text');
-
-            if (status === 'connected') {
-                indicator.className = 'status-indicator status-connected';
-                statusText.textContent = 'Live Connected';
-            } else if (status === 'error') {
-                indicator.className = 'status-indicator status-error';
-                statusText.textContent = message || 'Connection Error';
-            } else if (status === 'connecting') {
-                indicator.className = 'status-indicator';
-                indicator.style.background = '#f39c12';
-                statusText.textContent = 'Connecting...';
-            }
+        if (!amount || amount <= 0) {
+            showAlert('income-alert', 'Please enter a valid amount', 'error');
+            return;
         }
 
-        // Actions
-        function addIncome() {
-            alert('Add Income feature coming soon!');
-            // TODO: Open modal to add income
-        }
+        // Disable button
+        const btn = document.getElementById('saveIncomeBtn');
+        btn.disabled = true;
+        btn.textContent = '⏳ Saving...';
 
-        function addExpense() {
-            alert('Add Expense feature coming soon!');
-            // TODO: Open modal to add expense
-        }
-
-        function viewTransaction(id) {
-            const transaction = transactionsData.find(t => t.id === id);
-            if (transaction) {
-                console.log('Viewing transaction:', transaction);
-                alert(`Transaction Details:\n\nType: ${transaction.type}\nAmount: $${(transaction.amount || 0).toLocaleString()}\nCategory: ${transaction.category}\nDate: ${formatDate(transaction.date)}`);
-                // TODO: Open detailed view modal
-            }
-        }
-
-        function refreshData() {
-            console.log('[Cash Flow] Manual refresh triggered');
-            loadTransactions();
-        }
-
-        // Utility functions
-        function formatDate(dateString) {
-            if (!dateString) return '';
-            const date = new Date(dateString);
-            return date.toLocaleDateString('en-US', { 
-                month: 'short', 
-                day: 'numeric',
-                year: 'numeric'
+        try {
+            const response = await fetch(`${API_BASE}/api/cash-flow`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    description: description,
+                    amount: amount,
+                    transactionType: 'income',
+                    category: category,
+                    transactionDate: date,
+                    notes: notes || null
+                })
             });
+
+            const result = await response.json();
+
+            if (!result.success) {
+                showAlert('income-alert', result.error || 'Failed to add income', 'error');
+                btn.disabled = false;
+                btn.textContent = '💰 Add Income';
+                return;
+            }
+
+            // Success!
+            console.log('[Cash Flow] ✅ Income added:', result.data);
+            closeIncomeModal();
+            loadTransactions(); // Refresh the data
+            
+            // Show success message
+            alert('✅ Income added successfully!');
+
+        } catch (error) {
+            console.error('[Cash Flow] Error adding income:', error);
+            showAlert('income-alert', 'Connection error. Please try again.', 'error');
+            btn.disabled = false;
+            btn.textContent = '💰 Add Income';
+        }
+    }
+
+    // Save Expense
+    async function saveExpense() {
+        const description = document.getElementById('expenseDescription').value.trim();
+        const amount = parseFloat(document.getElementById('expenseAmount').value);
+        const category = document.getElementById('expenseCategory').value;
+        const date = document.getElementById('expenseDate').value;
+        const notes = document.getElementById('expenseNotes').value.trim();
+
+        // Validation
+        if (!description) {
+            showAlert('expense-alert', 'Please enter a description', 'error');
+            return;
         }
 
-        // Log system info
-        console.log('[Cash Flow] System initialized');
-        console.log('[Cash Flow] API Endpoint:', API_BASE);
-    </script>
+        if (!amount || amount <= 0) {
+            showAlert('expense-alert', 'Please enter a valid amount', 'error');
+            return;
+        }
+
+        // Disable button
+        const btn = document.getElementById('saveExpenseBtn');
+        btn.disabled = true;
+        btn.textContent = '⏳ Saving...';
+
+        try {
+            const response = await fetch(`${API_BASE}/api/cash-flow`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    description: description,
+                    amount: amount,
+                    transactionType: 'expense',
+                    category: category,
+                    transactionDate: date,
+                    notes: notes || null
+                })
+            });
+
+            const result = await response.json();
+
+            if (!result.success) {
+                showAlert('expense-alert', result.error || 'Failed to add expense', 'error');
+                btn.disabled = false;
+                btn.textContent = '💸 Add Expense';
+                return;
+            }
+
+            // Success!
+            console.log('[Cash Flow] ✅ Expense added:', result.data);
+            closeExpenseModal();
+            loadTransactions(); // Refresh the data
+            
+            // Show success message
+            alert('✅ Expense added successfully!');
+
+        } catch (error) {
+            console.error('[Cash Flow] Error adding expense:', error);
+            showAlert('expense-alert', 'Connection error. Please try again.', 'error');
+            btn.disabled = false;
+            btn.textContent = '💸 Add Expense';
+        }
+    }
+
+    // Show alert message
+    function showAlert(elementId, message, type) {
+        const alert = document.getElementById(elementId);
+        alert.textContent = message;
+        alert.className = `alert show alert-${type}`;
+    }
+
+    // Hide alert message
+    function hideAlert(elementId) {
+        const alert = document.getElementById(elementId);
+        alert.className = 'alert';
+    }
+
+    // Close modals when clicking outside
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('modal-overlay')) {
+            e.target.classList.remove('show');
+        }
+    });
+
+    // ==================== OTHER FUNCTIONS ====================
+
+    function viewTransaction(id) {
+        const transaction = transactionsData.find(t => t.id === id);
+        if (transaction) {
+            console.log('Viewing transaction:', transaction);
+            alert(`Transaction Details:\n\nType: ${transaction.type}\nAmount: $${(transaction.amount || 0).toLocaleString()}\nCategory: ${transaction.category}\nDate: ${formatDate(transaction.date)}\n\nDescription: ${transaction.description || 'N/A'}\n\nNotes: ${transaction.notes || 'N/A'}`);
+            // TODO: Open detailed view modal with edit/delete options
+        }
+    }
+
+    function refreshData() {
+        console.log('[Cash Flow] Manual refresh triggered');
+        loadTransactions();
+    }
+
+    // Utility functions
+    function formatDate(dateString) {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', { 
+            month: 'short', 
+            day: 'numeric',
+            year: 'numeric'
+        });
+    }
+
+    // Log system info
+    console.log('[Cash Flow] System initialized');
+    console.log('[Cash Flow] API Endpoint:', API_BASE);
+</script>
 </body>
 </html>
