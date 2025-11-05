@@ -830,6 +830,65 @@
             loadInterviews();
         }
 
+    async function retriggerAnalysis(callId) {
+    if (!confirm('Re-analyze this call and send podcast invite if qualified?')) return;
+    
+   try {
+    // Step 1: Analyze the call
+    const response = await fetch(`${API_BASE}/api/ai-analyzer`, {  // ← Fixed: fetch(
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+            action: 'analyze-prequal',
+            callId: callId 
+        })
+    });
+    
+    const result = await response.json();
+    
+    if (!result.success) {
+        alert('❌ Error: ' + result.error);
+        return;
+    }
+
+    // Step 2: If qualified (score >= 35), trigger SmartLead handoff
+    if (result.data && result.data.aiScore >= 35) {
+        console.log('[Pre-Qual] ✅ Qualified! Triggering SmartLead handoff...');
+        
+        try {
+            const handoffResponse = await fetch(`${API_BASE}/api/smartlead-handoff`, {  // ← Fixed: fetch(
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contactId: callId,
+                    trigger: 'pre_qual_qualified',
+                    preQualScore: result.data.aiScore
+                })
+            });
+
+            const handoffResult = await handoffResponse.json();
+
+            if (handoffResult.success) {
+                alert('✅ Analysis complete! Score: ' + result.data.aiScore + '/50\n📧 Podcast invitation sent via SmartLead!');
+            } else {
+                alert('✅ Analysis complete! Score: ' + result.data.aiScore + '/50\n⚠️ Note: Email handoff failed: ' + handoffResult.error);
+            }
+        } catch (handoffError) {
+            console.error('[Pre-Qual] SmartLead handoff error:', handoffError);
+            alert('✅ Analysis complete! Score: ' + result.data.aiScore + '/50\n⚠️ Note: Could not send email invitation (check console)');
+        }
+    } else {
+        const score = result.data?.aiScore || 0;
+        alert(`✅ Analysis complete! Score: ${score}/50\n❌ Below threshold (need 35+) - no invitation sent.`);  // ← Fixed: alert(
+    }
+    
+    loadCalls(); // Reload to show updates
+    
+} catch (error) {
+    alert('❌ Failed: ' + error.message);
+}
+
+}
         // Log system info
         console.log('[Podcast Calls] System initialized');
         console.log('[Podcast Calls] API Endpoint:', API_BASE);
