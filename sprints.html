@@ -766,7 +766,7 @@
                     <a href="client-success.html" class="nav-item">
                         <div class="nav-item-content">
                             <span class="nav-icon">🎯</span>
-                            <span class="nav-item-text">Client Success</span>
+                            <span class="nav-item-text">client Success</span>
                         </div>
                     </a>
                 </div>
@@ -866,7 +866,7 @@
                     <div class="action-category">
                         <div class="category-header">
                             <span class="category-icon">👥</span>
-                            <span class="category-title">Client To-Dos</span>
+                            <span class="category-title">client To-Dos</span>
                             <span class="category-count" id="client-count">0</span>
                         </div>
                         <div class="task-list" id="client-tasks">
@@ -1107,10 +1107,10 @@
             
             const result = await response.json();
             clientsData = result.clients || [];
-            renderClientTabs();
+            renderclientTabs();
         } catch (error) {
             console.error('[Sprints] Error loading clients:', error);
-            loadDemoClients();
+            loadDemoclients();
         }
     }
 
