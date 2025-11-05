@@ -942,14 +942,6 @@
                         </div>
                     </div>
                 </div>
-                
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" onclick="closeInviteModal()">Cancel</button>
-                    <button class="btn btn-primary" id="sendInviteBtn" onclick="sendInvitation()">Send Invitation</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
 <script src="auth-helper.js"></script>
     
@@ -1172,6 +1164,31 @@
                 return;
             }
 
+            // Send the invitation email via SmartLead
+try {
+    const emailResponse = await fetch(`${API_URL}/api/smartlead-handoff`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            contactId: result.invitation.id,
+            trigger: 'user_invitation',
+            campaignType: 'platform_invite',
+            inviteEmail: email,
+            inviteRole: selectedRole,
+            signupLink: result.invitation.signupLink
+        })
+    });
+
+    const emailResult = await emailResponse.json();
+    
+    if (!emailResult.success) {
+        console.error('[User Management] SmartLead email failed:', emailResult.error);
+    } else {
+        console.log('[User Management] ✅ Invitation email sent via SmartLead');
+    }
+} catch (emailError) {
+    console.error('[User Management] Failed to send email via SmartLead:', emailError);
+}
             // Close invite modal
             closeInviteModal();
 
