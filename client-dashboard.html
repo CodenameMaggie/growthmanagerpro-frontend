@@ -1164,9 +1164,11 @@
     const user = JSON.parse(userData);
 
     // Check if this is a client (not admin)
-    if (user.type !== 'client' && user.role !== 'client') {
-        window.location.href = 'dashboard.html';
-        throw new Error('Not a client account');
+   // Allow clients AND admins to view
+if (user.type !== 'client' && user.role !== 'client' && user.type !== 'admin' && user.role !== 'admin') {
+    window.location.href = 'dashboard.html';
+    throw new Error('Not authorized to view client dashboard');
+}
     }
 
     // Get the client's UUID from logged-in user
