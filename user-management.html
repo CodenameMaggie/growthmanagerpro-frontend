@@ -1155,15 +1155,17 @@
                 })
             });
 
-            const result = await response.json();
+         const result = await response.json();
 
-            if (!result.success) {
-                alert('❌ Error: ' + result.error);
-                btn.disabled = false;
-                btn.textContent = 'Send Invitation';
-                return;
-            }
+console.log('[DEBUG] Full result:', result);
+console.log('[DEBUG] result.success:', result.success);
 
+if (!result.success) {
+    alert('❌ Error: ' + result.error);
+    btn.disabled = false;
+    btn.textContent = 'Send Invitation';
+    return;
+}
            // Send the invitation email via SmartLead
 console.log('[DEBUG] About to call SmartLead with:');
 console.log('  result:', result);
@@ -1172,7 +1174,7 @@ console.log('  selectedRole:', selectedRole);
 
 try {            
             // Send the invitation email via SmartLead
-try {
+
     const emailResponse = await fetch(`${API_URL}/api/smartlead-handoff`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
