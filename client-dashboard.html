@@ -1145,7 +1145,7 @@
     // AUTHENTICATION & USER CHECK (LIVE DATA ONLY)
     // ============================================
     (function() {
-    if (!AuthHelper.protectPage('Client-Dashboard.html')) {
+    if (!AuthHelper.protectPage('client-dashboard.html')) {
     throw new Error('Unauthorized access');
         }
         AuthHelper.applyPermissions();
@@ -1445,7 +1445,7 @@
         if (!messageText) return;
 
         try {
-            const response = await fetch(`${API_BASE}/api/Client-Dashboard/messages`, {
+            const response = await fetch(`${API_BASE}/api/client-dashboard/messages`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
