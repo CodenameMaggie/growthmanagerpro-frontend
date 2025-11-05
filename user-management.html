@@ -1164,6 +1164,13 @@
                 return;
             }
 
+           // Send the invitation email via SmartLead
+console.log('[DEBUG] About to call SmartLead with:');
+console.log('  result:', result);
+console.log('  email:', email);
+console.log('  selectedRole:', selectedRole);
+
+try {            
             // Send the invitation email via SmartLead
 try {
     const emailResponse = await fetch(`${API_URL}/api/smartlead-handoff`, {
