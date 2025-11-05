@@ -1107,10 +1107,10 @@
             
             const result = await response.json();
             clientsData = result.clients || [];
-            renderclientTabs();
+            renderClientTabs();
         } catch (error) {
             console.error('[Sprints] Error loading clients:', error);
-            loadDemoclients();
+            loadDemoClients();
         }
     }
 
