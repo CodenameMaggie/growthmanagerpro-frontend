@@ -1145,8 +1145,8 @@
     // AUTHENTICATION & USER CHECK (LIVE DATA ONLY)
     // ============================================
     (function() {
-        if (!AuthHelper.protectPage('advisor-dashboard.html')) {
-            throw new Error('Unauthorized access');
+    if (!AuthHelper.protectPage('client-dashboard.html')) {
+    throw new Error('Unauthorized access');
         }
         AuthHelper.applyPermissions();
     })();
