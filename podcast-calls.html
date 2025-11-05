@@ -701,11 +701,16 @@
                     <td>
                         ${renderAutomationStatus(interview)}
                     </td>
-                    <td>
-                        <button class="btn btn-small btn-secondary" onclick="viewInterview('${interview.id}')">
-                            View
+                 <td>
+                    <button class="btn btn-small btn-secondary" onclick="viewInterview('${interview.id}')">
+                        View
+                    </button>
+                    ${interview.overallScore >= 35 && !interview.discoveryCallCreated ? `
+                        <button class="btn btn-small btn-success" onclick="event.stopPropagation(); triggerDiscoveryInvite('${interview.id}')" style="margin-left: 5px;">
+                            📧 Send Discovery Invite
                         </button>
-                    </td>
+                    ` : ''}
+                </td>
                 </tr>
             `).join('');
         }
