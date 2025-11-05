@@ -996,6 +996,38 @@
             loadCalls();
         }
 
+        // Trigger SmartLead discovery invitation
+        async function triggerDiscoveryInvite(interviewId) {
+            const interview = interviewsData.find(i => i.id === interviewId);
+            if (!interview) return;
+            
+            if (!confirm(`Send discovery call invitation to ${interview.guestEmail}?`)) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/smartlead-handoff`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contactId: interviewId,
+                        trigger: 'podcast_completed',
+                        campaignType: 'discovery'
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert(`✅ Discovery invitation sent to ${interview.guestEmail}!`);
+                    loadInterviews();
+                } else {
+                    alert('❌ Error: ' + result.error);
+                }
+            } catch (error) {
+                console.error('[Podcast] Discovery invite error:', error);
+                alert('Failed to send invitation: ' + error.message);
+            }
+        }
+        
         // Log system info
         console.log('[Discovery Calls] System initialized');
         console.log('[Discovery Calls] API Endpoint:', API_BASE);
