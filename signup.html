@@ -4,7 +4,8 @@ async function createAccount(fullName, password) {
     submitBtn.textContent = 'Creating Account...';
 
     try {
-const response = await fetch(`${API_URL}/api/signup-invited`, {method: 'POST',
+const response = await fetch(`${API_URL}/api/signup-invited`, {
+  method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
