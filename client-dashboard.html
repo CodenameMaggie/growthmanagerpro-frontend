@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Growth Manager Pro- Client Dashboard /title>
+    <title>Growth Manager Pron - Client Dashboard /title>
     <style>
         * {
             margin: 0;
@@ -1195,7 +1195,7 @@
         try {
             updateConnectionStatus('connecting');
             
-            const response = await fetch(`${API_BASE}/api/Client-Dashboard?clientId=${clientId}`);
+            const response = await fetch(`${API_BASE}/api/client-dashboard?clientId=${clientId}`);
             
             if (!response.ok) {
                 throw new Error(`API error: ${response.status}`);
