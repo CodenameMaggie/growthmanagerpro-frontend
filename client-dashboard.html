@@ -1195,7 +1195,7 @@
         try {
             updateConnectionStatus('connecting');
             
-            const response = await fetch(`${API_BASE}/api/client-dashboard?clientId=${clientId}`);
+            const response = await fetch(`${API_BASE}/api/Client-Dashboard?clientId=${clientId}`);
             
             if (!response.ok) {
                 throw new Error(`API error: ${response.status}`);
@@ -1445,7 +1445,7 @@
         if (!messageText) return;
 
         try {
-            const response = await fetch(`${API_BASE}/api/client-dashboard/messages`, {
+            const response = await fetch(`${API_BASE}/api/Client-Dashboard/messages`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
