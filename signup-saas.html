@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Start Your Free Trial - Growth Manager Pro</title>
+    <script src="https://js.stripe.com/v3/"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 3rem;
+        }
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .header p {
+            font-size: 1.25rem;
+            opacity: 0.9;
+        }
+        
+        /* Pricing Cards */
+        .pricing-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        .pricing-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+            position: relative;
+        }
+        .pricing-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.3);
+        }
+        .pricing-card.selected {
+            border-color: #3498db;
+            box-shadow: 0 15px 50px rgba(52, 152, 219, 0.4);
+        }
+        .pricing-card.popular {
+            border-color: #f39c12;
+        }
+        .popular-badge {
+            position: absolute;
+            top: -15px;
+            right: 20px;
+            background: #f39c12;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .pricing-tier {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+        .pricing-price {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #3498db;
+            margin-bottom: 0.25rem;
+        }
+        .pricing-period {
+            color: #7f8c8d;
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 1.5rem;
+        }
+        .pricing-features li {
+            padding: 0.75rem 0;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .pricing-features li:before {
+            content: "✓";
+            color: #27ae60;
+            font-weight: bold;
+            font-size: 1.25rem;
+        }
+        .select-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .select-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.3);
+        }
+        .select-btn.selected {
+            background: linear-gradient(135deg, #27ae60, #229954);
+        }
+        
+        /* Signup Form */
+        .signup-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            margin: 0 auto;
+            overflow: hidden;
+            display: none;
+        }
+        .signup-container.active {
+            display: block;
+            animation: slideUp 0.4s ease;
+        }
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .signup-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            padding: 2rem;
+            text-align: center;
+            color: white;
+        }
+        .signup-header h2 {
+            font-size: 1.75rem;
+            margin-bottom: 0.5rem;
+        }
+        .signup-header p {
+            opacity: 0.9;
+        }
+        .signup-form {
+            padding: 2.5rem 2rem;
+        }
+        .form-section {
+            margin-bottom: 2rem;
+        }
+        .section-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 0.875rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+        .required {
+            color: #e74c3c;
+            margin-left: 0.25rem;
+        }
+        .subdomain-input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .subdomain-input-wrapper input {
+            flex: 1;
+        }
+        .subdomain-suffix {
+            color: #7f8c8d;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        .helper-text {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+            margin-top: 0.5rem;
+        }
+        .helper-text.error {
+            color: #e74c3c;
+        }
+        .helper-text.success {
+            color: #27ae60;
+        }
+        
+        /* Stripe Elements */
+        #card-element {
+            padding: 0.875rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            background: white;
+            transition: all 0.2s ease;
+        }
+        #card-element.StripeElement--focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+        #card-errors {
+            color: #e74c3c;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            min-height: 20px;
+        }
+        
+        /* Trial Info Box */
+        .trial-info {
+            background: #e8f4fd;
+            border: 2px solid #bee5eb;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        .trial-info-title {
+            font-weight: 600;
+            color: #0c5460;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .trial-info-text {
+            font-size: 0.9rem;
+            color: #0c5460;
+            line-height: 1.5;
+        }
+        
+        /* Submit Button */
+        .submit-btn {
+            width: 100%;
+            padding: 1.25rem;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 1rem;
+        }
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.3);
+        }
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* Messages */
+        .message {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+            font-size: 0.95rem;
+        }
+        .message.active {
+            display: block;
+        }
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+        
+        /* Back Button */
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            transition: all 0.2s ease;
+        }
+        .back-btn:hover {
+            transform: translateX(-5px);
+        }
+        
+        @media (max-width: 768px) {
+            .pricing-section {
+                grid-template-columns: 1fr;
+            }
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Start Your 14-Day Free Trial</h1>
+            <p>No credit card required for trial • Cancel anytime</p>
+        </div>
+        
+        <!-- Pricing Cards -->
+        <div class="pricing-section" id="pricing-section">
+            <div class="pricing-card" data-tier="foundations" data-price="297">
+                <div class="pricing-tier">Foundations</div>
+                <div class="pricing-price">$297</div>
+                <div class="pricing-period">per month</div>
+                <ul class="pricing-features">
+                    <li>Up to 50 active clients</li>
+                    <li>1 advisor dashboard included</li>
+                    <li>2 team user seats</li>
+                    <li>Unlimited client portals (FREE)</li>
+                    <li>Email automation (SmartLead/Instantly)</li>
+                    <li>Zoom integration</li>
+                    <li>AI call analysis</li>
+                    <li>All core features</li>
+                </ul>
+                <button class="select-btn" onclick="selectTier('foundations', 297)">Select Foundations</button>
+            </div>
+            
+            <div class="pricing-card popular" data-tier="architecture" data-price="597">
+                <div class="popular-badge">⭐ Most Popular</div>
+                <div class="pricing-tier">Architecture</div>
+                <div class="pricing-price">$597</div>
+                <div class="pricing-period">per month</div>
+                <ul class="pricing-features">
+                    <li>Up to 200 active clients</li>
+                    <li>3 advisor dashboards included</li>
+                    <li>5 team user seats</li>
+                    <li>Unlimited client portals (FREE)</li>
+                    <li>Priority support</li>
+                    <li>Custom reporting</li>
+                    <li>Advanced automation</li>
+                    <li>All Foundations features</li>
+                </ul>
+                <button class="select-btn" onclick="selectTier('architecture', 597)">Select Architecture</button>
+            </div>
+            
+            <div class="pricing-card" data-tier="alliance" data-price="997">
+                <div class="pricing-tier">Alliance</div>
+                <div class="pricing-price">$997</div>
+                <div class="pricing-period">per month</div>
+                <ul class="pricing-features">
+                    <li>Unlimited clients</li>
+                    <li>Unlimited advisor dashboards</li>
+                    <li>Unlimited team users</li>
+                    <li>Unlimited client portals (FREE)</li>
+                    <li>White-label options</li>
+                    <li>Dedicated support</li>
+                    <li>Custom integrations</li>
+                    <li>All Architecture features</li>
+                </ul>
+                <button class="select-btn" onclick="selectTier('alliance', 997)">Select Alliance</button>
+            </div>
+        </div>
+        
+        <!-- Signup Form -->
+        <div class="signup-container" id="signup-container">
+            <a href="#" class="back-btn" onclick="goBack(event)" style="margin: 2rem 2rem 0 2rem; display: inline-flex;">
+                ← Choose Different Plan
+            </a>
+            
+            <div class="signup-header">
+                <h2>Complete Your Signup</h2>
+                <p id="selected-plan-text">Foundations - $297/month</p>
+            </div>
+            
+            <form id="signup-form" class="signup-form">
+                <div id="message" class="message"></div>
+                
+                <!-- Business Info -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <span>🏢</span>
+                        <span>Business Information</span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="businessName">Business Name <span class="required">*</span></label>
+                        <input type="text" id="businessName" required placeholder="Smith Coaching">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="subdomain">Choose Your Subdomain <span class="required">*</span></label>
+                        <div class="subdomain-input-wrapper">
+                            <input 
+                                type="text" 
+                                id="subdomain" 
+                                required 
+                                placeholder="smithcoaching"
+                                pattern="[a-z0-9-]+"
+                                maxlength="30"
+                            >
+                            <span class="subdomain-suffix">.growthmanagerpro.com</span>
+                        </div>
+                        <div class="helper-text" id="subdomain-helper">
+                            Lowercase letters, numbers, and hyphens only
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="ownerName">Your Full Name <span class="required">*</span></label>
+                        <input type="text" id="ownerName" required placeholder="John Smith">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email Address <span class="required">*</span></label>
+                        <input type="email" id="email" required placeholder="john@smithcoaching.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" placeholder="(555) 123-4567">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Password <span class="required">*</span></label>
+                        <input type="password" id="password" required minlength="8" placeholder="Min. 8 characters">
+                    </div>
+                </div>
+                
+                <!-- Payment Info -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <span>💳</span>
+                        <span>Payment Information</span>
+                    </div>
+                    
+                    <div class="trial-info">
+                        <div class="trial-info-title">
+                            <span>🎁</span>
+                            <span>14-Day Free Trial</span>
+                        </div>
+                        <div class="trial-info-text">
+                            Your card will not be charged today. Your trial starts immediately and you can cancel anytime during the 14-day period with no charge.
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Card Details <span class="required">*</span></label>
+                        <div id="card-element"></div>
+                        <div id="card-errors"></div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="submit-btn" id="submit-btn">
+                    Start My Free Trial
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        const API_BASE = 'https://growthmanagerpro-backend.vercel.app';
+        const STRIPE_PK = 'pk_test_51SQXumJGnC9PLlxhrpOVORegqW1RXY57qokBAn6yA7VO5wukvrqJ1Jz5evnEezmZDRybcpvoQKCc7BoMT0neFxSC008V0wfsgg';
+        
+        let selectedTier = null;
+        let selectedPrice = null;
+        let stripe = null;
+        let cardElement = null;
+        
+        // Initialize Stripe
+        function initializeStripe() {
+            stripe = Stripe(STRIPE_PK);
+            const elements = stripe.elements();
+            cardElement = elements.create('card', {
+                style: {
+                    base: {
+                        fontSize: '16px',
+                        color: '#2c3e50',
+                        '::placeholder': {
+                            color: '#95a5a6',
+                        },
+                    },
+                },
+            });
+            cardElement.mount('#card-element');
+            
+            cardElement.on('change', (event) => {
+                const displayError = document.getElementById('card-errors');
+                if (event.error) {
+                    displayError.textContent = event.error.message;
+                } else {
+                    displayError.textContent = '';
+                }
+            });
+        }
+        
+        // Select pricing tier
+        function selectTier(tier, price) {
+            selectedTier = tier;
+            selectedPrice = price;
+            
+            // Update UI
+            document.querySelectorAll('.pricing-card').forEach(card => {
+                card.classList.remove('selected');
+                card.querySelector('.select-btn').classList.remove('selected');
+                card.querySelector('.select-btn').textContent = `Select ${card.dataset.tier.charAt(0).toUpperCase() + card.dataset.tier.slice(1)}`;
+            });
+            
+            const selectedCard = document.querySelector(`[data-tier="${tier}"]`);
+            selectedCard.classList.add('selected');
+            selectedCard.querySelector('.select-btn').classList.add('selected');
+            selectedCard.querySelector('.select-btn').textContent = '✓ Selected';
+            
+            // Update header
+            const tierName = tier.charAt(0).toUpperCase() + tier.slice(1);
+            document.getElementById('selected-plan-text').textContent = `${tierName} - $${price}/month`;
+            
+            // Auto-fill subdomain from business name if empty
+            const businessNameInput = document.getElementById('businessName');
+            if (!businessNameInput.value) {
+                businessNameInput.addEventListener('input', autoFillSubdomain, { once: true });
+            }
+            
+            // Show signup form
+            document.getElementById('pricing-section').style.display = 'none';
+            document.getElementById('signup-container').classList.add('active');
+            
+            // Initialize Stripe
+            if (!stripe) {
+                initializeStripe();
+            }
+            
+            // Scroll to form
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        // Auto-fill subdomain from business name
+        function autoFillSubdomain() {
+            const businessName = document.getElementById('businessName').value;
+            const subdomain = document.getElementById('subdomain');
+            if (!subdomain.value && businessName) {
+                const suggested = businessName
+                    .toLowerCase()
+                    .replace(/[^a-z0-9-]/g, '')
+                    .replace(/\s+/g, '-')
+                    .substring(0, 30);
+                subdomain.value = suggested;
+                checkSubdomainAvailability(suggested);
+            }
+        }
+        
+        // Check subdomain availability
+        let subdomainTimeout;
+        document.addEventListener('DOMContentLoaded', () => {
+            const subdomainInput = document.getElementById('subdomain');
+            if (subdomainInput) {
+                subdomainInput.addEventListener('input', (e) => {
+                    clearTimeout(subdomainTimeout);
+                    const subdomain = e.target.value.toLowerCase();
+                    subdomainTimeout = setTimeout(() => {
+                        if (subdomain.length >= 3) {
+                            checkSubdomainAvailability(subdomain);
+                        }
+                    }, 500);
+                });
+            }
+        });
+        
+        async function checkSubdomainAvailability(subdomain) {
+            const helper = document.getElementById('subdomain-helper');
+            
+            if (subdomain.length < 3) {
+                helper.textContent = 'Subdomain must be at least 3 characters';
+                helper.className = 'helper-text error';
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/check-subdomain?subdomain=${subdomain}`);
+                const data = await response.json();
+                
+                if (data.available) {
+                    helper.textContent = `✓ ${subdomain}.growthmanagerpro.com is available!`;
+                    helper.className = 'helper-text success';
+                } else {
+                    helper.textContent = '✗ This subdomain is already taken';
+                    helper.className = 'helper-text error';
+                }
+            } catch (error) {
+                console.error('Error checking subdomain:', error);
+            }
+        }
+        
+        // Go back to pricing selection
+        function goBack(e) {
+            e.preventDefault();
+            document.getElementById('pricing-section').style.display = 'grid';
+            document.getElementById('signup-container').classList.remove('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        // Form submission
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('signup-form');
+            if (form) {
+                form.addEventListener('submit', handleSubmit);
+            }
+        });
+        
+        async function handleSubmit(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Processing...';
+            
+            try {
+                // Create payment method
+                const { error, paymentMethod } = await stripe.createPaymentMethod({
+                    type: 'card',
+                    card: cardElement,
+                });
+                
+                if (error) {
+                    throw new Error(error.message);
+                }
+                
+                // Submit signup
+                const response = await fetch(`${API_BASE}/api/signup-saas`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        businessName: document.getElementById('businessName').value,
+                        subdomain: document.getElementById('subdomain').value,
+                        ownerName: document.getElementById('ownerName').value,
+                        email: document.getElementById('email').value,
+                        phone: document.getElementById('phone').value,
+                        password: document.getElementById('password').value,
+                        tier: selectedTier,
+                        paymentMethodId: paymentMethod.id
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (!data.success) {
+                    throw new Error(data.error || 'Signup failed');
+                }
+                
+                // Success!
+                showMessage('✅ Account created! Redirecting to your dashboard...', 'success');
+                
+                // Store auth
+                localStorage.setItem('tenantId', data.tenantId);
+                localStorage.setItem('userId', data.userId);
+                localStorage.setItem('authToken', data.token);
+                
+                // Redirect to onboarding
+                setTimeout(() => {
+                    window.location.href = `https://${data.subdomain}.growthmanagerpro.com/onboarding`;
+                }, 2000);
+                
+            } catch (error) {
+                console.error('Signup error:', error);
+                showMessage('❌ ' + error.message, 'error');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Start My Free Trial';
+            }
+        }
+        
+        function showMessage(text, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = text;
+            messageDiv.className = `message ${type} active`;
+        }
+    </script>
+</body>
+</html>
