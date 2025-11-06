@@ -1002,12 +1002,12 @@
     const API_BASE = 'https://growthmanagerpro-backend.vercel.app';
     
     // THEN RUN AUTH PROTECTION
-    (function() {
-        if (!AuthHelper.protectPage('page.html')) {
-            throw new Error('Unauthorized access');
-        }
-        AuthHelper.applyPermissions();
-    })();
+(function() {
+    if (!AuthHelper.protectPage('advisor-dashboard.html')) {
+        throw new Error('Unauthorized access');
+    }
+    AuthHelper.applyPermissions();
+})();
     
     const API_URL = 'https://growthmanagerpro-backend.vercel.app';
         
