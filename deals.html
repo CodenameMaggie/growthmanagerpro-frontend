@@ -499,17 +499,31 @@
             <p>Strategic Intelligence</p>
         </div>
         <nav class="nav-links">
+            <div style="padding: 0.5rem 2rem; font-size: 0.75rem; color: #95a5a6; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">OVERVIEW</div>
             <a href="/dashboard.html">📊 Dashboard</a>
             <a href="/contacts.html">👥 Contacts</a>
-            <a href="/podcast-interviews.html">🎙️ Podcast Interviews</a>
+            
+            <div style="padding: 0.5rem 2rem; font-size: 0.75rem; color: #95a5a6; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-top: 1rem;">ACQUISITION</div>
+            <a href="/pre-qualification-calls.html">📞 Pre-Qual Calls</a>
+            <a href="/podcast-interviews.html">🎙️ Podcast Calls</a>
             <a href="/discovery-calls.html">🔍 Discovery Calls</a>
-            <a href="/sales-calls.html">💼 Sales Calls</a>
+            <a href="/strategy-calls.html">💼 Strategy Calls</a>
+            
+            <div style="padding: 0.5rem 2rem; font-size: 0.75rem; color: #95a5a6; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-top: 1rem;">SALES & REVENUE</div>
             <a href="/pipeline.html">📈 Pipeline</a>
-            <a href="/deals.html" class="active">🤝 Client Partnerships</a>
-            <a href="/campaigns.html">📧 Campaigns</a>
+            <a href="/deals.html" class="active">🤝 Deals</a>
             <a href="/cash-flow.html">💰 Cash Flow</a>
+            
+            <div style="padding: 0.5rem 2rem; font-size: 0.75rem; color: #95a5a6; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-top: 1rem;">MARKETING</div>
+            <a href="/campaigns.html">📧 Campaigns</a>
+            <a href="/sprints.html">🚀 Sprints</a>
+            
+            <div style="padding: 0.5rem 2rem; font-size: 0.75rem; color: #95a5a6; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-top: 1rem;">MANAGEMENT</div>
+            <a href="/expense-tracker.html">💳 Expense Tracker</a>
             <a href="/availability.html">📅 Availability</a>
-            <a href="/user-management.html">⚙️ Settings</a>
+            
+            <div style="padding: 0.5rem 2rem; font-size: 0.75rem; color: #95a5a6; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-top: 1rem;">SETTINGS</div>
+            <a href="/user-management.html">⚙️ User Management</a>
         </nav>
     </div>
 
@@ -565,7 +579,16 @@
         </div>
     </div>
 
+    <script src="auth-helper.js"></script>
     <script>
+        // AUTHENTICATION
+        (function() {
+            if (!AuthHelper.protectPage('deals.html')) {
+                throw new Error('Unauthorized access');
+            }
+            AuthHelper.applyPermissions();
+        })();
+        
         // API Configuration
         const API_BASE = 'https://growthmanagerpro-backend.vercel.app';
 
