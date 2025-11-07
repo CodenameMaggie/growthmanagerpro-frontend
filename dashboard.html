@@ -1037,10 +1037,11 @@ function updateProfileIndicator() {
         const role = user.role || user.type || 'user';
         
         if (role === 'admin' || role === 'saas') {
-            // For business owners: show company name
-            displayName = user.company_name || user.business_name || user.tenant_name || user.full_name || user.name || 'Business Account';
+            // For business owners: show company name or email username as fallback
+            displayName = user.company_name || user.business_name || user.tenant_name || 
+                         user.full_name || user.name || user.email?.split('@')[0] || 'Business Account';
         } else {
-            displayName = user.full_name || user.name || 'User';
+            displayName = user.full_name || user.name || user.email?.split('@')[0] || 'User';
         }
         
         // Update name
