@@ -1140,7 +1140,7 @@
     function selectRole(role) {
         selectedRole = role;
         // Update UI
-        document.querySelectorAll('.role-option').forEach(opt => {
+        document.querySelector(`[data-role="${role}"]`).classList.add('selected');
             opt.classList.remove('selected');
         });
         document.querySelector(`[data-role="${role}"]`).classList.add('selected');
