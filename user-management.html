@@ -1199,15 +1199,9 @@
                                 <strong>Role:</strong> ${roleNames[selectedRole]}
                             </div>
                         </div>
-                        <div style="background: #e8f4f8; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; word-break: break-all; font-size: 0.9rem; border: 2px solid #3498db;">
-                            ${signupLink}
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn btn-primary" onclick="navigator.clipboard.writeText('${signupLink}'); this.textContent='✅ Copied!'">
-                            📋 Copy Link
-                        </button>
-                        <button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove(); loadUsers();">
+                     </div>
+                      <div class="modal-footer">
+                          <button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove(); loadUsers();">
                             Close
                         </button>
                     </div>
