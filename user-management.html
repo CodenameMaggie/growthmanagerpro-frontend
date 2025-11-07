@@ -942,27 +942,14 @@
                         </div>
                     </div>
                 </div>
-
-                successModal.innerHTML = `
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>✅ Invitation Sent!</h3>
-        </div>
-        <div class="modal-body">
-            <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
-                <div style="margin-bottom: 0.5rem;">
-                    <strong>Email:</strong> ${email}<br>
-                    <strong>Role:</strong> ${roleNames[selectedRole]}
+                
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeInviteModal()">Cancel</button>
+                    <button class="btn btn-primary" id="sendInviteBtn" onclick="sendInvitation()">Send Invitation</button>
                 </div>
             </div>
         </div>
-        <div class="modal-footer">
-            
-            </button>
-        </div>
-        <p style="text-align: center; margin-top: 1rem; font-size: 0.85rem; color: #95a5a6;">💡 Link expires in 7 days</p>
     </div>
-`;
 
 <script src="auth-helper.js"></script>
     
@@ -1140,7 +1127,7 @@
     function selectRole(role) {
         selectedRole = role;
         // Update UI
-        document.querySelector(`[data-role="${role}"]`).classList.add('selected');
+        document.querySelectorAll('.role-option').forEach(opt => {
             opt.classList.remove('selected');
         });
         document.querySelector(`[data-role="${role}"]`).classList.add('selected');
@@ -1173,52 +1160,18 @@
                 body: JSON.stringify({
                     email: email,
                     role: selectedRole
-                    invited_by: currentUser.id  // ✅ ADD THIS                })
+                })
             });
 
-         const result = await response.json();
+            const result = await response.json();
 
-console.log('[DEBUG] Full result:', result);
-console.log('[DEBUG] result.success:', result.success);
+            if (!result.success) {
+                alert('❌ Error: ' + result.error);
+                btn.disabled = false;
+                btn.textContent = 'Send Invitation';
+                return;
+            }
 
-if (!result.success) {
-    alert('❌ Error: ' + result.error);
-    btn.disabled = false;
-    btn.textContent = 'Send Invitation';
-    return;
-}
-           // Send the invitation email via SmartLead
-console.log('[DEBUG] About to call SmartLead with:');
-console.log('  result:', result);
-console.log('  email:', email);
-console.log('  selectedRole:', selectedRole);
-
-try {            
-            // Send the invitation email via SmartLead
-
-    const emailResponse = await fetch(`${API_URL}/api/smartlead-handoff`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            contactId: result.invitation.id,
-            trigger: 'user_invitation',
-            campaignType: 'platform_invite',
-            inviteEmail: email,
-            inviteRole: selectedRole,
-            signupLink: result.invitation.signupLink
-        })
-    });
-
-    const emailResult = await emailResponse.json();
-    
-    if (!emailResult.success) {
-        console.error('[User Management] SmartLead email failed:', emailResult.error);
-    } else {
-        console.log('[User Management] ✅ Invitation email sent via SmartLead');
-    }
-} catch (emailError) {
-    console.error('[User Management] Failed to send email via SmartLead:', emailError);
-}
             // Close invite modal
             closeInviteModal();
 
@@ -1235,29 +1188,31 @@ try {
             successModal.className = 'modal-overlay show';
             successModal.innerHTML = `
                 <div class="modal-content">
-        <div class="modal-header">
-            <h3>✅ Invitation Sent!</h3>
-        </div>
-        <div class="modal-body">
-            <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; text-align: center;">
-                <div style="font-size: 1rem; color: #2c3e50; margin-bottom: 0.5rem;">
-                    <strong>📧 Email:</strong> ${email}
+                    <div class="modal-header">
+                        <h3>✅ Invitation Sent!</h3>
+                        <p>Share this link with ${email}</p>
+                    </div>
+                    <div class="modal-body">
+                        <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                            <div style="margin-bottom: 0.5rem;">
+                                <strong>Email:</strong> ${email}<br>
+                                <strong>Role:</strong> ${roleNames[selectedRole]}
+                            </div>
+                        </div>
+                        <div style="background: #e8f4f8; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; word-break: break-all; font-size: 0.9rem; border: 2px solid #3498db;">
+                            ${signupLink}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" onclick="navigator.clipboard.writeText('${signupLink}'); this.textContent='✅ Copied!'">
+                            📋 Copy Link
+                        </button>
+                        <button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove(); loadUsers();">
+                            Close
+                        </button>
+                    </div>
+                    <p style="text-align: center; margin-top: 1rem; font-size: 0.85rem; color: #95a5a6;">💡 Link expires in 7 days</p>
                 </div>
-                <div style="font-size: 1rem; color: #2c3e50;">
-                    <strong>Role:</strong> ${roleNames[selectedRole]}
-                </div>
-            </div>
-            <p style="text-align: center; margin-top: 1rem; font-size: 0.85rem; color: #95a5a6;">
-                💡 Link expires in 7 days
-            </p>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-primary" onclick="this.closest('.modal-overlay').remove(); loadUsers();">
-                Close
-            </button>
-        </div>
-    </div>
-`;
             `;
             document.body.appendChild(successModal);
 
