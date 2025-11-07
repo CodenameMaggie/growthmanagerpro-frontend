@@ -1559,16 +1559,86 @@ function uploadFile() {
     document.getElementById('file-input').click();
 }
 
-function handleFileUpload() {
+// REPLACE handleFileUpload() function in advisor-dashboard.html with this:
+
+async function handleFileUpload() {
     const input = document.getElementById('file-input');
     const files = input.files;
     
     if (files.length === 0) return;
 
-    alert(`📤 Uploading ${files[0].name}...\n\nFile will be shared with Maggie.`);
-    console.log('Uploading file:', files[0].name);
+    const file = files[0];
     
-    input.value = '';
+    // Validate file size (10MB limit)
+    if (file.size > 10 * 1024 * 1024) {
+        alert('❌ File too large. Maximum size is 10MB.');
+        input.value = '';
+        return;
+    }
+
+    try {
+        // Get advisor ID from logged-in user
+        const userData = localStorage.getItem('user');
+        if (!userData) {
+            alert('❌ Not logged in');
+            return;
+        }
+        const user = JSON.parse(userData);
+        const advisorId = user.id;
+
+        // Get client ID if viewing a specific client
+        const viewingClientId = localStorage.getItem('viewingClientId');
+
+        // Show uploading message
+        const uploadButton = document.querySelector('button[onclick="uploadFile()"]');
+        const originalText = uploadButton.textContent;
+        uploadButton.textContent = '⏳ Uploading...';
+        uploadButton.disabled = true;
+
+        // Create FormData
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('advisorId', advisorId);
+        if (viewingClientId) {
+            formData.append('clientId', viewingClientId);
+        }
+
+        // Upload file
+        const response = await fetch(`${API_BASE}/api/advisor/upload-file`, {
+            method: 'POST',
+            body: formData
+        });
+
+        const result = await response.json();
+
+        if (!result.success) {
+            throw new Error(result.error || 'Upload failed');
+        }
+
+        console.log('[File Upload] ✅ Success:', result.file);
+
+        // Show success message
+        alert(`✅ ${file.name} uploaded successfully!`);
+
+        // Reload files list
+        await loadFiles();
+
+        // Reset button
+        uploadButton.textContent = originalText;
+        uploadButton.disabled = false;
+
+    } catch (error) {
+        console.error('[File Upload] Error:', error);
+        alert(`❌ Upload failed: ${error.message}`);
+        
+        // Reset button
+        const uploadButton = document.querySelector('button[onclick="uploadFile()"]');
+        uploadButton.textContent = '📤 Upload File';
+        uploadButton.disabled = false;
+    } finally {
+        // Clear input
+        input.value = '';
+    }
 }
 
 function downloadFile(fileId) {
