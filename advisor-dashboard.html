@@ -1131,10 +1131,16 @@ function updateProfileIndicator() {
     const userData = localStorage.getItem('user');
     if (userData) {
         const user = JSON.parse(userData);
-        const userName = user.full_name || user.name || 'Advisor';
+        
+        // Better fallback chain - includes email as last resort
+        const userName = user.full_name || user.name || user.email?.split('@')[0] || 'Advisor';
+        
         document.getElementById('userName').textContent = userName;
+        
+        // Update avatar with initials
         const initials = userName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
         document.getElementById('userAvatar').textContent = initials;
+        
         const role = user.role || user.type || 'advisor';
         const roleNames = {
             'consultant': '💼 Consultant',
@@ -1143,7 +1149,6 @@ function updateProfileIndicator() {
         document.getElementById('userRole').textContent = roleNames[role] || 'Advisor';
     }
 }
-
 // Load client list
 async function loadClientList() {
     try {
