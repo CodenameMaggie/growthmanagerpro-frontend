@@ -60,6 +60,99 @@
             margin-top: 0.5rem;
         }
 
+        /* User Profile Styles */
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: linear-gradient(135deg, #e8f4f8 0%, #d6eaf8 100%);
+    border-radius: 12px;
+    margin-bottom: 1rem;
+}
+
+.user-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.user-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.user-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.user-role {
+    font-size: 0.75rem;
+    color: #5a6c7d;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Client Selector Styles */
+.client-selector {
+    margin-bottom: 1rem;
+}
+
+.client-selector label {
+    display: block;
+    font-size: 0.85rem;
+    color: #5a6c7d;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.client-dropdown {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #e1e5e9;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    color: #2c3e50;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.client-dropdown:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.client-dropdown:hover {
+    border-color: #3498db;
+}
+
+.viewing-client {
+    padding: 0.75rem;
+    background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+    color: white;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-align: center;
+}
         .nav-section {
             margin-bottom: 2rem;
         }
@@ -741,9 +834,25 @@
         <!-- Sidebar Navigation -->
         <aside class="sidebar">
             <div class="sidebar-header">
-                <h1>Growth Manager Pro</h1>
-                <span class="advisor-badge">Advisor Dashboard</span>
-            </div>
+    <h1>Growth Manager Pro</h1>
+    
+    <!-- User Profile -->
+    <div class="user-profile">
+        <div class="user-avatar" id="userAvatar">U</div>
+        <div class="user-info">
+            <div class="user-name" id="userName">Loading...</div>
+            <div class="user-role" id="userRole">Advisor</div>
+        </div>
+    </div>
+    
+    <!-- Client Selector -->
+    <div class="client-selector" id="clientSelector">
+        <label for="clientDropdown">📊 View Client:</label>
+        <select id="clientDropdown" class="client-dropdown" onchange="switchClient(this.value)">
+            <option value="">Select a client...</option>
+        </select>
+    </div>
+</div>
 
     <a href="sprints.html" class="nav-item">
         <span class="nav-icon">⚡</span>
@@ -1019,7 +1128,68 @@
 
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('[Advisor Dashboard] Initializing...');
+            // Update profile indicator
+function updateProfileIndicator() {
+    const userData = localStorage.getItem('user');
+    if (userData) {
+        const user = JSON.parse(userData);
+        const userName = user.full_name || user.name || 'Advisor';
+        document.getElementById('userName').textContent = userName;
+        const initials = userName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+        document.getElementById('userAvatar').textContent = initials;
+        const role = user.role || user.type || 'advisor';
+        const roleNames = {
+            'consultant': '💼 Consultant',
+            'advisor': '🎯 Advisor'
+        };
+        document.getElementById('userRole').textContent = roleNames[role] || 'Advisor';
+    }
+}
+
+// Load client list
+async function loadClientList() {
+    try {
+        const response = await fetch(`${API_BASE}/api/advisor/clients`);
+        const result = await response.json();
+        if (result.success && result.clients) {
+            const dropdown = document.getElementById('clientDropdown');
+            dropdown.innerHTML = '<option value="">My Dashboard (All Clients)</option>';
+            result.clients.forEach(client => {
+                const option = document.createElement('option');
+                option.value = client.id;
+                option.textContent = client.company_name || client.name || 'Unnamed Client';
+                dropdown.appendChild(option);
+            });
+        }
+    } catch (error) {
+        console.error('Error loading clients:', error);
+    }
+}
+
+// Switch client view
+function switchClient(clientId) {
+    if (!clientId) {
+        localStorage.removeItem('viewingClientId');
+        document.getElementById('viewingClientIndicator')?.remove();
+        return;
+    }
+    localStorage.setItem('viewingClientId', clientId);
+    const dropdown = document.getElementById('clientDropdown');
+    const clientName = dropdown.options[dropdown.selectedIndex].text;
+    let indicator = document.getElementById('viewingClientIndicator');
+    if (!indicator) {
+        indicator = document.createElement('div');
+        indicator.id = 'viewingClientIndicator';
+        indicator.className = 'viewing-client';
+        document.getElementById('clientSelector').after(indicator);
+    }
+    indicator.innerHTML = `👁️ Viewing: ${clientName}`;
+    alert(`Switched to viewing: ${clientName}\n\nClient-specific data loading will be added next.`);
+}
+
+// Call on page load
+updateProfileIndicator();
+loadClientList();            console.log('[Advisor Dashboard] Initializing...');
             loadAllData();
             
             // Auto-refresh every 2 minutes
