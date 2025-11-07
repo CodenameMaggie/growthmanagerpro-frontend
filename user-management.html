@@ -1224,32 +1224,31 @@ try {
             const successModal = document.createElement('div');
             successModal.className = 'modal-overlay show';
             successModal.innerHTML = `
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h3>✅ Invitation Sent!</h3>
-                        <p>Share this link with ${email}</p>
-                    </div>
-                    <div class="modal-body">
-                        <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
-                            <div style="margin-bottom: 0.5rem;">
-                                <strong>Email:</strong> ${email}<br>
-                                <strong>Role:</strong> ${roleNames[selectedRole]}
-                            </div>
-                        </div>
-                        <div style="background: #e8f4f8; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; word-break: break-all; font-size: 0.9rem; border: 2px solid #3498db;">
-                            ${signupLink}
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn btn-primary" onclick="navigator.clipboard.writeText('${signupLink}'); this.textContent='✅ Copied!'">
-                            📋 Copy Link
-                        </button>
-                        <button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove(); loadUsers();">
-                            Close
-                        </button>
-                    </div>
-                    <p style="text-align: center; margin-top: 1rem; font-size: 0.85rem; color: #95a5a6;">💡 Link expires in 7 days</p>
+               successModal.innerHTML = `
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>✅ Invitation Sent!</h3>
+        </div>
+        <div class="modal-body">
+            <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; text-align: center;">
+                <div style="font-size: 1rem; color: #2c3e50; margin-bottom: 0.5rem;">
+                    <strong>📧 Email:</strong> ${email}
                 </div>
+                <div style="font-size: 1rem; color: #2c3e50;">
+                    <strong>Role:</strong> ${roleNames[selectedRole]}
+                </div>
+            </div>
+            <p style="text-align: center; margin-top: 1rem; font-size: 0.85rem; color: #95a5a6;">
+                💡 Link expires in 7 days
+            </p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" onclick="this.closest('.modal-overlay').remove(); loadUsers();">
+                Close
+            </button>
+        </div>
+    </div>
+`;
             `;
             document.body.appendChild(successModal);
 
