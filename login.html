@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Growth Manager Pro</title>
     
-    <!-- Supabase Client Library -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
     <style>
         * { 
             margin: 0; 
@@ -16,7 +13,7 @@
         }
         
         body { 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
             background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
             min-height: 100vh;
             display: flex;
@@ -27,7 +24,6 @@
             overflow: hidden;
         }
         
-        /* Subtle animated background elements */
         body::before {
             content: '';
             position: absolute;
@@ -40,30 +36,18 @@
             animation: float 25s infinite ease-in-out;
         }
         
-        body::after {
-            content: '';
-            position: absolute;
-            width: 500px;
-            height: 500px;
-            background: rgba(44, 62, 80, 0.15);
-            border-radius: 50%;
-            bottom: -250px;
-            left: -200px;
-            animation: float 20s infinite ease-in-out reverse;
-        }
-        
         @keyframes float {
             0%, 100% { transform: translateY(0) scale(1); }
             50% { transform: translateY(-40px) scale(1.08); }
         }
         
-        .welcome-container {
+        .login-container {
             background: white;
             padding: 3rem 2.5rem;
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 8px 16px rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             width: 100%;
-            max-width: 480px;
+            max-width: 450px;
             position: relative;
             z-index: 1;
             animation: slideUp 0.6s ease-out;
@@ -82,102 +66,55 @@
         
         .header-section {
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem;
         }
         
         .logo-text {
-            font-size: 2.5rem;
+            font-size: 2rem;
             font-weight: 700;
             background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             margin-bottom: 0.5rem;
-            letter-spacing: -0.02em;
-        }
-        
-        .logo-subtitle {
-            font-size: 0.9rem;
-            color: #7f8c8d;
-            font-weight: 500;
-            margin-bottom: 1.5rem;
-            letter-spacing: 0.5px;
         }
         
         .welcome-title {
             color: #2c3e50;
-            font-size: 1.75rem;
+            font-size: 1.5rem;
             font-weight: 700;
             margin-bottom: 0.5rem;
-            letter-spacing: -0.03em;
         }
         
         .welcome-subtitle {
             color: #7f8c8d;
             font-size: 1rem;
-            line-height: 1.6;
-            margin-bottom: 0.5rem;
         }
         
-        .tagline {
-            color: #2c3e50;
-            font-size: 0.85rem;
-            font-weight: 600;
-            padding: 0.5rem 1rem;
-            background: linear-gradient(135deg, #e8f4f8 0%, #d6eaf8 100%);
-            border-radius: 8px;
-            display: inline-block;
-            margin-top: 0.75rem;
-            border: 1px solid #3498db;
-        }
-        
-        .features-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.75rem;
-            margin: 1.5rem 0 2rem;
-        }
-        
-        .feature-item {
-            background: #f8f9fa;
-            padding: 0.9rem;
+        .error-message {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 1rem;
             border-radius: 10px;
-            text-align: center;
-            border: 2px solid #e1e5e9;
-            transition: all 0.3s ease;
-        }
-        
-        .feature-item:hover {
-            background: linear-gradient(135deg, #e8f4f8 0%, #d6eaf8 100%);
-            border-color: #3498db;
-            transform: translateY(-2px);
-        }
-        
-        .feature-item .icon {
-            font-size: 1.5rem;
-            margin-bottom: 0.4rem;
-        }
-        
-        .feature-item .text {
-            color: #5a6c7d;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-        
-        .form-section {
             margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+            display: none;
+            border-left: 4px solid #ef4444;
+            animation: shake 0.4s;
         }
         
-        .section-title {
-            color: #2c3e50;
-            font-size: 0.95rem;
-            font-weight: 600;
-            margin-bottom: 1.2rem;
-            text-align: center;
+        .error-message.show {
+            display: block;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
         }
         
         .form-group {
-            margin-bottom: 1.3rem;
+            margin-bottom: 1.5rem;
         }
         
         .form-group label {
@@ -185,32 +122,17 @@
             margin-bottom: 0.6rem;
             color: #2c3e50;
             font-weight: 600;
-            font-size: 0.9rem;
-        }
-        
-        .input-wrapper {
-            position: relative;
-        }
-        
-        .input-icon {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #95a5a6;
-            width: 18px;
-            height: 18px;
+            font-size: 0.95rem;
         }
         
         .form-group input {
             width: 100%;
-            padding: 1rem 1rem 1rem 3rem;
+            padding: 1rem;
             border: 2px solid #e1e5e9;
             border-radius: 10px;
             font-size: 1rem;
             transition: all 0.3s;
             background: #f8f9fa;
-            color: #2c3e50;
         }
         
         .form-group input:focus {
@@ -231,18 +153,12 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
-            margin-top: 0.5rem;
             box-shadow: 0 6px 16px rgba(52, 152, 219, 0.4);
         }
         
         .login-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 24px rgba(52, 152, 219, 0.5);
-            background: linear-gradient(135deg, #2980b9 0%, #2472a4 100%);
-        }
-        
-        .login-btn:active {
-            transform: translateY(0);
         }
         
         .login-btn:disabled {
@@ -251,176 +167,76 @@
             transform: none;
         }
         
-        .error-message {
-            background: #fee2e2;
-            color: #991b1b;
-            padding: 1rem;
-            border-radius: 10px;
-            margin-bottom: 1.5rem;
-            font-size: 0.9rem;
-            display: none;
-            border-left: 4px solid #ef4444;
-            animation: shake 0.4s;
-        }
-        
-        .error-message.show {
-            display: block;
-        }
-        
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-8px); }
-            75% { transform: translateX(8px); }
-        }
-        
-        .welcome-message {
-            background: linear-gradient(135deg, #e8f4f8 0%, #d6eaf8 100%);
-            border: 2px solid #3498db;
-            padding: 1.2rem;
-            border-radius: 10px;
-            margin-bottom: 2rem;
-            text-align: center;
-        }
-        
-        .welcome-message h2 {
-            color: #2c3e50;
-            font-size: 1.1rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-        
-        .welcome-message p {
-            color: #5a6c7d;
-            font-size: 0.9rem;
-            font-weight: 500;
-            line-height: 1.5;
-        }
-        
-        .footer {
+        .footer-links {
             text-align: center;
             margin-top: 2rem;
             padding-top: 1.5rem;
             border-top: 1px solid #e1e5e9;
         }
         
-        .footer p {
-            color: #95a5a6;
-            font-size: 0.85rem;
-            margin-bottom: 0.3rem;
+        .footer-links p {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
         }
         
-        .footer strong {
-            color: #5a6c7d;
+        .footer-links a {
+            color: #3498db;
+            text-decoration: none;
             font-weight: 600;
         }
         
-        /* Responsive */
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+        
         @media (max-width: 480px) {
-            .welcome-container {
+            .login-container {
                 padding: 2rem 1.5rem;
-            }
-            
-            .welcome-title {
-                font-size: 1.5rem;
-            }
-            
-            .features-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .logo-text {
-                font-size: 2rem;
             }
         }
     </style>
 </head>
 <body>
-    <div class="welcome-container">
+    <div class="login-container">
         <div class="header-section">
             <div class="logo-text">Growth Manager Pro</div>
-            <div class="logo-subtitle">Growth Management System</div>
-            <h1 class="welcome-title">Welcome Back! 👋</h1>
+            <h1 class="welcome-title">Welcome Back</h1>
             <p class="welcome-subtitle">Sign in to access your dashboard</p>
-            <div class="tagline">Your Acquisition Management System™</div>
-        </div>
-        
-        <div class="features-grid">
-            <div class="feature-item">
-                <div class="icon">🎙️</div>
-                <div class="text">Podcast Pipeline</div>
-            </div>
-            <div class="feature-item">
-                <div class="icon">📊</div>
-                <div class="text">Deal Tracking</div>
-            </div>
-            <div class="feature-item">
-                <div class="icon">🤖</div>
-                <div class="text">AI Analysis</div>
-            </div>
-            <div class="feature-item">
-                <div class="icon">💰</div>
-                <div class="text">Cash Flow</div>
-            </div>
-        </div>
-        
-        <div class="welcome-message">
-            <h2>Your Growth Hub Awaits</h2>
-            <p>Access your complete growth management system with real-time pipeline visibility and automated workflows</p>
         </div>
         
         <div class="error-message" id="errorMessage"></div>
         
         <form id="loginForm" onsubmit="handleLogin(event)">
-            <div class="section-title">🔐 Secure Access</div>
-            
             <div class="form-group">
                 <label for="email">Email Address</label>
-                <div class="input-wrapper">
-                    <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M1.5 8.67v8.58a3 3 0 003 3h15a3 3 0 003-3V8.67l-8.928 5.493a3 3 0 01-3.144 0L1.5 8.67z" />
-                        <path d="M22.5 6.908V6.75a3 3 0 00-3-3h-15a3 3 0 00-3 3v.158l9.714 5.978a1.5 1.5 0 001.572 0L22.5 6.908z" />
-                    </svg>
-                    <input type="email" id="email" required autocomplete="email" placeholder="you@example.com">
-                </div>
+                <input type="email" id="email" required autocomplete="email" placeholder="you@example.com" autofocus>
             </div>
             
             <div class="form-group">
                 <label for="password">Password</label>
-                <div class="input-wrapper">
-                    <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                        <path fill-rule="evenodd" d="M12 1.5a5.25 5.25 0 00-5.25 5.25v3a3 3 0 00-3 3v6.75a3 3 0 003 3h10.5a3 3 0 003-3v-6.75a3 3 0 00-3-3v-3c0-2.9-2.35-5.25-5.25-5.25zm3.75 8.25v-3a3.75 3.75 0 10-7.5 0v3h7.5z" clip-rule="evenodd" />
-                    </svg>
-                    <input type="password" id="password" required autocomplete="current-password" placeholder="Enter your password">
-                </div>
+                <input type="password" id="password" required autocomplete="current-password" placeholder="Enter your password">
             </div>
             
             <button type="submit" class="login-btn" id="loginBtn">
-                ✨ Access Your Dashboard
+                Sign In
             </button>
         </form>
         
-        <div class="footer">
-            <p><strong>Maggie Forbes Strategies</strong></p>
-            <p>Empowering B2B Growth With Growth Management Systems</p>
-            <p style="margin-top: 0.8rem; color: #cbd5e1; font-size: 0.8rem;">© 2025 Growth Manager Pro. All rights reserved.</p>
+        <div class="footer-links">
+            <p>Don't have an account? <a href="signup-saas.html">Start free trial</a></p>
+            <p style="margin-top: 1rem; font-size: 0.85rem; color: #cbd5e1;">© 2025 Growth Manager Pro</p>
         </div>
     </div>
 
     <script>
-        // Initialize Supabase client
-        const SUPABASE_URL = 'https://tatbblgwhmyzovsyhzyb.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRhdGJibGd3aG15em92c3loenliIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkxOTQ1NDMsImV4cCI6MjA3NDc3MDU0M30.HUBWBd0Wtdl5rD1G8XSqJe8rYnpMaOXnJiuwHTHyZMo';
         const API_URL = 'https://growthmanagerpro-backend.vercel.app';
-
-        // Initialize Supabase (will be done in handleLogin)
-        let supabaseClient = null;
 
         // Check if already logged in
         const existingUser = localStorage.getItem('user');
         if (existingUser) {
             try {
                 const user = JSON.parse(existingUser);
-                // Redirect based on user role
                 if (user.role === 'client' || user.type === 'client') {
                     window.location.href = 'client-dashboard.html';
                 } else if (user.role === 'advisor' || user.type === 'advisor') {
@@ -429,7 +245,6 @@
                     window.location.href = 'dashboard.html';
                 }
             } catch (e) {
-                // Invalid user data, clear it
                 localStorage.removeItem('user');
             }
         }
@@ -442,12 +257,9 @@
             const errorMessage = document.getElementById('errorMessage');
             const loginBtn = document.getElementById('loginBtn');
             
-            // Hide previous errors
             errorMessage.classList.remove('show');
-            
-            // Disable button
             loginBtn.disabled = true;
-            loginBtn.textContent = '⏳ Signing you in...';
+            loginBtn.textContent = 'Signing in...';
             
             try {
                 const response = await fetch(`${API_URL}/api/login`, {
@@ -459,49 +271,29 @@
                 const result = await response.json();
                 
                 if (!result.success) {
-                    throw new Error(result.error || 'Login failed. Please check your credentials.');
+                    throw new Error(result.error || 'Login failed');
                 }
                 
-                // Store user data with permissions
                 localStorage.setItem('user', JSON.stringify(result.data));
                 
-                // If we have a session, set it in Supabase client
                 if (result.session) {
                     localStorage.setItem('supabase_session', JSON.stringify(result.session));
                 }
                 
-                console.log('Login successful:', {
-                    name: result.data.name,
-                    role: result.data.role,
-                    type: result.data.type,
-                    permissions: result.data.permissions
-                });
-                
-                // Show success
-                loginBtn.textContent = '✓ Success! Opening your dashboard...';
-                
-                // Redirect based on backend's recommendation
-                const redirectTo = result.data.redirectTo || 'dashboard.html';
+                loginBtn.textContent = '✓ Success!';
                 
                 setTimeout(() => {
-                    window.location.href = redirectTo;
-                }, 1000);
+                    window.location.href = result.data.redirectTo || 'dashboard.html';
+                }, 500);
                 
             } catch (error) {
                 console.error('Login error:', error);
                 errorMessage.textContent = '⚠️ ' + error.message;
                 errorMessage.classList.add('show');
-                
-                // Re-enable button
                 loginBtn.disabled = false;
-                loginBtn.textContent = '✨ Access Your Dashboard';
+                loginBtn.textContent = 'Sign In';
             }
         }
-        
-        // Add enter key support and auto-focus
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('email').focus();
-        });
     </script>
 </body>
 </html>
