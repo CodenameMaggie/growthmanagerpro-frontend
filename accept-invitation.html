@@ -121,6 +121,22 @@
             font-size: 0.9rem;
             color: #5a6c7d;
         }
+        .loading {
+            text-align: center;
+            padding: 2rem;
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #e1e5e9;
+            border-top-color: #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -128,6 +144,10 @@
         <div class="header">
             <h1>Accept Your Invitation</h1>
             <p>Welcome to Growth Manager Pro</p>
+        </div>
+        <div id="loading-state" class="content loading" style="display: none;">
+            <div class="spinner"></div>
+            <p style="color: #7f8c8d;">Verifying your invitation...</p>
         </div>
         <form id="verify-form" class="content">
             <div id="message" class="message"></div>
@@ -148,45 +168,60 @@
     </div>
     
     <script>
-        const API_URL = 'https://growthmanagerpro-backend.vercel.app';
+        // Check if token is in URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
         
-        document.getElementById('verify-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
+        if (token) {
+            // Token found in URL - show loading and redirect to signup page
+            document.getElementById('verify-form').style.display = 'none';
+            document.getElementById('loading-state').style.display = 'block';
             
-            const submitBtn = document.getElementById('submit-btn');
-            const email = document.getElementById('email').value;
+            setTimeout(() => {
+                window.location.href = `signup-invited.html?token=${token}`;
+            }, 500);
+        } else {
+            // No token - show email verification form
+            const API_URL = 'https://growthmanagerpro-backend.vercel.app';
             
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Verifying...';
-            
-            try {
-                const response = await fetch(`${API_URL}/api/verify-invitation`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ email })
-                });
+            document.getElementById('verify-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
                 
-                const result = await response.json();
+                const submitBtn = document.getElementById('submit-btn');
+                const email = document.getElementById('email').value;
                 
-                if (!result.success) {
-                    showMessage('❌ ' + (result.error || 'No invitation found for this email'), 'error');
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Verifying...';
+                
+                try {
+                    const response = await fetch(`${API_URL}/api/verify-invitation`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ email })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (!result.success) {
+                        showMessage('❌ ' + (result.error || 'No invitation found for this email'), 'error');
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Continue';
+                        return;
+                    }
+                    
+                    // Redirect to signup with token
+                    window.location.href = `signup-invited.html?token=${result.token}`;
+                    
+                } catch (error) {
+                    console.error('Error verifying invitation:', error);
+                    showMessage('❌ Failed to verify invitation. Please try again.', 'error');
                     submitBtn.disabled = false;
                     submitBtn.textContent = 'Continue';
-                    return;
                 }
-                
-                // Redirect to signup with token
-                window.location.href = `signup-invited.html?token=${result.token}`;
-                
-            } catch (error) {
-                console.error('Error verifying invitation:', error);
-                showMessage('❌ Failed to verify invitation. Please try again.', 'error');
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Continue';
-            }
-        });
+            });
+        }
         
         function showMessage(text, type) {
             const messageDiv = document.getElementById('message');
