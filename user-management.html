@@ -943,16 +943,26 @@
                     </div>
                 </div>
 
-                <div class="modal-footer">
-                    <button class="btn btn-primary" id="sendInviteBtn" onclick="sendInvitation()">
-                        Send Invitation
-                    </button>
-                    <button class="btn btn-secondary" onclick="closeInviteModal()">
-                        Cancel
-                    </button>
+                successModal.innerHTML = `
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>✅ Invitation Sent!</h3>
+        </div>
+        <div class="modal-body">
+            <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                <div style="margin-bottom: 0.5rem;">
+                    <strong>Email:</strong> ${email}<br>
+                    <strong>Role:</strong> ${roleNames[selectedRole]}
                 </div>
             </div>
         </div>
+        <div class="modal-footer">
+            
+            </button>
+        </div>
+        <p style="text-align: center; margin-top: 1rem; font-size: 0.85rem; color: #95a5a6;">💡 Link expires in 7 days</p>
+    </div>
+`;
 
 <script src="auth-helper.js"></script>
     
