@@ -1190,25 +1190,24 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h3>✅ Invitation Sent!</h3>
-                        <p>Share this link with ${email}</p>
+                        <p>The invitation email has been sent via SmartLead</p>
                     </div>
                     <div class="modal-body">
-                        <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                        <div style="background: #d1fae5; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #10b981;">
                             <div style="margin-bottom: 0.5rem;">
-                                <strong>Email:</strong> ${email}<br>
-                                <strong>Role:</strong> ${roleNames[selectedRole]}
+                                <strong>📧 Email:</strong> ${email}<br>
+                                <strong>👤 Role:</strong> ${roleNames[selectedRole]}
+                            </div>
+                            <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #a7f3d0; font-size: 0.9rem; color: #065f46;">
+                                ✉️ They will receive an email with their signup link shortly
                             </div>
                         </div>
-                     </div>
-                       <div class="modal-footer">
-                        <button class="btn btn-primary" onclick="navigator.clipboard.writeText('${signupLink}'); this.textContent='✅ Copied!'">
-                            📋 Copy Link
-                        </button>
-                        <button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove(); loadUsers();">
-                            Close
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" onclick="this.closest('.modal-overlay').remove(); loadUsers();" style="width: 100%;">
+                            Done
                         </button>
                     </div>
-                    <p style="text-align: center; margin-top: 1rem; font-size: 0.85rem; color: #95a5a6;">💡 Link expires in 7 days</p>
                 </div>
             `;
             document.body.appendChild(successModal);
