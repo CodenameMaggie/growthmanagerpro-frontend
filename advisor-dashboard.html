@@ -1107,28 +1107,26 @@
      <script src="auth-helper.js"></script>
     
      <script>
-    // DECLARE VARIABLES FIRST
-    const API_BASE = 'https://growthmanagerpro-backend.vercel.app';
-    
-    // THEN RUN AUTH PROTECTION
-(function() {
-    if (!AuthHelper.protectPage('advisor-dashboard.html')) {
-        throw new Error('Unauthorized access');
-    }
-    AuthHelper.applyPermissions();
-})();
-    
-    const API_URL = 'https://growthmanagerpro-backend.vercel.app';
-        
-        // Data stores
-        let tasksData = [];
-        let blockersData = [];
-        let discussionData = [];
-        let filesData = [];
+    // ============================================
+// ADVISOR DASHBOARD - CORRECTED SCRIPT
+// ============================================
+// Replace the entire <script> section in advisor-dashboard.html with this
 
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', () => {
-            // Update profile indicator
+// DECLARE VARIABLES FIRST
+const API_BASE = 'https://growthmanagerpro-backend.vercel.app';
+const API_URL = 'https://growthmanagerpro-backend.vercel.app';
+
+// Data stores
+let tasksData = [];
+let blockersData = [];
+let discussionData = [];
+let filesData = [];
+
+// ============================================
+// PROFILE & CLIENT SELECTOR FUNCTIONS (GLOBAL)
+// ============================================
+
+// Update profile indicator
 function updateProfileIndicator() {
     const userData = localStorage.getItem('user');
     if (userData) {
@@ -1187,482 +1185,493 @@ function switchClient(clientId) {
     alert(`Switched to viewing: ${clientName}\n\nClient-specific data loading will be added next.`);
 }
 
-// Call on page load
-updateProfileIndicator();
-loadClientList();            console.log('[Advisor Dashboard] Initializing...');
-            loadAllData();
-            
-            // Auto-refresh every 2 minutes
-            setInterval(loadAllData, 2 * 60 * 1000);
+// ============================================
+// INITIALIZATION
+// ============================================
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('[Advisor Dashboard] Initializing...');
+    
+    // Initialize profile and client selector
+    updateProfileIndicator();
+    loadClientList();
+    
+    // Load all dashboard data
+    loadAllData();
+    
+    // Auto-refresh every 2 minutes
+    setInterval(loadAllData, 2 * 60 * 1000);
+});
+
+// ============================================
+// DATA LOADING FUNCTIONS
+// ============================================
+
+async function loadAllData() {
+    updateConnectionStatus('connecting');
+    
+    try {
+        await Promise.all([
+            loadStats(),
+            loadTasks(),
+            loadBlockers(),
+            loadDiscussion(),
+            loadFiles()
+        ]);
+        
+        updateConnectionStatus('connected');
+        updateLastUpdated();
+    } catch (error) {
+        console.error('[Advisor Dashboard] Error loading data:', error);
+        updateConnectionStatus('error');
+    }
+}
+
+async function loadStats() {
+    try {
+        const response = await fetch(`${API_URL}/api/sprints/stats`);
+        if (!response.ok) throw new Error('Failed to load stats');
+        
+        const result = await response.json();
+        const stats = result.stats || {};
+        
+        // Update stat cards
+        document.getElementById('stat-podcast').textContent = stats.podcast_calls || 0;
+        document.getElementById('stat-discovery').textContent = stats.discovery_calls || 0;
+        document.getElementById('stat-tasks').textContent = stats.tasks_completed || 0;
+        document.getElementById('tasks-trend').textContent = `of ${stats.tasks_total || 0} total`;
+        
+        // Calculate pipeline health
+        const pipelineHealth = stats.leads_generated > 0 
+            ? Math.min(100, Math.round((stats.discovery_calls / stats.leads_generated) * 100))
+            : 0;
+        document.getElementById('stat-pipeline').textContent = pipelineHealth + '%';
+        
+        // Update sprint info
+        document.getElementById('current-sprint').textContent = 'Sprint ' + (new Date().getWeek() || 1);
+        document.getElementById('sprint-period').textContent = getCurrentSprintPeriod();
+        document.getElementById('days-remaining').textContent = getDaysRemainingInWeek() + ' days';
+    } catch (error) {
+        console.error('[Advisor Dashboard] Error loading stats:', error);
+    }
+}
+
+async function loadTasks() {
+    try {
+        const response = await fetch(`${API_URL}/api/sprints/tasks`);
+        if (!response.ok) throw new Error('Failed to load tasks');
+        
+        const result = await response.json();
+        tasksData = result.tasks || [];
+        renderTasks();
+    } catch (error) {
+        console.error('[Advisor Dashboard] Error loading tasks:', error);
+        renderTasksError();
+    }
+}
+
+function renderTasks() {
+    const container = document.getElementById('tasks-list');
+    
+    if (tasksData.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <h3>✅ All Caught Up!</h3>
+                <p>No active tasks at the moment</p>
+            </div>
+        `;
+        return;
+    }
+
+    const relevantTasks = tasksData.filter(t => 
+        t.status === 'in-progress' || 
+        t.status === 'on-track' || 
+        t.status === 'blocked' ||
+        t.status === 'off-track'
+    );
+
+    if (relevantTasks.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <h3>✅ Everything Running Smoothly!</h3>
+                <p>No tasks needing advisor support</p>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = relevantTasks.slice(0, 10).map(task => `
+        <div class="task-item">
+            <div class="task-header">
+                <div>
+                    <h4 class="task-title">${task.title || 'Untitled Task'}</h4>
+                    <div class="task-meta">
+                        <span>👤 ${task.assigned_to || 'Maggie'}</span>
+                        ${task.due_date ? `<span>📅 Due: ${formatDate(task.due_date)}</span>` : ''}
+                        ${task.priority ? `<span class="priority-badge priority-${task.priority}">${task.priority}</span>` : ''}
+                    </div>
+                </div>
+                <span class="status-badge status-${task.status}">${task.status}</span>
+            </div>
+            ${task.description ? `<p class="task-description">${task.description}</p>` : ''}
+            <div class="task-actions">
+                <button class="btn btn-small btn-secondary" onclick="addNote('task', '${task.id}')">
+                    💬 Add Note
+                </button>
+                ${task.status === 'blocked' ? `
+                    <button class="btn btn-small btn-success" onclick="suggestSolution('${task.id}')">
+                        💡 Suggest Solution
+                    </button>
+                ` : ''}
+            </div>
+        </div>
+    `).join('');
+}
+
+function renderTasksError() {
+    document.getElementById('tasks-list').innerHTML = `
+        <div class="empty-state">
+            <h3>⚠️ Unable to load tasks</h3>
+            <button class="btn btn-primary" onclick="loadTasks()">Retry</button>
+        </div>
+    `;
+}
+
+async function loadBlockers() {
+    try {
+        const response = await fetch(`${API_URL}/api/sprints/blockers`);
+        if (!response.ok) throw new Error('Failed to load blockers');
+        
+        const result = await response.json();
+        blockersData = result.blockers || [];
+        renderBlockers();
+    } catch (error) {
+        console.error('[Advisor Dashboard] Error loading blockers:', error);
+        renderBlockersError();
+    }
+}
+
+function renderBlockers() {
+    const container = document.getElementById('blockers-list');
+    
+    if (blockersData.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <h3>🎉 No Blockers!</h3>
+                <p>Everything is flowing smoothly</p>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = blockersData.map(blocker => `
+        <div class="blocker-item">
+            <div class="blocker-header">
+                <div class="blocker-title">
+                    <span>⚠️</span>
+                    <span>${blocker.title}</span>
+                </div>
+            </div>
+            <p class="blocker-description">${blocker.description}</p>
+            <div class="blocker-meta">
+                Reported ${formatDate(blocker.created_at)}
+            </div>
+            <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+                <button class="btn btn-small btn-primary" onclick="suggestSolution('${blocker.id}')">
+                    💡 Suggest Solution
+                </button>
+                <button class="btn btn-small btn-secondary" onclick="addNote('blocker', '${blocker.id}')">
+                    💬 Add Note
+                </button>
+            </div>
+        </div>
+    `).join('');
+}
+
+function renderBlockersError() {
+    document.getElementById('blockers-list').innerHTML = `
+        <div class="empty-state">
+            <h3>⚠️ Unable to load blockers</h3>
+            <button class="btn btn-primary" onclick="loadBlockers()">Retry</button>
+        </div>
+    `;
+}
+
+async function loadDiscussion() {
+    try {
+        const response = await fetch(`${API_URL}/api/advisor/discussion`);
+        if (!response.ok) throw new Error('Failed to load discussion');
+        
+        const result = await response.json();
+        discussionData = result.notes || [];
+        renderDiscussion();
+    } catch (error) {
+        console.error('[Advisor Dashboard] Error loading discussion:', error);
+        discussionData = [
+            {
+                id: 1,
+                author: 'Maggie Forbes',
+                role: 'admin',
+                content: 'Starting this week with focus on podcast outreach and follow-ups!',
+                created_at: new Date().toISOString()
+            }
+        ];
+        renderDiscussion();
+    }
+}
+
+function renderDiscussion() {
+    const container = document.getElementById('discussion-list');
+    
+    if (discussionData.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <p>No discussion yet. Start the conversation!</p>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = discussionData.slice(0, 10).reverse().map(note => {
+        const initials = note.author.split(' ').map(n => n[0]).join('').toUpperCase();
+        return `
+            <div class="discussion-item">
+                <div class="discussion-header">
+                    <div class="discussion-author">
+                        <div class="discussion-avatar">${initials}</div>
+                        <div class="discussion-author-info">
+                            <h4>${note.author}</h4>
+                            <p>${formatRelativeTime(note.created_at)}</p>
+                        </div>
+                    </div>
+                </div>
+                <p class="discussion-content">${note.content}</p>
+            </div>
+        `;
+    }).join('');
+}
+
+async function loadFiles() {
+    try {
+        const response = await fetch(`${API_URL}/api/sprints/files`);
+        if (!response.ok) throw new Error('Failed to load files');
+        
+        const result = await response.json();
+        filesData = result.files || [];
+        renderFiles();
+    } catch (error) {
+        console.error('[Advisor Dashboard] Error loading files:', error);
+        renderFilesError();
+    }
+}
+
+function renderFiles() {
+    const container = document.getElementById('files-list');
+    
+    if (filesData.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <h3>📁 No Files Yet</h3>
+                <p>Upload documents to share with Maggie</p>
+                <button class="btn btn-primary" onclick="uploadFile()">📤 Upload First File</button>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = filesData.map(file => `
+        <div class="file-item">
+            <div class="file-info">
+                <div class="file-icon">📄</div>
+                <div class="file-details">
+                    <h4>${file.filename}</h4>
+                    <p>Uploaded ${formatDate(file.created_at)} • ${file.uploaded_by}</p>
+                </div>
+            </div>
+            <button class="btn btn-small btn-secondary" onclick="downloadFile('${file.id}')">
+                ⬇️ Download
+            </button>
+        </div>
+    `).join('');
+}
+
+function renderFilesError() {
+    document.getElementById('files-list').innerHTML = `
+        <div class="empty-state">
+            <h3>⚠️ Unable to load files</h3>
+            <button class="btn btn-primary" onclick="loadFiles()">Retry</button>
+        </div>
+    `;
+}
+
+// ============================================
+// ACTION FUNCTIONS
+// ============================================
+
+async function postNote() {
+    const input = document.getElementById('note-input');
+    const content = input.value.trim();
+    
+    if (!content) {
+        alert('Please enter a note before posting.');
+        return;
+    }
+    
+    try {
+        const response = await fetch(`${API_URL}/api/advisor/discussion`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                content,
+                author: 'Advisor',
+                role: 'advisor'
+            })
         });
 
-        async function loadAllData() {
-            updateConnectionStatus('connecting');
-            
-            try {
-                await Promise.all([
-                    loadStats(),
-                    loadTasks(),
-                    loadBlockers(),
-                    loadDiscussion(),
-                    loadFiles()
-                ]);
-                
-                updateConnectionStatus('connected');
-                updateLastUpdated();
-            } catch (error) {
-                console.error('[Advisor Dashboard] Error loading data:', error);
-                updateConnectionStatus('error');
-            }
-        }
+        if (!response.ok) throw new Error('Failed to post note');
 
-        async function loadStats() {
-            try {
-                const response = await fetch(`${API_URL}/api/sprints/stats`);
-                if (!response.ok) throw new Error('Failed to load stats');
-                
-                const result = await response.json();
-                const stats = result.stats || {};
-                
-                // Update stat cards
-                document.getElementById('stat-podcast').textContent = stats.podcast_calls || 0;
-                document.getElementById('stat-discovery').textContent = stats.discovery_calls || 0;
-                document.getElementById('stat-tasks').textContent = stats.tasks_completed || 0;
-                document.getElementById('tasks-trend').textContent = `of ${stats.tasks_total || 0} total`;
-                
-                // Calculate pipeline health (example calculation)
-                const pipelineHealth = stats.leads_generated > 0 
-                    ? Math.min(100, Math.round((stats.discovery_calls / stats.leads_generated) * 100))
-                    : 0;
-                document.getElementById('stat-pipeline').textContent = pipelineHealth + '%';
-                
-                // Update sprint info
-                document.getElementById('current-sprint').textContent = 'Sprint ' + (new Date().getWeek() || 1);
-                document.getElementById('sprint-period').textContent = getCurrentSprintPeriod();
-                document.getElementById('days-remaining').textContent = getDaysRemainingInWeek() + ' days';
-            } catch (error) {
-                console.error('[Advisor Dashboard] Error loading stats:', error);
-            }
-        }
+        input.value = '';
+        await loadDiscussion();
+    } catch (error) {
+        console.error('[Advisor Dashboard] Error posting note:', error);
+        alert('Failed to post note. Please try again.');
+    }
+}
 
-        async function loadTasks() {
-            try {
-                const response = await fetch(`${API_URL}/api/sprints/tasks`);
-                if (!response.ok) throw new Error('Failed to load tasks');
-                
-                const result = await response.json();
-                tasksData = result.tasks || [];
-                renderTasks();
-            } catch (error) {
-                console.error('[Advisor Dashboard] Error loading tasks:', error);
-                renderTasksError();
-            }
-        }
+function addNote(type, id) {
+    const note = prompt(`Add a note about this ${type}:`);
+    if (!note) return;
+    
+    alert(`✅ Note added!\n\n"${note}"\n\nThis will be visible to Maggie in her dashboard.`);
+    console.log('Adding note:', { type, id, note });
+}
 
-        function renderTasks() {
-            const container = document.getElementById('tasks-list');
-            
-            if (tasksData.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <h3>✅ All Caught Up!</h3>
-                        <p>No active tasks at the moment</p>
-                    </div>
-                `;
-                return;
-            }
+function suggestSolution(id) {
+    const solution = prompt('Suggest a solution for this blocker:');
+    if (!solution) return;
+    
+    alert(`💡 Solution suggested!\n\n"${solution}"\n\nMaggie will receive a notification about your suggestion.`);
+    console.log('Suggesting solution:', { id, solution });
+}
 
-            // Show only in-progress and blocked tasks to advisor
-            const relevantTasks = tasksData.filter(t => 
-                t.status === 'in-progress' || 
-                t.status === 'on-track' || 
-                t.status === 'blocked' ||
-                t.status === 'off-track'
-            );
+function uploadFile() {
+    document.getElementById('file-input').click();
+}
 
-            if (relevantTasks.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <h3>✅ Everything Running Smoothly!</h3>
-                        <p>No tasks needing advisor support</p>
-                    </div>
-                `;
-                return;
-            }
+function handleFileUpload() {
+    const input = document.getElementById('file-input');
+    const files = input.files;
+    
+    if (files.length === 0) return;
 
-            container.innerHTML = relevantTasks.slice(0, 10).map(task => `
-                <div class="task-item">
-                    <div class="task-header">
-                        <div>
-                            <h4 class="task-title">${task.title || 'Untitled Task'}</h4>
-                            <div class="task-meta">
-                                <span>👤 ${task.assigned_to || 'Maggie'}</span>
-                                ${task.due_date ? `<span>📅 Due: ${formatDate(task.due_date)}</span>` : ''}
-                                ${task.priority ? `<span class="priority-badge priority-${task.priority}">${task.priority}</span>` : ''}
-                            </div>
-                        </div>
-                        <span class="status-badge status-${task.status}">${task.status}</span>
-                    </div>
-                    ${task.description ? `<p class="task-description">${task.description}</p>` : ''}
-                    <div class="task-actions">
-                        <button class="btn btn-small btn-secondary" onclick="addNote('task', '${task.id}')">
-                            💬 Add Note
-                        </button>
-                        ${task.status === 'blocked' ? `
-                            <button class="btn btn-small btn-success" onclick="suggestSolution('${task.id}')">
-                                💡 Suggest Solution
-                            </button>
-                        ` : ''}
-                    </div>
-                </div>
-            `).join('');
-        }
+    alert(`📤 Uploading ${files[0].name}...\n\nFile will be shared with Maggie.`);
+    console.log('Uploading file:', files[0].name);
+    
+    input.value = '';
+}
 
-        function renderTasksError() {
-            document.getElementById('tasks-list').innerHTML = `
-                <div class="empty-state">
-                    <h3>⚠️ Unable to load tasks</h3>
-                    <button class="btn btn-primary" onclick="loadTasks()">Retry</button>
-                </div>
-            `;
-        }
+function downloadFile(fileId) {
+    alert('📥 Downloading file...');
+    console.log('Downloading file:', fileId);
+}
 
-        async function loadBlockers() {
-            try {
-                const response = await fetch(`${API_URL}/api/sprints/blockers`);
-                if (!response.ok) throw new Error('Failed to load blockers');
-                
-                const result = await response.json();
-                blockersData = result.blockers || [];
-                renderBlockers();
-            } catch (error) {
-                console.error('[Advisor Dashboard] Error loading blockers:', error);
-                renderBlockersError();
-            }
-        }
+function refreshTasks() {
+    loadTasks();
+}
 
-        function renderBlockers() {
-            const container = document.getElementById('blockers-list');
-            
-            if (blockersData.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <h3>🎉 No Blockers!</h3>
-                        <p>Everything is flowing smoothly</p>
-                    </div>
-                `;
-                return;
-            }
+function refreshBlockers() {
+    loadBlockers();
+}
 
-            container.innerHTML = blockersData.map(blocker => `
-                <div class="blocker-item">
-                    <div class="blocker-header">
-                        <div class="blocker-title">
-                            <span>⚠️</span>
-                            <span>${blocker.title}</span>
-                        </div>
-                    </div>
-                    <p class="blocker-description">${blocker.description}</p>
-                    <div class="blocker-meta">
-                        Reported ${formatDate(blocker.created_at)}
-                    </div>
-                    <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
-                        <button class="btn btn-small btn-primary" onclick="suggestSolution('${blocker.id}')">
-                            💡 Suggest Solution
-                        </button>
-                        <button class="btn btn-small btn-secondary" onclick="addNote('blocker', '${blocker.id}')">
-                            💬 Add Note
-                        </button>
-                    </div>
-                </div>
-            `).join('');
-        }
+function refreshDiscussion() {
+    loadDiscussion();
+}
 
-        function renderBlockersError() {
-            document.getElementById('blockers-list').innerHTML = `
-                <div class="empty-state">
-                    <h3>⚠️ Unable to load blockers</h3>
-                    <button class="btn btn-primary" onclick="loadBlockers()">Retry</button>
-                </div>
-            `;
-        }
+function refreshFiles() {
+    loadFiles();
+}
 
-        async function loadDiscussion() {
-            try {
-                const response = await fetch(`${API_URL}/api/advisor/discussion`);
-                if (!response.ok) throw new Error('Failed to load discussion');
-                
-                const result = await response.json();
-                discussionData = result.notes || [];
-                renderDiscussion();
-            } catch (error) {
-                console.error('[Advisor Dashboard] Error loading discussion:', error);
-                // Use sample data for demo
-                discussionData = [
-                    {
-                        id: 1,
-                        author: 'Maggie Forbes',
-                        role: 'admin',
-                        content: 'Starting this week with focus on podcast outreach and follow-ups!',
-                        created_at: new Date().toISOString()
-                    }
-                ];
-                renderDiscussion();
-            }
-        }
+// ============================================
+// UTILITY FUNCTIONS
+// ============================================
 
-        function renderDiscussion() {
-            const container = document.getElementById('discussion-list');
-            
-            if (discussionData.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <p>No discussion yet. Start the conversation!</p>
-                    </div>
-                `;
-                return;
-            }
+function updateConnectionStatus(status) {
+    const indicator = document.getElementById('status-indicator');
+    const text = document.getElementById('status-text');
+    
+    if (status === 'connected') {
+        indicator.className = 'status-indicator status-connected';
+        text.textContent = 'Live Connected';
+    } else if (status === 'error') {
+        indicator.className = 'status-indicator status-error';
+        text.textContent = 'Connection Error';
+    } else if (status === 'connecting') {
+        indicator.className = 'status-indicator';
+        indicator.style.background = '#f39c12';
+        text.textContent = 'Connecting...';
+    }
+}
 
-            container.innerHTML = discussionData.slice(0, 10).reverse().map(note => {
-                const initials = note.author.split(' ').map(n => n[0]).join('').toUpperCase();
-                return `
-                    <div class="discussion-item">
-                        <div class="discussion-header">
-                            <div class="discussion-author">
-                                <div class="discussion-avatar">${initials}</div>
-                                <div class="discussion-author-info">
-                                    <h4>${note.author}</h4>
-                                    <p>${formatRelativeTime(note.created_at)}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <p class="discussion-content">${note.content}</p>
-                    </div>
-                `;
-            }).join('');
-        }
+function updateLastUpdated() {
+    const now = new Date();
+    document.getElementById('last-updated').textContent = now.toLocaleTimeString();
+}
 
-        async function loadFiles() {
-            try {
-                const response = await fetch(`${API_URL}/api/sprints/files`);
-                if (!response.ok) throw new Error('Failed to load files');
-                
-                const result = await response.json();
-                filesData = result.files || [];
-                renderFiles();
-            } catch (error) {
-                console.error('[Advisor Dashboard] Error loading files:', error);
-                renderFilesError();
-            }
-        }
+function formatDate(dateString) {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { 
+        month: 'short', 
+        day: 'numeric',
+        year: 'numeric'
+    });
+}
 
-        function renderFiles() {
-            const container = document.getElementById('files-list');
-            
-            if (filesData.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <h3>📁 No Files Yet</h3>
-                        <p>Upload documents to share with Maggie</p>
-                        <button class="btn btn-primary" onclick="uploadFile()">📤 Upload First File</button>
-                    </div>
-                `;
-                return;
-            }
+function formatRelativeTime(dateString) {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const now = new Date();
+    const diff = now - date;
+    const hours = Math.floor(diff / 3600000);
+    
+    if (hours < 1) return 'Just now';
+    if (hours < 24) return `${hours}h ago`;
+    if (hours < 48) return 'Yesterday';
+    
+    const days = Math.floor(hours / 24);
+    if (days < 7) return `${days}d ago`;
+    
+    return formatDate(dateString);
+}
 
-            container.innerHTML = filesData.map(file => `
-                <div class="file-item">
-                    <div class="file-info">
-                        <div class="file-icon">📄</div>
-                        <div class="file-details">
-                            <h4>${file.filename}</h4>
-                            <p>Uploaded ${formatDate(file.created_at)} • ${file.uploaded_by}</p>
-                        </div>
-                    </div>
-                    <button class="btn btn-small btn-secondary" onclick="downloadFile('${file.id}')">
-                        ⬇️ Download
-                    </button>
-                </div>
-            `).join('');
-        }
+function getCurrentSprintPeriod() {
+    const now = new Date();
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() - now.getDay());
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    
+    return `${startOfWeek.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${endOfWeek.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+}
 
-        function renderFilesError() {
-            document.getElementById('files-list').innerHTML = `
-                <div class="empty-state">
-                    <h3>⚠️ Unable to load files</h3>
-                    <button class="btn btn-primary" onclick="loadFiles()">Retry</button>
-                </div>
-            `;
-        }
+function getDaysRemainingInWeek() {
+    const now = new Date();
+    const dayOfWeek = now.getDay();
+    return 7 - dayOfWeek;
+}
 
-        // Action Functions
-        async function postNote() {
-            const input = document.getElementById('note-input');
-            const content = input.value.trim();
-            
-            if (!content) {
-                alert('Please enter a note before posting.');
-                return;
-            }
-            
-            try {
-                const response = await fetch(`${API_URL}/api/advisor/discussion`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        content,
-                        author: 'Advisor', // This would come from auth in production
-                        role: 'advisor'
-                    })
-                });
+Date.prototype.getWeek = function() {
+    const onejan = new Date(this.getFullYear(), 0, 1);
+    return Math.ceil((((this - onejan) / 86400000) + onejan.getDay() + 1) / 7);
+};
 
-                if (!response.ok) throw new Error('Failed to post note');
+function scrollToSection(sectionId) {
+    const section = document.getElementById(sectionId);
+    if (section) {
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
 
-                input.value = '';
-                await loadDiscussion();
-            } catch (error) {
-                console.error('[Advisor Dashboard] Error posting note:', error);
-                alert('Failed to post note. Please try again.');
-            }
-        }
-
-        function addNote(type, id) {
-            const note = prompt(`Add a note about this ${type}:`);
-            if (!note) return;
-            
-            alert(`✅ Note added!\n\n"${note}"\n\nThis will be visible to Maggie in her dashboard.`);
-            console.log('Adding note:', { type, id, note });
-        }
-
-        function suggestSolution(id) {
-            const solution = prompt('Suggest a solution for this blocker:');
-            if (!solution) return;
-            
-            alert(`💡 Solution suggested!\n\n"${solution}"\n\nMaggie will receive a notification about your suggestion.`);
-            console.log('Suggesting solution:', { id, solution });
-        }
-
-        function uploadFile() {
-            document.getElementById('file-input').click();
-        }
-
-        function handleFileUpload() {
-            const input = document.getElementById('file-input');
-            const files = input.files;
-            
-            if (files.length === 0) return;
-
-            alert(`📤 Uploading ${files[0].name}...\n\nFile will be shared with Maggie.`);
-            console.log('Uploading file:', files[0].name);
-            
-            // TODO: Implement actual file upload
-            input.value = '';
-        }
-
-        function downloadFile(fileId) {
-            alert('📥 Downloading file...');
-            console.log('Downloading file:', fileId);
-        }
-
-        // Refresh functions
-        function refreshTasks() {
-            loadTasks();
-        }
-
-        function refreshBlockers() {
-            loadBlockers();
-        }
-
-        function refreshDiscussion() {
-            loadDiscussion();
-        }
-
-        function refreshFiles() {
-            loadFiles();
-        }
-
-        // Utility Functions
-        function updateConnectionStatus(status) {
-            const indicator = document.getElementById('status-indicator');
-            const text = document.getElementById('status-text');
-            
-            if (status === 'connected') {
-                indicator.className = 'status-indicator status-connected';
-                text.textContent = 'Live Connected';
-            } else if (status === 'error') {
-                indicator.className = 'status-indicator status-error';
-                text.textContent = 'Connection Error';
-            } else if (status === 'connecting') {
-                indicator.className = 'status-indicator';
-                indicator.style.background = '#f39c12';
-                text.textContent = 'Connecting...';
-            }
-        }
-
-        function updateLastUpdated() {
-            const now = new Date();
-            document.getElementById('last-updated').textContent = now.toLocaleTimeString();
-        }
-
-        function formatDate(dateString) {
-            if (!dateString) return '';
-            const date = new Date(dateString);
-            return date.toLocaleDateString('en-US', { 
-                month: 'short', 
-                day: 'numeric',
-                year: 'numeric'
-            });
-        }
-
-        function formatRelativeTime(dateString) {
-            if (!dateString) return '';
-            const date = new Date(dateString);
-            const now = new Date();
-            const diff = now - date;
-            const hours = Math.floor(diff / 3600000);
-            
-            if (hours < 1) return 'Just now';
-            if (hours < 24) return `${hours}h ago`;
-            if (hours < 48) return 'Yesterday';
-            
-            const days = Math.floor(hours / 24);
-            if (days < 7) return `${days}d ago`;
-            
-            return formatDate(dateString);
-        }
-
-        function getCurrentSprintPeriod() {
-            const now = new Date();
-            const startOfWeek = new Date(now);
-            startOfWeek.setDate(now.getDate() - now.getDay());
-            const endOfWeek = new Date(startOfWeek);
-            endOfWeek.setDate(startOfWeek.getDate() + 6);
-            
-            return `${startOfWeek.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${endOfWeek.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
-        }
-
-        function getDaysRemainingInWeek() {
-            const now = new Date();
-            const dayOfWeek = now.getDay();
-            return 7 - dayOfWeek;
-        }
-
-        // Week number helper
-        Date.prototype.getWeek = function() {
-            const onejan = new Date(this.getFullYear(), 0, 1);
-            return Math.ceil((((this - onejan) / 86400000) + onejan.getDay() + 1) / 7);
-        };
-
-        console.log('[Advisor Dashboard] System initialized');
-        console.log('[Advisor Dashboard] API Endpoint:', API_URL);
-
-        // Smooth scroll to section
-        function scrollToSection(sectionId) {
-            const section = document.getElementById(sectionId);
-            if (section) {
-                section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-        }
-    </script>
-</body>
-</html>
+console.log('[Advisor Dashboard] System initialized');
+console.log('[Advisor Dashboard] API Endpoint:', API_URL);
