@@ -1163,7 +1163,7 @@
                 body: JSON.stringify({
                     email: email,
                     role: selectedRole
-                })
+                    invited_by: currentUser.id  // ✅ ADD THIS                })
             });
 
          const result = await response.json();
