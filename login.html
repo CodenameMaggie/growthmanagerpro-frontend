@@ -239,7 +239,7 @@
                 const user = JSON.parse(existingUser);
                 if (user.role === 'client' || user.type === 'client') {
                     window.location.href = 'client-dashboard.html';
-                } else if (user.role === 'advisor' || user.type === 'advisor') {
+                } else if (user.role === 'advisor' || user.type === 'advisor' || user.role === 'consultant' || user.type === 'consultant') {
                     window.location.href = 'advisor-dashboard.html';
                 } else {
                     window.location.href = 'dashboard.html';
