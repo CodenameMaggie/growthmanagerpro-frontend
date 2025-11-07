@@ -1172,6 +1172,28 @@
                 return;
             }
 
+            }
+
+            // Send invitation email via SmartLead
+            try {
+                await fetch(`${API_URL}/api/smartlead-handoff`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contactId: result.invitation.id,
+                        trigger: 'user_invitation',
+                        campaignType: 'platform_invite',
+                        inviteEmail: email,
+                        inviteRole: selectedRole,
+                        signupLink: result.invitation.signupLink
+                    })
+                });
+            } catch (emailError) {
+                console.error('[User Management] Failed to send email:', emailError);
+            }
+
+            // Close invite modal
+            closeInviteModal();
             // Close invite modal
             closeInviteModal();
 
