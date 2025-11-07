@@ -1452,9 +1452,23 @@ function renderDiscussion() {
     }).join('');
 }
 
+         
 async function loadFiles() {
     try {
-        const response = await fetch(`${API_URL}/api/sprints/files`);
+        // Get advisor ID
+        const userData = localStorage.getItem('user');
+        if (!userData) return;
+        const user = JSON.parse(userData);
+        
+        // Get client ID if viewing specific client
+        const viewingClientId = localStorage.getItem('viewingClientId');
+        
+        const url = viewingClientId 
+            ? `${API_URL}/api/advisor/files?advisorId=${user.id}&clientId=${viewingClientId}`
+            : `${API_URL}/api/advisor/files?advisorId=${user.id}`;
+            
+        const response = await fetch(url);
+        
         if (!response.ok) throw new Error('Failed to load files');
         
         const result = await response.json();
