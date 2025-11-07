@@ -1200,8 +1200,11 @@
                             </div>
                         </div>
                      </div>
-                      <div class="modal-footer">
-                          <button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove(); loadUsers();">
+                       <div class="modal-footer">
+                        <button class="btn btn-primary" onclick="navigator.clipboard.writeText('${signupLink}'); this.textContent='✅ Copied!'">
+                            📋 Copy Link
+                        </button>
+                        <button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove(); loadUsers();">
                             Close
                         </button>
                     </div>
