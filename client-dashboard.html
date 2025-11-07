@@ -1243,8 +1243,10 @@ function updateProfileIndicator() {
     if (userData) {
         const user = JSON.parse(userData);
         
-        // For clients: show company name or personal name
-        const displayName = user.company_name || user.business_name || user.full_name || user.name || 'Client Account';
+        // For clients: show company name or personal name, with email fallback
+        const displayName = user.company_name || user.business_name || 
+                           user.full_name || user.name || 
+                           user.email?.split('@')[0] || 'Client Account';
         
         // Update name
         document.getElementById('userName').textContent = displayName;
@@ -1256,7 +1258,7 @@ function updateProfileIndicator() {
         // Update role badge
         document.getElementById('userRole').textContent = '👤 Client Portal';
     }
-}    
+}
     // Initialize on page load
     document.addEventListener('DOMContentLoaded', () => {
         updateProfileIndicator();
