@@ -826,19 +826,19 @@
         
         // Live API Configuration
         const API_BASE = 'https://growthmanagerpro-backend.vercel.app';
+        const TENANT_ID = '92f6c0d3-252c-4471-a9d0-e8af9ad82834';
         
         // Global state
         let contactsData = [];
         let filteredContacts = [];
         let editingContactId = null;
-        let showOnlyCampaigns = true; // Default to showing only campaign contacts
+        let showOnlyCampaigns = true;
         
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             sidebar.classList.toggle('open');
         }
         
-        // Close sidebar when clicking outside on mobile
         document.addEventListener('click', function(event) {
             const sidebar = document.getElementById('sidebar');
             const toggle = document.querySelector('.mobile-menu-toggle');
@@ -850,7 +850,6 @@
             }
         });
         
-        // Update connection status indicator
         function updateConnectionStatus(status) {
             const statusEl = document.getElementById('connectionStatus');
             statusEl.className = `connection-status ${status}`;
@@ -868,13 +867,12 @@
             }
         }
         
-        // Load contacts from API
         async function loadContacts() {
             console.log('[Contacts] Loading REAL data from Supabase API...');
             updateConnectionStatus('loading');
             
             try {
-                const response = await fetch(`${API_BASE}/api/prospects`);
+                const response = await fetch(`${API_BASE}/api/prospects?tenant_id=${TENANT_ID}`);
                 
                 if (!response.ok) {
                     throw new Error(`API returned ${response.status}: ${response.statusText}`);
@@ -887,7 +885,6 @@
                     throw new Error(data.error || 'Invalid API response');
                 }
                 
-                // Handle different response formats
                 contactsData = data.data?.prospects || data.prospects || data.data || data || [];
                 
                 updateContactsDisplay();
@@ -915,17 +912,15 @@
             }
         }
         
-        // Determine engagement level
         function getEngagementLevel(contact) {
             if (contact.has_replied) return 'hot';
             if (contact.email_open_count >= 3) return 'hot';
             if (contact.email_click_count >= 1) return 'hot';
             if (contact.email_open_count >= 1) return 'warm';
-            if (contact.current_campaign) return 'cold'; // In campaign but no engagement
-            return 'none'; // Not in campaigns yet
+            if (contact.current_campaign) return 'cold';
+            return 'none';
         }
         
-        // Toggle between campaign contacts only and all contacts
         function toggleCampaignFilter() {
             showOnlyCampaigns = !showOnlyCampaigns;
             
@@ -941,37 +936,30 @@
             updateContactsDisplay();
         }
         
-        // Update contacts display
         function updateContactsDisplay() {
-            // Apply campaign filter first
             let baseContacts = showOnlyCampaigns 
                 ? contactsData.filter(c => c.current_campaign) 
                 : contactsData;
             
             filteredContacts = [...baseContacts];
             
-            // Calculate stats based on filtered set
             const totalContacts = baseContacts.length;
             const highEngagement = baseContacts.filter(c => getEngagementLevel(c) === 'hot').length;
             const replied = baseContacts.filter(c => c.has_replied).length;
             const inCampaigns = baseContacts.filter(c => c.current_campaign).length;
             const noEngagement = baseContacts.filter(c => c.current_campaign && getEngagementLevel(c) === 'cold').length;
             
-            // Update stats
             document.getElementById('total-contacts').textContent = totalContacts;
             document.getElementById('high-engagement').textContent = highEngagement;
             document.getElementById('replied-count').textContent = replied;
             document.getElementById('in-campaigns').textContent = inCampaigns;
             document.getElementById('no-engagement').textContent = noEngagement;
             
-            // Update contact count
             document.getElementById('contact-count').textContent = `${filteredContacts.length} contacts`;
             
-            // Render contacts table
             renderContactsTable();
         }
         
-        // Render contacts table
         function renderContactsTable() {
             const tbody = document.getElementById('contacts-table-body');
             
@@ -1037,7 +1025,6 @@
             }).join('');
         }
         
-        // Render engagement indicators
         function renderEngagement(contact, level) {
             if (!contact.current_campaign) {
                 return '<span class="engagement-badge engagement-no-activity">Not in campaigns yet</span>';
@@ -1045,7 +1032,6 @@
             
             const badges = [];
             
-            // Main engagement level
             if (level === 'hot') {
                 badges.push('<span class="engagement-badge engagement-hot">🔥 Hot Lead</span>');
             } else if (level === 'warm') {
@@ -1054,22 +1040,18 @@
                 badges.push('<span class="engagement-badge engagement-cold">🔵 No Engagement</span>');
             }
             
-            // Replied badge
             if (contact.has_replied) {
                 badges.push('<span class="engagement-badge engagement-replied">✅ Replied</span>');
             }
             
-            // Opens badge
             if (contact.email_open_count > 0) {
                 badges.push(`<span class="engagement-badge engagement-opened">📧 ${contact.email_open_count} opens</span>`);
             }
             
-            // Clicks badge
             if (contact.email_click_count > 0) {
                 badges.push(`<span class="engagement-badge engagement-clicked">🔗 ${contact.email_click_count} clicks</span>`);
             }
             
-            // Last activity
             if (contact.last_engagement_date) {
                 badges.push(`<div class="engagement-time">Last activity: ${formatTimeAgo(contact.last_engagement_date)}</div>`);
             }
@@ -1077,7 +1059,6 @@
             return `<div class="engagement-container">${badges.join('')}</div>`;
         }
         
-        // Render campaign badge
         function renderCampaign(contact) {
             if (!contact.current_campaign) {
                 return '<span class="source-badge">—</span>';
@@ -1094,26 +1075,22 @@
             return `<span class="campaign-badge ${campaignClass}">${icon} ${contact.current_campaign}</span>`;
         }
         
-        // Filter contacts
         function filterContacts() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             const engagementFilter = document.getElementById('engagementFilter').value;
             const campaignFilter = document.getElementById('campaignFilter').value;
             const statusFilter = document.getElementById('statusFilter').value;
             
-            // Start with base set (campaign contacts only or all)
             let baseContacts = showOnlyCampaigns 
                 ? contactsData.filter(c => c.current_campaign) 
                 : contactsData;
             
             filteredContacts = baseContacts.filter(contact => {
-                // Search filter
                 const matchesSearch = !searchTerm || 
                     (contact.name && contact.name.toLowerCase().includes(searchTerm)) ||
                     (contact.email && contact.email.toLowerCase().includes(searchTerm)) ||
                     (contact.company && contact.company.toLowerCase().includes(searchTerm));
                 
-                // Engagement filter
                 let matchesEngagement = true;
                 if (engagementFilter) {
                     const level = getEngagementLevel(contact);
@@ -1124,10 +1101,8 @@
                     }
                 }
                 
-                // Campaign filter
                 const matchesCampaign = !campaignFilter || contact.current_campaign === campaignFilter;
                 
-                // Status filter
                 const matchesStatus = !statusFilter || contact.status === statusFilter;
                 
                 return matchesSearch && matchesEngagement && matchesCampaign && matchesStatus;
@@ -1137,10 +1112,8 @@
             renderContactsTable();
         }
         
-        // Search input handler
         document.getElementById('searchInput').addEventListener('input', filterContacts);
         
-        // Clear filters
         function clearFilters() {
             document.getElementById('searchInput').value = '';
             document.getElementById('engagementFilter').value = '';
@@ -1149,7 +1122,6 @@
             updateContactsDisplay();
         }
         
-        // Modal functions
         function openAddModal() {
             editingContactId = null;
             document.getElementById('modalTitle').textContent = 'Add New Contact';
@@ -1210,7 +1182,7 @@ Notes: ${contact.notes || 'No notes'}`);
             if (!confirm('Are you sure you want to delete this contact?')) return;
             
             try {
-                const response = await fetch(`${API_BASE}/api/prospects/${id}`, {
+                const response = await fetch(`${API_BASE}/api/prospects/${id}?tenant_id=${TENANT_ID}`, {
                     method: 'DELETE'
                 });
                 
@@ -1241,8 +1213,8 @@ Notes: ${contact.notes || 'No notes'}`);
             
             try {
                 const url = editingContactId 
-                    ? `${API_BASE}/api/prospects/${editingContactId}`
-                    : `${API_BASE}/api/prospects`;
+                    ? `${API_BASE}/api/prospects/${editingContactId}?tenant_id=${TENANT_ID}`
+                    : `${API_BASE}/api/prospects?tenant_id=${TENANT_ID}`;
                 
                 const method = editingContactId ? 'PUT' : 'POST';
                 
@@ -1267,7 +1239,6 @@ Notes: ${contact.notes || 'No notes'}`);
             }
         }
         
-        // Sync contacts from Instantly.ai
         async function syncFromInstantly() {
             const syncBtn = document.getElementById('syncBtn');
             const originalText = syncBtn.innerHTML;
@@ -1306,7 +1277,6 @@ Notes: ${contact.notes || 'No notes'}`);
             }
         }
         
-        // Sync engagement data from Instantly.ai
         async function syncEngagement() {
             const engagementBtn = document.getElementById('engagementSyncBtn');
             const originalText = engagementBtn.innerHTML;
@@ -1378,7 +1348,6 @@ Notes: ${contact.notes || 'No notes'}`);
             a.click();
         }
         
-        // Utility functions
         function formatDate(dateStr) {
             if (!dateStr) return 'Never';
             const date = new Date(dateStr);
@@ -1406,12 +1375,10 @@ Notes: ${contact.notes || 'No notes'}`);
             return formatDate(dateStr);
         }
         
-        // Close modal on outside click
         document.getElementById('contactModal').addEventListener('click', function(e) {
             if (e.target === this) closeModal();
         });
         
-        // Initialize on page load
         window.addEventListener('DOMContentLoaded', function() {
             console.log('[Contacts] Growth Manager Pro - Initializing Contacts Page with Engagement Tracking...');
             loadContacts();
