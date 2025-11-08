@@ -894,9 +894,10 @@
 
                 <div class="nav-section">
                     <div class="nav-section-title">Account</div>
-                    <a href="login.html" class="nav-item">
-                        <span class="nav-icon">🚪</span>
-                        <span>Logout</span>
+                    <a href="login.html" class="nav-item" onclick="handleLogout(event)">
+                    <span class="nav-icon">🚪</span>
+                    <span>Logout</span>
+                    </a>
                     </a>
                 </div>
             </nav>
@@ -1127,8 +1128,11 @@ let filesData = [];
 // ============================================
 
 // Update profile indicator
-function updateProfileIndicator() {
-    const userData = localStorage.getItem('user');
+function handleLogout(event) {
+    event.preventDefault();
+    localStorage.removeItem('user');
+    window.location.href = 'login.html';
+}
     
     console.log('[Profile] Reading user data from localStorage');
     
