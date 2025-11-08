@@ -756,21 +756,6 @@
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="billingPostal">Billing Postal/ZIP Code <span class="required">*</span></label>
-                    <input 
-                        type="text" 
-                        id="billingPostal" 
-                        required 
-                        placeholder="12345 or M5V 3A8"
-                        pattern="[A-Za-z0-9\s\-]{3,10}"
-                        title="Enter your postal/ZIP code"
-                    />
-                    <div class="helper-text">
-                        Any format accepted (US, Canada, UK, etc.)
-                    </div>
-                </div>
-
           <div class="form-group">
                     <label>Card Details <span class="required">*</span></label>
                     <div id="card-element"></div>
@@ -793,21 +778,6 @@
         let stripe = null;
         let cardElement = null;
         
-        // Initialize Stripe
-        function initializeStripe() {
-            stripe = Stripe(STRIPE_PK);
-            const elements = stripe.elements();
-            cardElement = elements.create('card', {
-                style: {
-                    base: {
-                        fontSize: '16px',
-                        color: '#2c3e50',
-                        '::placeholder': {
-                            color: '#95a5a6',
-                        },
-                    },
-                },
-            });
             cardElement.mount('#card-element');
             
             cardElement.on('change', (event) => {
@@ -937,20 +907,16 @@
             submitBtn.disabled = true;
             submitBtn.textContent = 'Processing...';
             
-            try {
-                // Create payment method
-                const { error, paymentMethod } = await stripe.createPaymentMethod({
-                    type: 'card',
-                    card: cardElement,
-                    billing_details: {
-                        address: {
-                            postal_code: document.getElementById('billingPostal').value
-                        }
-                    }
-                });
-                
+        
+                try {
+            // Create payment method
+            const { error, paymentMethod } = await stripe.createPaymentMethod({
+                type: 'card',
+                card: cardElement,
+                });                
                 if (error) {
-                    throw new Error(error.message);
+
+                throw new Error(error.message);
                 }
                 
                 // Submit signup
