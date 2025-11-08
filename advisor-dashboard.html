@@ -1164,13 +1164,12 @@ function updateProfileIndicator() {
         
         console.log('[Profile] ✅ Profile updated successfully');
     } catch (error) {
-        console.error('[Profile] Error parsing user data:', error);
-      document.getElementById('userName').textContent = 'Error Loading';
-    } catch (error) {  // <- Missing this part!
-}    
-
-         
+       console.error('[Profile] Error parsing user data:', error);
+        document.getElementById('userName').textContent = 'Error Loading';
+    }
 }
+         
+
 // Load client list
 async function loadClientList() {
     try {
