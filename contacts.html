@@ -1255,7 +1255,10 @@ Notes: ${contact.notes || 'No notes'}`);
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ action: 'sync' })
+                    body: JSON.stringify({ 
+                        action: 'sync',
+                        tenant_id: TENANT_ID
+                    })
                 });
                 
                 const result = await response.json();
@@ -1293,7 +1296,10 @@ Notes: ${contact.notes || 'No notes'}`);
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ action: 'sync-engagement' })
+                    body: JSON.stringify({ 
+                        action: 'sync-engagement',
+                        tenant_id: TENANT_ID
+                    })
                 });
                 
                 const result = await response.json();
