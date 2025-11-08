@@ -1256,7 +1256,7 @@ async function loadAllData() {
 
 async function loadStats() {
     try {
-        const response = await fetch(`${API_URL}/api/sprints/stats`);
+        const response = await fetch(`${API_URL}/api/sprints?type=stats`);
         if (!response.ok) throw new Error('Failed to load stats');
         
         const result = await response.json();
@@ -1285,7 +1285,7 @@ async function loadStats() {
 
 async function loadTasks() {
     try {
-        const response = await fetch(`${API_URL}/api/sprints/tasks`);
+        const response = await fetch(`${API_URL}/api/sprints?type=tasks`);
         if (!response.ok) throw new Error('Failed to load tasks');
         
         const result = await response.json();
@@ -1366,7 +1366,7 @@ function renderTasksError() {
 
 async function loadBlockers() {
     try {
-        const response = await fetch(`${API_URL}/api/sprints/blockers`);
+        const response = await fetch(`${API_URL}/api/sprints?type=blockers`);
         if (!response.ok) throw new Error('Failed to load blockers');
         
         const result = await response.json();
