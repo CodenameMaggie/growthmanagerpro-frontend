@@ -1,4 +1,4 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -21,7 +21,6 @@
             overflow-x: hidden;
         }
         
-        /* Subtle animated background elements - matching login.html */
         body::before {
             content: '';
             position: absolute;
@@ -58,7 +57,6 @@
             z-index: 1;
         }
         
-        /* Header Section */
         .header-section {
             text-align: center;
             margin-bottom: 3rem;
@@ -122,7 +120,6 @@
             border: 1px solid rgba(255,255,255,0.3);
         }
         
-        /* Trust Badges */
         .trust-badges {
             display: flex;
             justify-content: center;
@@ -137,7 +134,6 @@
             font-weight: 500;
         }
         
-        /* Pricing Cards */
         .pricing-section {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -269,7 +265,6 @@
             background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
         }
         
-        /* Signup Form Container */
         .signup-container {
             background: white;
             padding: 3rem 2.5rem;
@@ -379,7 +374,6 @@
             color: #27ae60;
         }
         
-        /* Stripe Elements */
         #card-element {
             padding: 1rem;
             border: 2px solid #e1e5e9;
@@ -401,7 +395,6 @@
             min-height: 20px;
         }
         
-        /* Trial Info Box */
         .trial-info {
             background: linear-gradient(135deg, #e8f4f8 0%, #d6eaf8 100%);
             border: 2px solid #3498db;
@@ -424,7 +417,6 @@
             line-height: 1.5;
         }
         
-        /* Submit Button */
         .submit-btn {
             width: 100%;
             padding: 1.15rem;
@@ -451,7 +443,6 @@
             transform: none;
         }
         
-        /* Messages */
         .message {
             padding: 1rem;
             border-radius: 10px;
@@ -483,7 +474,6 @@
             75% { transform: translateX(8px); }
         }
         
-        /* Back Button */
         .back-btn {
             display: inline-flex;
             align-items: center;
@@ -500,7 +490,6 @@
             color: #2980b9;
         }
         
-        /* Footer */
         .footer {
             text-align: center;
             margin-top: 3rem;
@@ -514,7 +503,6 @@
             margin-bottom: 0.3rem;
         }
         
-        /* Responsive */
         @media (max-width: 768px) {
             .pricing-section {
                 grid-template-columns: 1fr;
@@ -536,7 +524,6 @@
 </head>
 <body>
     <div class="container">
-        <!-- Header Section -->
         <div class="header-section">
             <div class="logo-text">Growth Manager Pro</div>
             <div class="logo-subtitle">Growth Management System</div>
@@ -550,9 +537,7 @@
             </div>
         </div>
         
-        <!-- Pricing Cards -->
         <div class="pricing-section" id="pricing-section">
-            <!-- Foundations -->
             <div class="pricing-card" data-tier="foundations" data-price="297" onclick="selectTier('foundations', 297)">
                 <div class="tier-name">Foundations</div>
                 <div class="tier-description">Perfect for solo coaches launching their practice</div>
@@ -583,7 +568,6 @@
                 <button class="select-btn">Select Foundations</button>
             </div>
             
-            <!-- Growth -->
             <div class="pricing-card popular" data-tier="growth" data-price="597" onclick="selectTier('growth', 597)">
                 <div class="tier-name">Growth</div>
                 <div class="tier-description">Built for established practitioners scaling up</div>
@@ -614,7 +598,6 @@
                 <button class="select-btn">Select Growth</button>
             </div>
             
-            <!-- Scale -->
             <div class="pricing-card" data-tier="scale" data-price="997" onclick="selectTier('scale', 997)">
                 <div class="tier-name">Scale</div>
                 <div class="tier-description">For agencies managing 200+ clients</div>
@@ -645,7 +628,6 @@
                 <button class="select-btn">Select Scale</button>
             </div>
             
-            <!-- Enterprise -->
             <div class="pricing-card" data-tier="enterprise" data-price="2500" onclick="selectTier('enterprise', 2500)">
                 <div class="tier-name">Enterprise</div>
                 <div class="tier-description">White-glove service for established firms</div>
@@ -677,13 +659,11 @@
             </div>
         </div>
         
-        <!-- Footer -->
         <div class="footer">
             <p>© 2025 Growth Manager Pro. All rights reserved.</p>
         </div>
     </div>
     
-    <!-- Signup Form (Hidden Initially) -->
     <div class="signup-container" id="signup-container">
         <a href="#" class="back-btn" onclick="goBack(event)">
             ← Choose Different Plan
@@ -697,7 +677,6 @@
         <form id="signup-form">
             <div id="message" class="message"></div>
             
-            <!-- Business Info -->
             <div class="form-section">
                 <div class="section-title">🏢 Business Information</div>
                 
@@ -745,7 +724,6 @@
                 </div>
             </div>
             
-            <!-- Payment Info -->
             <div class="form-section">
                 <div class="section-title">💳 Payment Information</div>
                 
@@ -755,9 +733,12 @@
                         Your card will not be charged today. Your trial starts immediately and you can cancel anytime during the 14-day period with no charge.
                     </div>
                 </div>
-
-          <div class="form-group">
+                
+                <div class="form-group">
                     <label>Card Details <span class="required">*</span></label>
+                    <div class="helper-text" style="margin-bottom: 0.5rem;">
+                        💡 For testing: Card 4242 4242 4242 4242, any future date, CVC 123, ZIP 12345
+                    </div>
                     <div id="card-element"></div>
                     <div id="card-errors"></div>
                 </div>
@@ -778,6 +759,21 @@
         let stripe = null;
         let cardElement = null;
         
+        // Initialize Stripe
+        function initializeStripe() {
+            stripe = Stripe(STRIPE_PK);
+            const elements = stripe.elements();
+            cardElement = elements.create('card', {
+                style: {
+                    base: {
+                        fontSize: '16px',
+                        color: '#2c3e50',
+                        '::placeholder': {
+                            color: '#95a5a6',
+                        },
+                    },
+                },
+            });
             cardElement.mount('#card-element');
             
             cardElement.on('change', (event) => {
@@ -815,32 +811,10 @@
             document.querySelector('.container').style.display = 'none';
             document.getElementById('signup-container').classList.add('active');
             
-           // Initialize Stripe
-            function initializeStripe() {
-                stripe = Stripe(STRIPE_PK);
-                const elements = stripe.elements();
-                cardElement = elements.create('card', {
-                    style: {
-                        base: {
-                            fontSize: '16px',
-                            color: '#2c3e50',
-                            '::placeholder': {
-                                color: '#95a5a6',
-                            },
-                        },
-                    },
-                });
-                cardElement.mount('#card-element');
-    
-                cardElement.on('change', (event) => {
-        const displayError = document.getElementById('card-errors');
-        if (event.error) {
-            displayError.textContent = error.message;
-        } else {
-            displayError.textContent = '';
-        }
-    });
-}
+            // Initialize Stripe
+            if (!stripe) {
+                initializeStripe();
+            }
             
             // Scroll to top
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -929,16 +903,15 @@
             submitBtn.disabled = true;
             submitBtn.textContent = 'Processing...';
             
-        
-                try {
-            // Create payment method
-            const { error, paymentMethod } = await stripe.createPaymentMethod({
-                type: 'card',
-                card: cardElement,
-                });                
+            try {
+                // Create payment method
+                const { error, paymentMethod } = await stripe.createPaymentMethod({
+                    type: 'card',
+                    card: cardElement,
+                });
+                
                 if (error) {
-
-                throw new Error(error.message);
+                    throw new Error(error.message);
                 }
                 
                 // Submit signup
