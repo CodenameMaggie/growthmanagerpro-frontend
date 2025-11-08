@@ -93,7 +93,7 @@ const AuthHelper = {
     // Map pages to required permissions
     const pagePermissions = {
       'dashboard.html': 'dashboard.view',
-      'advisor-dashboard.html': 'dashboard.view',
+      advisor: ['advisor-dashboard.view'],  // ← From login.js
       'contacts.html': 'contacts.view',
       'podcast-calls.html': 'calls.view',
       'podcast-interviews.html': 'calls.view',
