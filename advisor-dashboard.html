@@ -1168,9 +1168,9 @@ function updateProfileIndicator() {
         document.getElementById('userName').textContent = 'Error Loading';
     }
 }
-         
 
-// Load client list
+
+        // Load client list
 async function loadClientList() {
     try {
         const response = await fetch(`${API_BASE}/api/advisor/clients`);
