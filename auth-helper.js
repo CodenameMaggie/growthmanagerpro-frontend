@@ -1,10 +1,18 @@
-// auth-helper.js - Enhanced authentication helper with Supabase session support
-// This integrates with your permissions.js system AND Supabase Auth
+// auth-helper.js - Enhanced authentication helper with tenant context
+// This integrates authentication, permissions, AND multi-tenant support
 
 const AuthHelper = {
-  // Initialize Supabase client (call this once at app startup)
+  // Supabase client
   supabaseClient: null,
+  
+  // Tenant context
+  tenantId: null,
+  subdomain: null,
+  tenantName: null,
+  subscriptionStatus: null,
+  tenantLoaded: false,
 
+  // Initialize Supabase client
   initSupabase: function(supabaseUrl, supabaseAnonKey) {
     if (typeof supabase !== 'undefined') {
       this.supabaseClient = supabase.createClient(supabaseUrl, supabaseAnonKey);
@@ -22,7 +30,122 @@ const AuthHelper = {
     }
   },
 
-  // Get current user from localStorage (backward compatible)
+  // ==================== TENANT CONTEXT ====================
+  
+  // Initialize tenant context from URL subdomain
+  initTenant: async function() {
+    if (this.tenantLoaded) return this;
+
+    const hostname = window.location.hostname;
+    const subdomain = hostname.split('.')[0];
+    
+    // Check if we're on a subdomain
+    const isSubdomain = hostname.includes('.growthmanagerpro.com') && 
+                        subdomain !== 'www' && 
+                        subdomain !== 'growthmanagerpro';
+    
+    if (!isSubdomain) {
+      console.log('[Auth] Not on a tenant subdomain');
+      this.tenantLoaded = true;
+      return this;
+    }
+
+    this.subdomain = subdomain;
+    console.log('[Auth] Detected tenant subdomain:', subdomain);
+
+    // Try to get tenant info from localStorage first (fast)
+    const cachedTenantId = localStorage.getItem('tenantId');
+    const cachedSubdomain = localStorage.getItem('subdomain');
+    
+    if (cachedTenantId && cachedSubdomain === subdomain) {
+      this.tenantId = cachedTenantId;
+      this.tenantName = localStorage.getItem('tenantName');
+      this.subscriptionStatus = localStorage.getItem('subscriptionStatus');
+      console.log('[Auth] Loaded tenant from cache:', this.tenantId);
+      this.tenantLoaded = true;
+      return this;
+    }
+
+    // Otherwise fetch from API
+    try {
+      const response = await fetch(`https://growthmanagerpro-backend.vercel.app/api/get-tenant?subdomain=${subdomain}`);
+      const data = await response.json();
+      
+      if (data.success) {
+        this.tenantId = data.tenant.id;
+        this.tenantName = data.tenant.business_name;
+        this.subscriptionStatus = data.tenant.subscription_status;
+        
+        // Cache in localStorage
+        localStorage.setItem('tenantId', this.tenantId);
+        localStorage.setItem('tenantName', this.tenantName);
+        localStorage.setItem('subdomain', this.subdomain);
+        localStorage.setItem('subscriptionStatus', this.subscriptionStatus);
+        
+        console.log('[Auth] Loaded tenant from API:', this.tenantName);
+      } else {
+        console.error('[Auth] Failed to load tenant:', data.error);
+        // Redirect to signup if tenant doesn't exist
+        if (data.error === 'Tenant not found') {
+          window.location.href = 'https://growthmanagerpro.com/signup-saas.html';
+          return;
+        }
+      }
+    } catch (error) {
+      console.error('[Auth] Error loading tenant:', error);
+    }
+
+    this.tenantLoaded = true;
+    return this;
+  },
+
+  // Get tenant ID (used for filtering API calls)
+  getTenantId: function() {
+    return this.tenantId || localStorage.getItem('tenantId');
+  },
+
+  // Get subdomain
+  getSubdomain: function() {
+    return this.subdomain || localStorage.getItem('subdomain');
+  },
+
+  // Get tenant name
+  getTenantName: function() {
+    return this.tenantName || localStorage.getItem('tenantName');
+  },
+
+  // Check if on subdomain
+  isOnSubdomain: function() {
+    const hostname = window.location.hostname;
+    const subdomain = hostname.split('.')[0];
+    return hostname.includes('.growthmanagerpro.com') && 
+           subdomain !== 'www' && 
+           subdomain !== 'growthmanagerpro';
+  },
+
+  // Add tenant_id to API requests automatically
+  addTenantToRequest: function(url, options = {}) {
+    const tenantId = this.getTenantId();
+    
+    if (!tenantId) {
+      console.warn('[Auth] No tenant ID available for request');
+      return { url, options };
+    }
+
+    // Add tenant_id to URL params
+    const urlObj = new URL(url, window.location.origin);
+    urlObj.searchParams.set('tenant_id', tenantId);
+
+    // Add to headers as well
+    options.headers = options.headers || {};
+    options.headers['X-Tenant-ID'] = tenantId;
+
+    return { url: urlObj.toString(), options };
+  },
+
+  // ==================== AUTHENTICATION ====================
+
+  // Get current user from localStorage
   getCurrentUser: function() {
     const userData = localStorage.getItem('user');
     if (!userData) return null;
@@ -53,7 +176,7 @@ const AuthHelper = {
     }
   },
 
-  // Check if user is logged in (checks both localStorage and Supabase)
+  // Check if user is logged in
   isLoggedIn: function() {
     return this.getCurrentUser() !== null;
   },
@@ -61,7 +184,13 @@ const AuthHelper = {
   // Require authentication - redirect to login if not logged in
   requireAuth: function() {
     if (!this.isLoggedIn()) {
-      window.location.href = '/login.html';
+      // Preserve subdomain when redirecting to login
+      if (this.isOnSubdomain()) {
+        const subdomain = this.getSubdomain();
+        window.location.href = `https://${subdomain}.growthmanagerpro.com/login.html`;
+      } else {
+        window.location.href = '/login.html';
+      }
       return false;
     }
     return true;
@@ -93,7 +222,7 @@ const AuthHelper = {
     // Map pages to required permissions
     const pagePermissions = {
       'dashboard.html': 'dashboard.view',
-      advisor: ['advisor-dashboard.view'],  // ← From login.js
+      'advisor-dashboard.html': 'advisor-dashboard.view',
       'contacts.html': 'contacts.view',
       'podcast-calls.html': 'calls.view',
       'podcast-interviews.html': 'calls.view',
@@ -122,10 +251,16 @@ const AuthHelper = {
   },
 
   // Protect a page - call this at the start of page load
-  protectPage: function(pageName) {
+  protectPage: async function(pageName) {
     console.log('[Auth] Protecting page:', pageName);
     
-    // First check if logged in
+    // First initialize tenant context if on subdomain
+    if (this.isOnSubdomain()) {
+      await this.initTenant();
+      console.log('[Auth] Tenant context loaded:', this.getTenantName());
+    }
+    
+    // Then check if logged in
     if (!this.requireAuth()) {
       console.log('[Auth] Not logged in, redirecting to login');
       return false;
@@ -134,7 +269,20 @@ const AuthHelper = {
     const user = this.getCurrentUser();
     console.log('[Auth] Current user:', user.email, 'Role:', user.role);
     
-    // Then check if user can access this specific page
+    // Verify user belongs to this tenant (if on subdomain)
+    if (this.isOnSubdomain()) {
+      const userTenantId = user.tenant_id;
+      const currentTenantId = this.getTenantId();
+      
+      if (userTenantId && currentTenantId && userTenantId !== currentTenantId) {
+        console.log('[Auth] User does not belong to this tenant');
+        alert('You do not have access to this organization.');
+        this.logout();
+        return false;
+      }
+    }
+    
+    // Check if user can access this specific page
     if (!this.canAccessPage(pageName)) {
       console.log('[Auth] User does not have permission for:', pageName);
       alert('You do not have permission to access this page.');
@@ -142,6 +290,8 @@ const AuthHelper = {
       // Redirect based on user type
       if (user.type === 'client') {
         window.location.href = '/client-portal.html';
+      } else if (user.role === 'advisor') {
+        window.location.href = '/advisor-dashboard.html';
       } else {
         window.location.href = '/dashboard.html';
       }
@@ -152,7 +302,7 @@ const AuthHelper = {
     return true;
   },
 
-  // Logout user (clears both localStorage and Supabase session)
+  // Logout user
   logout: async function() {
     // Sign out from Supabase
     if (this.supabaseClient) {
@@ -163,12 +313,22 @@ const AuthHelper = {
       }
     }
     
-    // Clear local storage
+    // Clear all storage
     localStorage.removeItem('user');
+    localStorage.removeItem('token');
     localStorage.removeItem('supabase_session');
+    localStorage.removeItem('tenantId');
+    localStorage.removeItem('tenantName');
+    localStorage.removeItem('subdomain');
+    localStorage.removeItem('subscriptionStatus');
     
-    // Redirect to login
-    window.location.href = '/login.html';
+    // Redirect to login (preserve subdomain if applicable)
+    if (this.isOnSubdomain()) {
+      const subdomain = this.getSubdomain();
+      window.location.href = `https://${subdomain}.growthmanagerpro.com/login.html`;
+    } else {
+      window.location.href = '/login.html';
+    }
   },
 
   // Get user's role
@@ -222,48 +382,68 @@ const AuthHelper = {
   // Get authenticated Supabase client for API calls
   getAuthenticatedClient: function() {
     return this.supabaseClient;
+  },
+
+  // Display tenant info in UI (helper for dashboards)
+  displayTenantInfo: function(elementId) {
+    const element = document.getElementById(elementId);
+    if (!element) return;
+    
+    if (this.isOnSubdomain()) {
+      const tenantName = this.getTenantName();
+      const subscriptionStatus = this.subscriptionStatus || localStorage.getItem('subscriptionStatus');
+      
+      element.innerHTML = `
+        <div style="padding: 0.5rem 1rem; background: #f8f9fa; border-radius: 8px; font-size: 0.9rem;">
+          <strong>${tenantName || 'Loading...'}</strong>
+          ${subscriptionStatus ? `<span style="margin-left: 0.5rem; color: #7f8c8d;">(${subscriptionStatus})</span>` : ''}
+        </div>
+      `;
+    }
   }
 };
+
+// Auto-initialize tenant context on page load
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    AuthHelper.initTenant();
+  });
+} else {
+  AuthHelper.initTenant();
+}
 
 // Example usage in your HTML pages:
 /*
 
-<!-- Load Supabase client first (if you want to use Supabase features) -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<!-- Then load auth-helper -->
+<!-- Load auth-helper -->
 <script src="auth-helper.js"></script>
 
 <script>
-  // Initialize Supabase (optional, for enhanced features)
-  AuthHelper.initSupabase('YOUR_SUPABASE_URL', 'YOUR_SUPABASE_ANON_KEY');
+  // Protect this page - automatically handles both auth AND tenant context
+  AuthHelper.protectPage('dashboard.html').then(granted => {
+    if (granted) {
+      // Page access granted, load page content
+      loadDashboard();
+      
+      // Apply permissions to UI elements
+      AuthHelper.applyPermissions();
+      
+      // Display tenant info (optional, for SaaS tenants)
+      AuthHelper.displayTenantInfo('tenant-info-container');
+    }
+  });
   
-  // Protect this page - only allow users with proper permissions
-  
-  // Apply permissions to UI elements
-  AuthHelper.applyPermissions();
-  
-  // Get current user info
-  const currentUser = AuthHelper.getCurrentUser();
-  console.log('Current user:', currentUser.name, 'Role:', currentUser.role);
+  // When making API calls, include tenant context
+  async function loadContacts() {
+    const { url, options } = AuthHelper.addTenantToRequest(
+      'https://growthmanagerpro-backend.vercel.app/api/contacts',
+      { method: 'GET' }
+    );
+    
+    const response = await fetch(url, options);
+    const data = await response.json();
+    // ... handle data
+  }
 </script>
-
-<!-- In your HTML, mark elements that need permission checks: -->
-
-<!-- This button only shows if user has 'contacts.create' permission -->
-<button data-requires-permission="contacts.create" onclick="createContact()">
-  New Contact
-</button>
-
-<!-- This section only shows to admins -->
-<div data-admin-only>
-  <h3>Admin Settings</h3>
-  <p>Only administrators can see this</p>
-</div>
-
-<!-- This is hidden from clients -->
-<nav data-hide-from-client>
-  <a href="/user-management.html">User Management</a>
-</nav>
 
 */
