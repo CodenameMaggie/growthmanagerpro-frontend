@@ -548,6 +548,7 @@
 
   <script>
     const API_BASE = 'https://growthmanagerpro-backend.vercel.app';
+    const TENANT_ID = '92f6c0d3-252c-4471-a9d0-e8af9ad82834';
     
     let allCalls = [];
     let filteredCalls = [];
@@ -556,6 +557,7 @@
     window.addEventListener('DOMContentLoaded', () => {
         console.log('[Pre-Qual Calls] Initializing...');
         console.log('[Pre-Qual Calls] API Base:', API_BASE);
+        console.log('[Pre-Qual Calls] Tenant ID:', TENANT_ID);
         loadCalls();
         
         // Auto-refresh every 5 minutes
@@ -565,9 +567,9 @@
     async function loadCalls() {
         try {
             updateConnectionStatus('connecting');
-            console.log('[Pre-Qual Calls] Fetching from:', `${API_BASE}/api/pre-qualification-calls`);
+            console.log('[Pre-Qual Calls] Fetching from:', `${API_BASE}/api/pre-qualification-calls?tenant_id=${TENANT_ID}`);
             
-            const response = await fetch(`${API_BASE}/api/pre-qualification-calls`);
+            const response = await fetch(`${API_BASE}/api/pre-qualification-calls?tenant_id=${TENANT_ID}`);
             
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
