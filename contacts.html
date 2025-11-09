@@ -885,7 +885,7 @@
             updateConnectionStatus('loading');
             
             try {
-                const response = await fetch(`${API_BASE}/api/prospects?currentTenantId=${currentTenantId}`);
+                const response = await fetch(`${API_BASE}/api/prospects?tenant_id=${currentTenantId}`);
                 
                 if (!response.ok) {
                     throw new Error(`API returned ${response.status}: ${response.statusText}`);
@@ -1195,7 +1195,7 @@ Notes: ${contact.notes || 'No notes'}`);
             if (!confirm('Are you sure you want to delete this contact?')) return;
             
             try {
-                const response = await fetch(`${API_BASE}/api/prospects/${id}?currentTenantId=${currentTenantId}`, {
+                const response = await fetch(`${API_BASE}/api/prospects?tenant_id=${currentTenantId}`, {
                     method: 'DELETE'
                 });
                 
@@ -1226,8 +1226,8 @@ Notes: ${contact.notes || 'No notes'}`);
             
             try {
                 const url = editingContactId 
-                    ? `${API_BASE}/api/prospects/${editingContactId}?currentTenantId=${currentTenantId}`
-                    : `${API_BASE}/api/prospects?currentTenantId=${currentTenantId}`;
+                    ? `${API_BASE}/api/prospects/${editingContactId}?tenant_id=${currentTenantId}`
+                    : `${API_BASE}/api/prospects?tenant_id=${currentTenantId}`;
                 
                 const method = editingContactId ? 'PUT' : 'POST';
                 
