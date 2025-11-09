@@ -634,7 +634,7 @@
             updateConnectionStatus('connecting');
             console.log('[Podcast Calls] Fetching from:', `${API_BASE}/api/podcast-interviews?tenant_id=${TENANT_ID}`);
             
-            const response = await fetch(`${API_BASE}/api/podcast-interviews?tenant_id=${TENANT_ID}`);
+            cconst response = await fetch(`${API_BASE}/api/podcast-interviews?tenant_id=${currentTenantId}`);
             
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
