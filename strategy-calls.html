@@ -627,7 +627,7 @@
         <span class="nav-icon">🔍</span>
         <span>Discovery Calls</span>
     </a>
-    <a href="strategy-calls.html" class="nav-item">
+    <a href="strategy-calls.html" class="nav-item active">
         <span class="nav-icon">💼</span>
         <span>Strategy Calls</span>
     </a>
@@ -769,14 +769,29 @@
         </div>
     </div>
 
+    <script src="auth-helper.js"></script>
     <script>
         const API_BASE = 'https://growthmanagerpro-backend.vercel.app';
         let callsData = [];
+        let currentTenantId = null;
 
         // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             console.log('[Strategy Calls] Initializing...');
             console.log('[Strategy Calls] API Base:', API_BASE);
+            
+            // Get tenant_id from auth
+            currentTenantId = getTenantId();
+            
+            if (!currentTenantId) {
+                console.error('[Strategy Calls] No tenant ID found');
+                alert('Session expired. Please log in again.');
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            console.log('[Strategy Calls] Tenant ID:', currentTenantId);
+            
             loadCalls();
             
             // Auto-refresh every 5 minutes
@@ -795,7 +810,7 @@
             try {
                 updateConnectionStatus('connecting');
                 
-                const response = await fetch(`${API_BASE}/api/strategy-calls`);
+                const response = await fetch(`${API_BASE}/api/strategy-calls?tenant_id=${currentTenantId}`);
                 
                 if (!response.ok) {
                     throw new Error(`HTTP ${response.status}`);
@@ -1067,9 +1082,12 @@
             }
 
             try {
-                const response = await fetch(`${API_BASE}/api/strategy-calls`, {
+                const response = await fetch(`${API_BASE}/api/strategy-calls?tenant_id=${currentTenantId}`, {
                     method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'X-Tenant-ID': currentTenantId
+                    },
                     body: JSON.stringify({
                         id: callId,
                         call_status: 'won'
