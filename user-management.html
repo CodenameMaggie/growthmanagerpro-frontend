@@ -968,50 +968,38 @@
     
     const API_URL = 'https://growthmanagerpro-backend.vercel.app';
     let usersData = [];
+    let currentTenantId = null;
 
-    // Sample data for demonstration (will be replaced with API data)
-    const sampleUsers = [
-        {
-            id: 1,
-            name: 'Maggie Forbes',
-            email: 'maggie@growthmanagerpro.com',
-            role: 'admin',
-            status: 'active',
-            joined: '2024-01-15',
-            last_active: new Date().toISOString()
-        },
-        {
-            id: 2,
-            name: 'John Advisor',
-            email: 'advisor@example.com',
-            role: 'advisor',
-            status: 'active',
-            joined: '2024-02-01',
-            last_active: '2025-01-20'
-        },
-        {
-            id: 3,
-            name: 'Jonathan Brewer',
-            email: 'jonathan@brewerco.com',
-            role: 'client',
-            status: 'active',
-            joined: '2024-08-15',
-            last_active: '2025-01-19'
-        },
-        {
-            id: 4,
-            name: 'Tye Shumway',
-            email: 'tye@twsconstruction.com',
-            role: 'client',
-            status: 'active',
-            joined: '2024-09-01',
-            last_active: '2025-01-18'
+    // Helper function to get tenant_id from session
+    function getTenantId() {
+        const userSession = sessionStorage.getItem('userSession');
+        if (!userSession) return null;
+        
+        try {
+            const session = JSON.parse(userSession);
+            return session.tenant_id || null;
+        } catch (error) {
+            console.error('[User Management] Error parsing user session:', error);
+            return null;
         }
-    ];
+    }
 
     // Initialize
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
         console.log('[User Management] Initializing...');
+        
+        // Get tenant_id from auth
+        currentTenantId = getTenantId();
+        
+        if (!currentTenantId) {
+            console.error('[User Management] No tenant ID found');
+            alert('Session expired. Please log in again.');
+            window.location.href = 'login.html';
+            return;
+        }
+        
+        console.log('[User Management] Tenant ID:', currentTenantId);
+        
         loadUsers();
     });
 
@@ -1019,16 +1007,19 @@
         try {
             updateConnectionStatus('connecting');
             
-            // Try to load from API
-            const response = await fetch(`${API_URL}/api/users`);
+            // Load from API with tenant_id
+            const response = await fetch(`${API_URL}/api/users?tenant_id=${currentTenantId}`);
             
             if (!response.ok) {
-                // Use sample data if API not ready
-                console.log('[User Management] Using sample data');
-                usersData = sampleUsers;
+                throw new Error(`HTTP ${response.status}`);
+            }
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                usersData = result.users || [];
             } else {
-                const result = await response.json();
-                usersData = result.users || sampleUsers;
+                throw new Error('Invalid response format');
             }
             
             updateStats();
@@ -1037,11 +1028,11 @@
             console.log('[User Management] ✅ Loaded', usersData.length, 'users');
             
         } catch (error) {
-            console.log('[User Management] Using sample data:', error);
-            usersData = sampleUsers;
+            console.error('[User Management] ❌ Error loading users:', error);
+            updateConnectionStatus('error', error.message);
+            usersData = [];
             updateStats();
             renderUsersTable();
-            updateConnectionStatus('connected');
         }
     }
 
@@ -1084,7 +1075,12 @@
             }[user.role] || user.role;
             
             const statusClass = `status-${user.status}`;
-            const initials = user.name.split(' ').map(n => n[0]).join('').toUpperCase();
+            const initials = (user.full_name || user.name || user.email || '??')
+                .split(' ')
+                .map(n => n[0])
+                .join('')
+                .toUpperCase()
+                .substring(0, 2);
             
             return `
                 <tr>
@@ -1092,15 +1088,15 @@
                         <div class="user-info">
                             <div class="user-avatar">${initials}</div>
                             <div class="user-details">
-                                <h4>${user.name}</h4>
+                                <h4>${user.full_name || user.name || 'Unknown'}</h4>
                                 <p>${user.email}</p>
                             </div>
                         </div>
                     </td>
                     <td><span class="role-badge ${roleClass}">${roleName}</span></td>
-                    <td><span class="status-badge ${statusClass}">${user.status}</span></td>
-                    <td>${formatDate(user.joined)}</td>
-                    <td>${formatRelativeTime(user.last_active)}</td>
+                    <td><span class="status-badge ${statusClass}">${user.status || 'active'}</span></td>
+                    <td>${formatDate(user.created_at || user.joined)}</td>
+                    <td>${formatRelativeTime(user.last_active || user.created_at)}</td>
                     <td>
                         <button class="btn btn-small btn-secondary" onclick="editUser('${user.id}')">
                             ✏️ Edit
@@ -1118,6 +1114,7 @@
         // Open modal
         document.getElementById('inviteModal').classList.add('show');
         document.getElementById('inviteEmail').value = '';
+        document.getElementById('inviteName').value = '';
         selectedRole = null;
         // Remove selected class from all options
         document.querySelectorAll('.role-option').forEach(opt => {
@@ -1140,7 +1137,13 @@
 
     async function sendInvitation() {
         const email = document.getElementById('inviteEmail').value.trim();
+        const name = document.getElementById('inviteName').value.trim();
         const btn = document.getElementById('sendInviteBtn');
+        
+        if (!name) {
+            alert('Please enter a name');
+            return;
+        }
         
         if (!email) {
             alert('Please enter an email address');
@@ -1157,13 +1160,15 @@
         btn.textContent = '⏳ Sending...';
 
         try {
-            const response = await fetch(`${API_URL}/api/invitations`, {
+            const response = await fetch(`${API_URL}/api/invitations?tenant_id=${currentTenantId}`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'X-Tenant-ID': currentTenantId
                 },
                 body: JSON.stringify({
                     email: email,
+                    full_name: name,
                     role: selectedRole
                 })
             });
@@ -1181,7 +1186,6 @@
             closeInviteModal();
 
             // Show success modal with link
-            const signupLink = result.invitation.signupLink;
             const roleNames = {
                 'admin': '👑 Admin',
                 'advisor': '🎯 Advisor',
@@ -1200,6 +1204,7 @@
                     <div class="modal-body">
                         <div style="background: #d1fae5; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #10b981;">
                             <div style="margin-bottom: 0.5rem;">
+                                <strong>👤 Name:</strong> ${name}<br>
                                 <strong>📧 Email:</strong> ${email}<br>
                                 <strong>👤 Role:</strong> ${roleNames[selectedRole]}
                             </div>
@@ -1223,7 +1228,7 @@
             btn.textContent = 'Send Invitation';
 
         } catch (error) {
-            console.error('Error creating invitation:', error);
+            console.error('[User Management] Error creating invitation:', error);
             alert('❌ Failed to create invitation. Please try again.');
             btn.disabled = false;
             btn.textContent = 'Send Invitation';
@@ -1238,8 +1243,43 @@
     });
 
     function exportUsers() {
-        alert('📋 Exporting users list...\n\nThis will download a CSV file with all user data.');
-        console.log('Exporting users:', usersData);
+        // Create CSV content
+        const csvRows = [];
+        
+        // Header
+        csvRows.push(['Name', 'Email', 'Role', 'Status', 'Joined Date', 'Last Active'].join(','));
+        
+        // Data rows
+        usersData.forEach(user => {
+            const row = [
+                user.full_name || user.name || '',
+                user.email || '',
+                user.role || '',
+                user.status || 'active',
+                formatDate(user.created_at || user.joined),
+                formatDate(user.last_active || user.created_at)
+            ];
+            csvRows.push(row.join(','));
+        });
+        
+        // Create blob and download
+        const csvContent = csvRows.join('\n');
+        const blob = new Blob([csvContent], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `users-export-${new Date().toISOString().split('T')[0]}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        
+        console.log('[User Management] ✅ Exported', usersData.length, 'users to CSV');
+    }
+
+    function editUser(userId) {
+        alert('Edit user functionality coming soon!\n\nUser ID: ' + userId);
+        console.log('[User Management] Edit user:', userId);
     }
 
     function updateConnectionStatus(status, message = '') {
@@ -1260,7 +1300,7 @@
     }
 
     function formatDate(dateString) {
-        if (!dateString) return '';
+        if (!dateString) return 'N/A';
         const date = new Date(dateString);
         return date.toLocaleDateString('en-US', { 
             month: 'short', 
@@ -1270,7 +1310,7 @@
     }
 
     function formatRelativeTime(dateString) {
-        if (!dateString) return '';
+        if (!dateString) return 'Never';
         const date = new Date(dateString);
         const now = new Date();
         const diff = now - date;
