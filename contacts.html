@@ -826,7 +826,7 @@
         
         // Live API Configuration
         const API_BASE = 'https://growthmanagerpro-backend.vercel.app';
-        const TENANT_ID = '92f6c0d3-252c-4471-a9d0-e8af9ad82834';
+        let currentTenantId = null;
         
         // Global state
         let contactsData = [];
@@ -868,11 +868,24 @@
         }
         
         async function loadContacts() {
+            // Initialize tenant context if not already done
+            if (!currentTenantId) {
+                await AuthHelper.initTenant();
+                currentTenantId = AuthHelper.getTenantId();
+                
+                if (!currentTenantId) {
+                    console.error('[Contacts] No tenant ID found');
+                    alert('Session error. Please refresh the page.');
+                    return;
+                }
+            }
+            
             console.log('[Contacts] Loading REAL data from Supabase API...');
+            console.log('[Contacts] Tenant ID:', currentTenantId);
             updateConnectionStatus('loading');
             
             try {
-                const response = await fetch(`${API_BASE}/api/prospects?tenant_id=${TENANT_ID}`);
+                const response = await fetch(`${API_BASE}/api/prospects?currentTenantId=${currentTenantId}`);
                 
                 if (!response.ok) {
                     throw new Error(`API returned ${response.status}: ${response.statusText}`);
@@ -1182,7 +1195,7 @@ Notes: ${contact.notes || 'No notes'}`);
             if (!confirm('Are you sure you want to delete this contact?')) return;
             
             try {
-                const response = await fetch(`${API_BASE}/api/prospects/${id}?tenant_id=${TENANT_ID}`, {
+                const response = await fetch(`${API_BASE}/api/prospects/${id}?currentTenantId=${currentTenantId}`, {
                     method: 'DELETE'
                 });
                 
@@ -1213,8 +1226,8 @@ Notes: ${contact.notes || 'No notes'}`);
             
             try {
                 const url = editingContactId 
-                    ? `${API_BASE}/api/prospects/${editingContactId}?tenant_id=${TENANT_ID}`
-                    : `${API_BASE}/api/prospects?tenant_id=${TENANT_ID}`;
+                    ? `${API_BASE}/api/prospects/${editingContactId}?currentTenantId=${currentTenantId}`
+                    : `${API_BASE}/api/prospects?currentTenantId=${currentTenantId}`;
                 
                 const method = editingContactId ? 'PUT' : 'POST';
                 
@@ -1257,7 +1270,7 @@ Notes: ${contact.notes || 'No notes'}`);
                     },
                     body: JSON.stringify({ 
                         action: 'sync',
-                        tenant_id: TENANT_ID
+                        currentTenantId: currentTenantId
                     })
                 });
                 
@@ -1298,7 +1311,7 @@ Notes: ${contact.notes || 'No notes'}`);
                     },
                     body: JSON.stringify({ 
                         action: 'sync-engagement',
-                        tenant_id: TENANT_ID
+                        currentTenantId: currentTenantId
                     })
                 });
                 
