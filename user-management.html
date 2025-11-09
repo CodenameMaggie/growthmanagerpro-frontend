@@ -1145,7 +1145,7 @@
         btn.textContent = '⏳ Sending...';
 
         try {
-            const response = await fetch(`${API_URL}/api/invitations?tenant_id=${currentTenantId}`, {
+            const url = `${API_BASE}/api/invitations?tenant_id=${currentTenantId}`;
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
