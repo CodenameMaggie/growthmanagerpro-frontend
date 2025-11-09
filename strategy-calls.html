@@ -776,17 +776,18 @@
         let currentTenantId = null;
 
         // Initialize
+        // Initialize
         document.addEventListener('DOMContentLoaded', async () => {
             console.log('[Strategy Calls] Initializing...');
             console.log('[Strategy Calls] API Base:', API_BASE);
             
-            // Get tenant_id from auth
-            currentTenantId = getTenantId();
+            // Initialize tenant context
+            await AuthHelper.initTenant();
+            currentTenantId = AuthHelper.getTenantId();
             
             if (!currentTenantId) {
                 console.error('[Strategy Calls] No tenant ID found');
-                alert('Session expired. Please log in again.');
-                window.location.href = 'login.html';
+                alert('Session error. Please refresh the page.');
                 return;
             }
             
