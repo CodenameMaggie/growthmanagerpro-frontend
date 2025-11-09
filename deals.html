@@ -621,7 +621,7 @@
                 console.log('[Deals] Tenant ID:', currentTenantId);
                 
                 // Fetch from your backend with currentTenantId
-                const response = await fetch(`${API_BASE}/api/deals?currentTenantId=${currentTenantId}`);enant_id parameter
+const response = await fetch(`${API_BASE}/api/deals?tenant_id=${currentTenantId}`);
                 if (!response.ok) throw new Error('Failed to load deals');
                 
                 const result = await response.json();
