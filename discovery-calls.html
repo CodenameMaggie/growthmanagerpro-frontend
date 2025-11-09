@@ -585,7 +585,7 @@
             <!-- Page Header -->
             <div class="page-header">
                 <h2>🔍 Discovery Calls</h2>
-                <p>AI-powered tier qualification and systems recommendation</p>
+                <p>AI-powered SaaS tier qualification and recommendation</p>
                 <div class="header-actions">
                     <button class="btn btn-primary" onclick="scheduleCall()">+ Book Strategy Call</button>
                     <button class="btn btn-secondary" onclick="refreshData()">🔄 Refresh</button>
@@ -600,21 +600,27 @@
                 </div>
 
                 <div class="stat-card">
-                    <div class="stat-label">Architecture Tier</div>
-                    <div class="stat-value" style="color: #9b59b6;" id="architecture-count">0</div>
-                    <div class="stat-change">$150K+ Annual</div>
-                </div>
-
-                <div class="stat-card">
                     <div class="stat-label">Foundations Tier</div>
                     <div class="stat-value" style="color: #3498db;" id="foundations-count">0</div>
-                    <div class="stat-change">$25K-75K Projects</div>
+                    <div class="stat-change">$297/mo - 25 clients</div>
                 </div>
 
                 <div class="stat-card">
-                    <div class="stat-label">Alliance Tier</div>
-                    <div class="stat-value" style="color: #e67e22;" id="alliance-count">0</div>
-                    <div class="stat-change">Premium Partnerships</div>
+                    <div class="stat-label">Growth Tier</div>
+                    <div class="stat-value" style="color: #27ae60;" id="growth-count">0</div>
+                    <div class="stat-change">$597/mo - 50 clients</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-label">Scale Tier</div>
+                    <div class="stat-value" style="color: #9b59b6;" id="scale-count">0</div>
+                    <div class="stat-change">$997/mo - 200 clients</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-label">Enterprise Tier</div>
+                    <div class="stat-value" style="color: #e67e22;" id="enterprise-count">0</div>
+                    <div class="stat-change">$2,500/mo - Unlimited</div>
                 </div>
 
                 <div class="stat-card">
@@ -636,7 +642,7 @@
                                 <th>Contact</th>
                                 <th>Company</th>
                                 <th>Date</th>
-                                <th>Recommended Tier</th>
+                                <th>Recommended SaaS Tier</th>
                                 <th>Status</th>
                                 <th>Priority Systems</th>
                                 <th>Actions</th>
@@ -666,7 +672,7 @@
     <div class="modal" id="analysis-modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>AI Tier & Systems Recommendation</h3>
+                <h3>AI SaaS Tier Recommendation</h3>
                 <button class="modal-close" onclick="closeModal()">&times;</button>
             </div>
             <div class="modal-body" id="modal-body">
@@ -675,14 +681,29 @@
         </div>
     </div>
 
+    <script src="auth-helper.js"></script>
     <script>
         const API_BASE = 'https://growthmanagerpro-backend.vercel.app';
         let callsData = [];
+        let currentTenantId = null;
 
         // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             console.log('[Discovery Calls] Initializing...');
             console.log('[Discovery Calls] API Base:', API_BASE);
+            
+            // Get tenant_id from auth
+            currentTenantId = getTenantId();
+            
+            if (!currentTenantId) {
+                console.error('[Discovery Calls] No tenant ID found');
+                alert('Session expired. Please log in again.');
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            console.log('[Discovery Calls] Tenant ID:', currentTenantId);
+            
             loadCalls();
             
             // Auto-refresh every 5 minutes
@@ -694,7 +715,7 @@
             try {
                 updateConnectionStatus('connecting');
                 
-                const response = await fetch(`${API_BASE}/api/discovery-calls`);
+                const response = await fetch(`${API_BASE}/api/discovery-calls?tenant_id=${currentTenantId}`);
                 
                 if (!response.ok) {
                     throw new Error(`HTTP ${response.status}`);
@@ -723,22 +744,27 @@
         function updateStats(stats) {
             if (!stats) return;
             
-            const architectureCount = callsData.filter(c => 
-                c.aiAnalysis?.recommendation?.engagementModel === 'Growth Architecture'
-            ).length;
-            
             const foundationsCount = callsData.filter(c => 
-                c.aiAnalysis?.recommendation?.engagementModel === 'Strategic Foundations'
+                c.aiAnalysis?.recommendation?.engagementModel === 'Foundations'
             ).length;
             
-            const allianceCount = callsData.filter(c => 
-                c.aiAnalysis?.recommendation?.engagementModel === 'Strategic Alliance'
+            const growthCount = callsData.filter(c => 
+                c.aiAnalysis?.recommendation?.engagementModel === 'Growth'
+            ).length;
+            
+            const scaleCount = callsData.filter(c => 
+                c.aiAnalysis?.recommendation?.engagementModel === 'Scale'
+            ).length;
+            
+            const enterpriseCount = callsData.filter(c => 
+                c.aiAnalysis?.recommendation?.engagementModel === 'Enterprise'
             ).length;
             
             document.getElementById('total-calls').textContent = stats.totalCalls || 0;
-            document.getElementById('architecture-count').textContent = architectureCount;
             document.getElementById('foundations-count').textContent = foundationsCount;
-            document.getElementById('alliance-count').textContent = allianceCount;
+            document.getElementById('growth-count').textContent = growthCount;
+            document.getElementById('scale-count').textContent = scaleCount;
+            document.getElementById('enterprise-count').textContent = enterpriseCount;
             document.getElementById('auto-progressed').textContent = stats.autoProgressedToStrategy || 0;
         }
 
@@ -793,12 +819,14 @@
             
             const tier = call.aiAnalysis.recommendation.engagementModel;
             
-            if (tier === 'Growth Architecture') {
-                return `<span class="tier-badge tier-architecture">💎 Architecture</span>`;
-            } else if (tier === 'Strategic Foundations') {
+            if (tier === 'Foundations') {
                 return `<span class="tier-badge tier-foundations">🔷 Foundations</span>`;
-            } else if (tier === 'Strategic Alliance') {
-                return `<span class="tier-badge tier-alliance">👑 Alliance</span>`;
+            } else if (tier === 'Growth') {
+                return `<span class="tier-badge" style="background: linear-gradient(135deg, #27ae60 0%, #229954 100%); color: white;">🌱 Growth</span>`;
+            } else if (tier === 'Scale') {
+                return `<span class="tier-badge tier-architecture">💎 Scale</span>`;
+            } else if (tier === 'Enterprise') {
+                return `<span class="tier-badge tier-alliance">👑 Enterprise</span>`;
             } else {
                 return `<span class="tier-badge tier-pending">${tier}</span>`;
             }
@@ -846,9 +874,12 @@
             }
 
             try {
-                const response = await fetch(`${API_BASE}/api/ai-analyze-discovery`, {
+                const response = await fetch(`${API_BASE}/api/ai-analyze-discovery?tenant_id=${currentTenantId}`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'X-Tenant-ID': currentTenantId
+                    },
                     body: JSON.stringify({
                         discovery_call_id: callId,
                         transcript: call.transcript
@@ -880,12 +911,13 @@
             const analysis = call.aiAnalysis;
             const modalBody = document.getElementById('modal-body');
             
-            const tierClass = analysis.recommendation.engagementModel === 'Growth Architecture' ? 'tier-architecture' : 
-                              analysis.recommendation.engagementModel === 'Strategic Foundations' ? 'tier-foundations' : 'tier-alliance';
+            const tierClass = analysis.recommendation.engagementModel === 'Scale' ? 'tier-architecture' : 
+                              analysis.recommendation.engagementModel === 'Foundations' ? 'tier-foundations' : 
+                              analysis.recommendation.engagementModel === 'Enterprise' ? 'tier-alliance' : 'tier-foundations';
             
             modalBody.innerHTML = `
                 <div class="tier-recommendation">
-                    <h4>Recommended Partnership Tier</h4>
+                    <h4>Recommended SaaS Tier</h4>
                     <div class="tier-name">${analysis.recommendation.engagementModel}</div>
                     <div class="tier-price">${analysis.recommendation.estimatedValue || 'Custom Pricing'}</div>
                     <div>${analysis.recommendation.reasoning}</div>
@@ -995,42 +1027,10 @@
             console.log('[Discovery Calls] Manual refresh triggered');
             loadCalls();
         }
-
-        // Trigger SmartLead discovery invitation
-        async function triggerDiscoveryInvite(interviewId) {
-            const interview = interviewsData.find(i => i.id === interviewId);
-            if (!interview) return;
-            
-            if (!confirm(`Send discovery call invitation to ${interview.guestEmail}?`)) return;
-            
-            try {
-                const response = await fetch(`${API_BASE}/api/smartlead-handoff`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contactId: interviewId,
-                        trigger: 'podcast_completed',
-                        campaignType: 'discovery'
-                    })
-                });
-
-                const result = await response.json();
-                
-                if (result.success) {
-                    alert(`✅ Discovery invitation sent to ${interview.guestEmail}!`);
-                    loadInterviews();
-                } else {
-                    alert('❌ Error: ' + result.error);
-                }
-            } catch (error) {
-                console.error('[Podcast] Discovery invite error:', error);
-                alert('Failed to send invitation: ' + error.message);
-            }
-        }
         
         // Log system info
         console.log('[Discovery Calls] System initialized');
-        console.log('[Discovery Calls] API Endpoint:', API_BASE);
+        console.log('[Discovery Calls] API Endpoint:', `${API_BASE}/api/discovery-calls`);
     </script>
 </body>
 </html>
