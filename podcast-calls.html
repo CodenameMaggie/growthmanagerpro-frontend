@@ -602,15 +602,26 @@
 
 <script>
     const API_BASE = 'https://growthmanagerpro-backend.vercel.app';
-    const TENANT_ID = '92f6c0d3-252c-4471-a9d0-e8af9ad82834';
+    let currentTenantId = null;
     
     let interviewsData = [];
 
     // Initialize
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
         console.log('[Podcast Calls] Initializing...');
         console.log('[Podcast Calls] API Base:', API_BASE);
-        console.log('[Podcast Calls] Tenant ID:', TENANT_ID);
+        
+        // Initialize tenant context
+        await AuthHelper.initTenant();
+        currentTenantId = AuthHelper.getTenantId();
+        
+        if (!currentTenantId) {
+            console.error('[Podcast Calls] No tenant ID found');
+            alert('Session error. Please refresh the page.');
+            return;
+        }
+        
+        console.log('[Podcast Calls] Tenant ID:', currentTenantId);
         loadInterviews();
         
         // Auto-refresh every 5 minutes
