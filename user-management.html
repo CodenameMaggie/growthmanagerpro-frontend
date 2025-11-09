@@ -960,16 +960,31 @@
     
 <script>
     const API_URL = 'https://growthmanagerpro-backend.vercel.app';
-    const TENANT_ID = '92f6c0d3-252c-4471-a9d0-e8af9ad82834'; // Same as podcast-calls.html
     let usersData = [];
-    let currentTenantId = TENANT_ID;
+    let currentTenantId = null;
 
-    // Initialize
+    // Initialize - get tenant_id from auth-helper
     document.addEventListener('DOMContentLoaded', async () => {
         console.log('[User Management] Initializing...');
-        console.log('[User Management] API URL:', API_URL);
-        console.log('[User Management] Tenant ID:', currentTenantId);
         
+        // Initialize auth-helper to get tenant context
+        if (typeof AuthHelper !== 'undefined') {
+            await AuthHelper.initTenant();
+            currentTenantId = AuthHelper.tenantId;
+            console.log('[User Management] Tenant ID from auth-helper:', currentTenantId);
+        } else {
+            console.error('[User Management] auth-helper.js not loaded!');
+            alert('System error: Authentication helper not loaded');
+            return;
+        }
+        
+        if (!currentTenantId) {
+            console.error('[User Management] No tenant ID found');
+            alert('Session error. Please refresh the page.');
+            return;
+        }
+        
+        console.log('[User Management] API URL:', API_URL);
         loadUsers();
     });
 
