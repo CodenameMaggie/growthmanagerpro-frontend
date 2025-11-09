@@ -548,16 +548,27 @@
 
   <script>
     const API_BASE = 'https://growthmanagerpro-backend.vercel.app';
-    const TENANT_ID = '92f6c0d3-252c-4471-a9d0-e8af9ad82834';
+    let currentTenantId = null;
     
     let allCalls = [];
     let filteredCalls = [];
 
     // Load data on page load
-    window.addEventListener('DOMContentLoaded', () => {
+    window.addEventListener('DOMContentLoaded', async () => {
         console.log('[Pre-Qual Calls] Initializing...');
         console.log('[Pre-Qual Calls] API Base:', API_BASE);
-        console.log('[Pre-Qual Calls] Tenant ID:', TENANT_ID);
+        
+        // Initialize tenant context
+        await AuthHelper.initTenant();
+        currentTenantId = AuthHelper.getTenantId();
+        
+        if (!currentTenantId) {
+            console.error('[Pre-Qual Calls] No tenant ID found');
+            alert('Session error. Please refresh the page.');
+            return;
+        }
+        
+        console.log('[Pre-Qual Calls] Tenant ID:', currentTenantId);
         loadCalls();
         
         // Auto-refresh every 5 minutes
@@ -567,9 +578,9 @@
     async function loadCalls() {
         try {
             updateConnectionStatus('connecting');
-            console.log('[Pre-Qual Calls] Fetching from:', `${API_BASE}/api/pre-qualification-calls?tenant_id=${TENANT_ID}`);
+            console.log('[Pre-Qual Calls] Fetching from:', `${API_BASE}/api/pre-qualification-calls?currentTenantId=${currentTenantId}`);
             
-            const response = await fetch(`${API_BASE}/api/pre-qualification-calls?tenant_id=${TENANT_ID}`);
+            const response = await fetch(`${API_BASE}/api/pre-qualification-calls?tenant_id=${currentTenantId}`);
             
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
