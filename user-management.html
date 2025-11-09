@@ -959,45 +959,15 @@
 <script src="auth-helper.js"></script>
     
 <script>
-    (function() {
-        if (!AuthHelper.protectPage('advisor-dashboard.html')) {
-            throw new Error('Unauthorized access');
-        }
-        AuthHelper.applyPermissions();
-    })();
-    
     const API_URL = 'https://growthmanagerpro-backend.vercel.app';
+    const TENANT_ID = '92f6c0d3-252c-4471-a9d0-e8af9ad82834'; // Same as podcast-calls.html
     let usersData = [];
-    let currentTenantId = null;
-
-    // Helper function to get tenant_id from session
-    function getTenantId() {
-        const userSession = sessionStorage.getItem('userSession');
-        if (!userSession) return null;
-        
-        try {
-            const session = JSON.parse(userSession);
-            return session.tenant_id || null;
-        } catch (error) {
-            console.error('[User Management] Error parsing user session:', error);
-            return null;
-        }
-    }
+    let currentTenantId = TENANT_ID;
 
     // Initialize
     document.addEventListener('DOMContentLoaded', async () => {
         console.log('[User Management] Initializing...');
-        
-        // Get tenant_id from auth
-        currentTenantId = getTenantId();
-        
-        if (!currentTenantId) {
-            console.error('[User Management] No tenant ID found');
-            alert('Session expired. Please log in again.');
-            window.location.href = 'login.html';
-            return;
-        }
-        
+        console.log('[User Management] API URL:', API_URL);
         console.log('[User Management] Tenant ID:', currentTenantId);
         
         loadUsers();
