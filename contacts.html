@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -1269,9 +1269,10 @@ Notes: ${contact.notes || 'No notes'}`);
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({ 
-                        action: 'sync',
-                        currentTenantId: currentTenantId
-                    })
+                    action: 'sync',
+                    tenant_id: currentTenantId
+                })
+                    
                 });
                 
                 const result = await response.json();
@@ -1310,9 +1311,10 @@ Notes: ${contact.notes || 'No notes'}`);
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({ 
-                        action: 'sync-engagement',
-                        currentTenantId: currentTenantId
-                    })
+                    action: 'sync-engagement',
+                    tenant_id: currentTenantId
+                })
+                    
                 });
                 
                 const result = await response.json();
