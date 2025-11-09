@@ -461,7 +461,7 @@
         <span class="nav-icon">📞</span>
         <span>Pre-Qual Calls</span>
     </a>
-    <a href="podcast-calls.html" class="nav-item">
+    <a href="podcast-calls.html" class="nav-item active">
         <span class="nav-icon">🎙️</span>
         <span>Podcast Calls</span>
     </a>
@@ -600,303 +600,267 @@
         </div>
     </div>
 
-<script src="auth-helper.js"></script>
-    
 <script>
-    (function() {
-        if (!AuthHelper.protectPage('advisor-dashboard.html')) {  // ← NOW CORRECT
-            throw new Error('Unauthorized access');
-        }
-        AuthHelper.applyPermissions();
-    })();
-    
     const API_BASE = 'https://growthmanagerpro-backend.vercel.app';
-        let interviewsData = [];
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('[Podcast Calls] Initializing...');
-            console.log('[Podcast Calls] API Base:', API_BASE);
-            loadInterviews();
-            
-            // Auto-refresh every 5 minutes
-            setInterval(loadInterviews, 300000);
-        });
-
-        // Load interviews from API
-        async function loadInterviews() {
-            try {
-                updateConnectionStatus('connecting');
-                
-                const response = await fetch(`${API_BASE}/api/podcast-interviews`);
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}`);
-                }
-
-                const result = await response.json();
-                
-                if (result.success && result.data) {
-                    interviewsData = result.data.interviews || [];
-                    updateStats(result.data.stats);
-                    renderInterviewsTable();
-                    updateConnectionStatus('connected');
-                    console.log('[Podcast Calls] ✅ Loaded', interviewsData.length, 'interviews');
-                } else {
-                    throw new Error('Invalid response format');
-                }
-
-            } catch (error) {
-                console.error('[Podcast Calls] ❌ Error loading interviews:', error);
-                updateConnectionStatus('error', error.message);
-                renderErrorState(error.message);
-            }
-        }
-
-        // Update statistics
-        function updateStats(stats) {
-            if (!stats) return;
-            
-            document.getElementById('total-interviews').textContent = stats.totalInterviews || 0;
-            document.getElementById('scheduled-interviews').textContent = stats.scheduledInterviews || 0;
-            document.getElementById('analyzed-interviews').textContent = stats.analyzedInterviews || 0;
-            document.getElementById('qualified-guests').textContent = stats.qualifiedGuests || 0;
-            document.getElementById('average-score').textContent = stats.averageScore || '0';
-            document.getElementById('auto-progressed').textContent = stats.autoProgressedToDiscovery || 0;
-        }
-
-        // Render interviews table
-        function renderInterviewsTable() {
-            const tbody = document.getElementById('interviews-body');
-            document.getElementById('interview-count').textContent = interviewsData.length;
-
-            if (interviewsData.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="7" style="text-align: center; padding: 3rem; color: #7f8c8d;">
-                            <p style="font-size: 1.1rem; margin-bottom: 0.5rem;">📭 No interviews yet</p>
-                            <p>Schedule your first podcast interview to get started!</p>
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
-
-            tbody.innerHTML = interviewsData.map(interview => `
-                <tr>
-                    <td>
-                        <strong>${interview.guestName || 'Unknown'}</strong><br>
-                        <small style="color: #7f8c8d;">${interview.guestEmail || ''}</small>
-                    </td>
-                    <td>${interview.company || '—'}</td>
-                    <td>${interview.scheduledDate ? new Date(interview.scheduledDate).toLocaleDateString() : '—'}</td>
-                    <td>
-                        <span class="status-badge status-${interview.status || 'scheduled'}">
-                            ${interview.status || 'scheduled'}
-                        </span>
-                    </td>
-                    <td>
-                        ${renderScoreDisplay(interview)}
-                    </td>
-                    <td>
-                        ${renderAutomationStatus(interview)}
-                    </td>
-                 <td>
-                    <button class="btn btn-small btn-secondary" onclick="viewInterview('${interview.id}')">
-                        View
-                    </button>
-                    ${interview.overallScore >= 35 && !interview.discoveryCallCreated ? `
-                        <button class="btn btn-small btn-success" onclick="event.stopPropagation(); triggerDiscoveryInvite('${interview.id}')" style="margin-left: 5px;">
-                            📧 Send Discovery Invite
-                        </button>
-                    ` : ''}
-                </td>
-                </tr>
-            `).join('');
-        }
-
-        // Render score display
-        function renderScoreDisplay(interview) {
-            if (!interview.overallScore) {
-                return `<span class="score-badge score-pending">Pending Analysis</span>`;
-            }
-
-            const score = interview.overallScore;
-            let scoreClass = 'score-poor';
-            let emoji = '❌';
-
-            if (score >= 40) {
-                scoreClass = 'score-excellent';
-                emoji = '🌟';
-            } else if (score >= 35) {
-                scoreClass = 'score-good';
-                emoji = '✅';
-            } else if (score >= 25) {
-                scoreClass = 'score-fair';
-                emoji = '⚠️';
-            }
-
-            return `
-                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                    <span class="score-badge ${scoreClass}">
-                        ${emoji} ${score}/50
-                    </span>
-                    <div class="score-details">
-                        <span class="score-item">
-                            <span class="score-item-label">Intro:</span>
-                            <span class="score-item-value">${interview.introScore || 0}</span>
-                        </span>
-                        <span class="score-item">
-                            <span class="score-item-label">Flow:</span>
-                            <span class="score-item-value">${interview.questionsFlowScore || 0}</span>
-                        </span>
-                        <span class="score-item">
-                            <span class="score-item-label">Close:</span>
-                            <span class="score-item-value">${interview.closeNextStepsScore || 0}</span>
-                        </span>
-                    </div>
-                </div>
-            `;
-        }
-
-        // Render automation status
-        function renderAutomationStatus(interview) {
-            if (interview.discoveryCallCreated) {
-                return `
-                    <span class="automation-badge">
-                        ✅ Discovery Created
-                    </span>
-                `;
-            }
-
-            if (interview.qualifiedForDiscovery && interview.overallScore >= 35) {
-                return `
-                    <span class="score-badge score-good">
-                        ✓ Qualified
-                    </span>
-                `;
-            }
-
-            return '<span style="color: #95a5a6; font-size: 0.9rem;">—</span>';
-        }
-
-        // Render error state
-        function renderErrorState(message) {
-            const tbody = document.getElementById('interviews-body');
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="7" style="text-align: center; padding: 3rem;">
-                        <p style="color: #e74c3c; font-size: 1.1rem; margin-bottom: 0.5rem;">⚠️ Connection Error</p>
-                        <p style="color: #7f8c8d; margin-bottom: 1rem;">Could not connect to: ${API_BASE}/api/podcast-interviews</p>
-                        <p style="color: #7f8c8d; font-size: 0.9rem;">${message}</p>
-                        <button class="btn btn-primary" onclick="loadInterviews()" style="margin-top: 1rem;">
-                            🔄 Retry Connection
-                        </button>
-                    </td>
-                </tr>
-            `;
-        }
-
-        // Update connection status indicator
-        function updateConnectionStatus(status, message = '') {
-            const indicator = document.getElementById('status-indicator');
-            const statusText = document.getElementById('status-text');
-
-            if (status === 'connected') {
-                indicator.className = 'status-indicator status-connected';
-                statusText.textContent = 'Live Connected';
-            } else if (status === 'error') {
-                indicator.className = 'status-indicator status-error';
-                statusText.textContent = message || 'Connection Error';
-            } else if (status === 'connecting') {
-                indicator.className = 'status-indicator';
-                indicator.style.background = '#f39c12';
-                statusText.textContent = 'Connecting...';
-            }
-        }
-
-        // Actions
-        // Actions
-        function rescheduleCall() {
-        window.open('https://calendly.com/maggie-maggieforbesstrategies/discovery-call', '_blank');
-        }
-
-        function viewInterview(id) {
-            const interview = interviewsData.find(i => i.id === id);
-            if (interview) {
-                console.log('Viewing interview:', interview);
-                alert(`Interview Details:\n\nGuest: ${interview.guestName}\nCompany: ${interview.company || 'N/A'}\nScore: ${interview.overallScore || 'Not analyzed'}/50`);
-                // TODO: Open detailed view modal
-            }
-        }
-
-        function refreshData() {
-            console.log('[Podcast Calls] Manual refresh triggered');
-            loadInterviews();
-        }
-
-    async function retriggerAnalysis(callId) {
-    if (!confirm('Re-analyze this call and send podcast invite if qualified?')) return;
+    const TENANT_ID = '92f6c0d3-252c-4471-a9d0-e8af9ad82834';
     
-   try {
-    // Step 1: Analyze the call
-    const response = await fetch(`${API_BASE}/api/ai-analyzer`, {  // ← Fixed: fetch(
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-            action: 'analyze-prequal',
-            callId: callId 
-        })
+    let interviewsData = [];
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('[Podcast Calls] Initializing...');
+        console.log('[Podcast Calls] API Base:', API_BASE);
+        console.log('[Podcast Calls] Tenant ID:', TENANT_ID);
+        loadInterviews();
+        
+        // Auto-refresh every 5 minutes
+        setInterval(loadInterviews, 300000);
     });
-    
-    const result = await response.json();
-    
-    if (!result.success) {
-        alert('❌ Error: ' + result.error);
-        return;
+
+    // Load interviews from API
+    async function loadInterviews() {
+        try {
+            updateConnectionStatus('connecting');
+            console.log('[Podcast Calls] Fetching from:', `${API_BASE}/api/podcast-interviews?tenant_id=${TENANT_ID}`);
+            
+            const response = await fetch(`${API_BASE}/api/podcast-interviews?tenant_id=${TENANT_ID}`);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+
+            const result = await response.json();
+            console.log('[Podcast Calls] Response:', result);
+            
+            if (result.success && result.data) {
+                interviewsData = result.data.interviews || [];
+                updateStats(result.data.stats);
+                renderInterviewsTable();
+                updateConnectionStatus('connected');
+                console.log('[Podcast Calls] ✅ Loaded', interviewsData.length, 'interviews');
+            } else {
+                throw new Error('Invalid response format');
+            }
+
+        } catch (error) {
+            console.error('[Podcast Calls] ❌ Error loading interviews:', error);
+            updateConnectionStatus('error', error.message);
+            renderErrorState(error.message);
+        }
     }
 
-    // Step 2: If qualified (score >= 35), trigger SmartLead handoff
-    if (result.data && result.data.aiScore >= 35) {
-        console.log('[Pre-Qual] ✅ Qualified! Triggering SmartLead handoff...');
+    // Update statistics
+    function updateStats(stats) {
+        if (!stats) return;
+        
+        document.getElementById('total-interviews').textContent = stats.totalInterviews || 0;
+        document.getElementById('scheduled-interviews').textContent = stats.scheduledInterviews || 0;
+        document.getElementById('analyzed-interviews').textContent = stats.analyzedInterviews || 0;
+        document.getElementById('qualified-guests').textContent = stats.qualifiedGuests || 0;
+        document.getElementById('average-score').textContent = stats.averageScore || '0';
+        document.getElementById('auto-progressed').textContent = stats.autoProgressedToDiscovery || 0;
+    }
+
+    // Render interviews table
+    function renderInterviewsTable() {
+        const tbody = document.getElementById('interviews-body');
+        document.getElementById('interview-count').textContent = interviewsData.length;
+
+        if (interviewsData.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="7" style="text-align: center; padding: 3rem; color: #7f8c8d;">
+                        <p style="font-size: 1.1rem; margin-bottom: 0.5rem;">📭 No interviews yet</p>
+                        <p>Schedule your first podcast interview to get started!</p>
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        tbody.innerHTML = interviewsData.map(interview => `
+            <tr>
+                <td>
+                    <strong>${interview.guestName || 'Unknown'}</strong><br>
+                    <small style="color: #7f8c8d;">${interview.guestEmail || ''}</small>
+                </td>
+                <td>${interview.company || '—'}</td>
+                <td>${interview.scheduledDate ? new Date(interview.scheduledDate).toLocaleDateString() : '—'}</td>
+                <td>
+                    <span class="status-badge status-${interview.status || 'scheduled'}">
+                        ${interview.status || 'scheduled'}
+                    </span>
+                </td>
+                <td>
+                    ${renderScoreDisplay(interview)}
+                </td>
+                <td>
+                    ${renderAutomationStatus(interview)}
+                </td>
+             <td>
+                <button class="btn btn-small btn-secondary" onclick="viewInterview('${interview.id}')">
+                    View
+                </button>
+                ${interview.overallScore >= 35 && !interview.discoveryCallCreated ? `
+                    <button class="btn btn-small btn-success" onclick="event.stopPropagation(); triggerDiscoveryInvite('${interview.id}')" style="margin-left: 5px;">
+                        📧 Send Discovery Invite
+                    </button>
+                ` : ''}
+            </td>
+            </tr>
+        `).join('');
+    }
+
+    // Render score display
+    function renderScoreDisplay(interview) {
+        if (!interview.overallScore) {
+            return `<span class="score-badge score-pending">Pending Analysis</span>`;
+        }
+
+        const score = interview.overallScore;
+        let scoreClass = 'score-poor';
+        let emoji = '❌';
+
+        if (score >= 40) {
+            scoreClass = 'score-excellent';
+            emoji = '🌟';
+        } else if (score >= 35) {
+            scoreClass = 'score-good';
+            emoji = '✅';
+        } else if (score >= 25) {
+            scoreClass = 'score-fair';
+            emoji = '⚠️';
+        }
+
+        return `
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <span class="score-badge ${scoreClass}">
+                    ${emoji} ${score}/50
+                </span>
+                <div class="score-details">
+                    <span class="score-item">
+                        <span class="score-item-label">Intro:</span>
+                        <span class="score-item-value">${interview.introScore || 0}</span>
+                    </span>
+                    <span class="score-item">
+                        <span class="score-item-label">Flow:</span>
+                        <span class="score-item-value">${interview.questionsFlowScore || 0}</span>
+                    </span>
+                    <span class="score-item">
+                        <span class="score-item-label">Close:</span>
+                        <span class="score-item-value">${interview.closeNextStepsScore || 0}</span>
+                    </span>
+                </div>
+            </div>
+        `;
+    }
+
+    // Render automation status
+    function renderAutomationStatus(interview) {
+        if (interview.discoveryCallCreated) {
+            return `
+                <span class="automation-badge">
+                    ✅ Discovery Created
+                </span>
+            `;
+        }
+
+        if (interview.qualifiedForDiscovery && interview.overallScore >= 35) {
+            return `
+                <span class="score-badge score-good">
+                    ✓ Qualified
+                </span>
+            `;
+        }
+
+        return '<span style="color: #95a5a6; font-size: 0.9rem;">—</span>';
+    }
+
+    // Render error state
+    function renderErrorState(message) {
+        const tbody = document.getElementById('interviews-body');
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7" style="text-align: center; padding: 3rem;">
+                    <p style="color: #e74c3c; font-size: 1.1rem; margin-bottom: 0.5rem;">⚠️ Connection Error</p>
+                    <p style="color: #7f8c8d; margin-bottom: 1rem;">Could not connect to: ${API_BASE}/api/podcast-interviews</p>
+                    <p style="color: #7f8c8d; font-size: 0.9rem;">${message}</p>
+                    <button class="btn btn-primary" onclick="loadInterviews()" style="margin-top: 1rem;">
+                        🔄 Retry Connection
+                    </button>
+                </td>
+            </tr>
+        `;
+    }
+
+    // Update connection status indicator
+    function updateConnectionStatus(status, message = '') {
+        const indicator = document.getElementById('status-indicator');
+        const statusText = document.getElementById('status-text');
+
+        if (status === 'connected') {
+            indicator.className = 'status-indicator status-connected';
+            statusText.textContent = 'Live Connected';
+        } else if (status === 'error') {
+            indicator.className = 'status-indicator status-error';
+            statusText.textContent = message || 'Connection Error';
+        } else if (status === 'connecting') {
+            indicator.className = 'status-indicator';
+            indicator.style.background = '#f39c12';
+            statusText.textContent = 'Connecting...';
+        }
+    }
+
+    // Actions
+    function scheduleInterview() {
+        window.open('https://calendly.com/maggie-maggieforbesstrategies/podcast-interview', '_blank');
+    }
+
+    function viewInterview(id) {
+        const interview = interviewsData.find(i => i.id === id);
+        if (interview) {
+            console.log('Viewing interview:', interview);
+            alert(`Interview Details:\n\nGuest: ${interview.guestName}\nCompany: ${interview.company || 'N/A'}\nScore: ${interview.overallScore || 'Not analyzed'}/50`);
+            // TODO: Open detailed view modal
+        }
+    }
+
+    function refreshData() {
+        console.log('[Podcast Calls] Manual refresh triggered');
+        loadInterviews();
+    }
+
+    async function triggerDiscoveryInvite(interviewId) {
+        if (!confirm('Send discovery call invitation via SmartLead?')) return;
         
         try {
-            const handoffResponse = await fetch(`${API_BASE}/api/smartlead-handoff`, {  // ← Fixed: fetch(
+            const handoffResponse = await fetch(`${API_BASE}/api/smartlead-handoff`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    contactId: callId,
-                    trigger: 'pre_qual_qualified',
-                    preQualScore: result.data.aiScore
+                    contactId: interviewId,
+                    trigger: 'podcast_completed',
+                    campaignType: 'discovery'
                 })
             });
 
             const handoffResult = await handoffResponse.json();
 
             if (handoffResult.success) {
-                alert('✅ Analysis complete! Score: ' + result.data.aiScore + '/50\n📧 Podcast invitation sent via SmartLead!');
+                alert('✅ Discovery invitation sent via SmartLead!');
+                loadInterviews(); // Reload to show updates
             } else {
-                alert('✅ Analysis complete! Score: ' + result.data.aiScore + '/50\n⚠️ Note: Email handoff failed: ' + handoffResult.error);
+                alert('❌ Failed to send invitation: ' + handoffResult.error);
             }
-        } catch (handoffError) {
-            console.error('[Pre-Qual] SmartLead handoff error:', handoffError);
-            alert('✅ Analysis complete! Score: ' + result.data.aiScore + '/50\n⚠️ Note: Could not send email invitation (check console)');
+        } catch (error) {
+            console.error('[Podcast Calls] Error sending invitation:', error);
+            alert('❌ Error: ' + error.message);
         }
-    } else {
-        const score = result.data?.aiScore || 0;
-        alert(`✅ Analysis complete! Score: ${score}/50\n❌ Below threshold (need 35+) - no invitation sent.`);  // ← Fixed: alert(
     }
-    
-    loadCalls(); // Reload to show updates
-    
-} catch (error) {
-    alert('❌ Failed: ' + error.message);
-}
 
-}
-        // Log system info
-        console.log('[Podcast Calls] System initialized');
-        console.log('[Podcast Calls] API Endpoint:', API_BASE);
-    </script>
+    // Log system info
+    console.log('[Podcast Calls] System initialized');
+    console.log('[Podcast Calls] API Endpoint:', `${API_BASE}/api/podcast-interviews`);
+</script>
 </body>
 </html>
