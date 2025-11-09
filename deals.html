@@ -591,6 +591,7 @@
         
         // API Configuration
         const API_BASE = 'https://growthmanagerpro-backend.vercel.app';
+        const TENANT_ID = '92f6c0d3-252c-4471-a9d0-e8af9ad82834';  // ← ADDED: Tenant ID
 
         // Sample data structure - will be replaced with API calls
         let dealsData = [];
@@ -606,8 +607,8 @@
             try {
                 console.log('[Deals] Loading partnerships from API...');
                 
-                // Fetch from your backend
-                const response = await fetch(`${API_BASE}/api/deals`);
+                // Fetch from your backend with tenant_id
+                const response = await fetch(`${API_BASE}/api/deals?tenant_id=${TENANT_ID}`);  // ← ADDED: tenant_id parameter
                 if (!response.ok) throw new Error('Failed to load deals');
                 
                 const result = await response.json();
