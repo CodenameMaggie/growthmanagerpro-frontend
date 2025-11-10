@@ -831,77 +831,7 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- Sidebar Navigation -->
-        <aside class="sidebar">
-            <div class="sidebar-header">
-    <h1>Growth Manager Pro</h1>
-    
-    <!-- User Profile -->
-    <div class="user-profile">
-        <div class="user-avatar" id="userAvatar">U</div>
-        <div class="user-info">
-            <div class="user-name" id="userName">Loading...</div>
-            <div class="user-role" id="userRole">Advisor</div>
-        </div>
-    </div>
-    
-    <!-- Client Selector -->
-    <div class="client-selector" id="clientSelector">
-        <label for="clientDropdown">📊 View Client:</label>
-        <select id="clientDropdown" class="client-dropdown" onchange="switchClient(this.value)">
-            <option value="">Select a client...</option>
-        </select>
-    </div>
-</div>
 
-    <a href="sprints.html" class="nav-item">
-        <span class="nav-icon">⚡</span>
-        Sprints Workspace
-    </a>
-    
-        <a href="sprints.html" class="nav-item">
-            <span class="nav-icon">✅</span>
-            <span>My Tasks</span>
-        </a>
-            <div class="nav-section">
-    <div class="nav-section-title">Admin</div>
-    <a href="dashboard.html" class="nav-item">
-        <span class="nav-icon">📊</span>
-        <span>Back to Dashboard</span>
-    </a>
-            
-    <a href="client-dashboard.html" class="nav-item">
-        <span class="nav-icon">👤</span>
-        <span>Client Dashboard</span>
-    </a>
-</div>
-            <nav>
-                <div class="nav-section">
-                    <div class="nav-section-title">Navigation</div>
-                    <a href="advisor-dashboard.html" class="nav-item active">
-                        <span class="nav-icon">📊</span>
-                        <span>Dashboard</span>
-                    </a>
-                    <a href="javascript:void(0)" class="nav-item" onclick="scrollToSection('discussion')">
-                        <span class="nav-icon">💬</span>
-                        <span>Discussion</span>
-                    </a>
-                    <a href="javascript:void(0)" class="nav-item" onclick="scrollToSection('files')">
-                        <span class="nav-icon">📁</span>
-                        <span>Files</span>
-                    </a>
-                </div>
-
-                <div class="nav-section">
-                    <div class="nav-section-title">Account</div>
-                    <a href="login.html" class="nav-item" onclick="handleLogout(event)">
-                    <span class="nav-icon">🚪</span>
-                    <span>Logout</span>
-                    </a>
-                    </a>
-                </div>
-            </nav>
-        </aside>
 
         <!-- Main Content -->
         <main class="main-content">
@@ -1106,6 +1036,7 @@
 
 
      <script src="auth-helper.js"></script>
+     <script src="/nav.js"></script>
     
      <script>
     // ============================================
