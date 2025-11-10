@@ -1150,21 +1150,6 @@
                 throw error;
             }
         }
-                
-                // Calculate pipeline health (example calculation)
-                const pipelineHealth = stats.leads_generated > 0 
-                    ? Math.min(100, Math.round((stats.discovery_calls / stats.leads_generated) * 100))
-                    : 0;
-                document.getElementById('stat-pipeline').textContent = pipelineHealth + '%';
-                
-                // Update sprint info
-                document.getElementById('current-sprint').textContent = 'Sprint ' + (new Date().getWeek() || 1);
-                document.getElementById('sprint-period').textContent = getCurrentSprintPeriod();
-                document.getElementById('days-remaining').textContent = getDaysRemainingInWeek() + ' days';
-            } catch (error) {
-                console.error('[Advisor Dashboard] Error loading stats:', error);
-            }
-        }
 
         async function loadTasks() {
             try {
