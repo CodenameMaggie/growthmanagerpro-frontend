@@ -585,106 +585,7 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- Sidebar Navigation -->
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <h1>Growth Manager Pro</h1>
-                <p>Strategy Calls</p>
-            </div>
-            
-            <nav class="sidebar-nav">
-                <div class="nav-section">
-                    <div class="nav-section-title">Main</div>
-                    <a href="dashboard.html" class="nav-item">
-                        <span class="nav-icon">📊</span>
-                        <span>Dashboard</span>
-                    </a>
-                    <a href="pipeline.html" class="nav-item">
-                        <span class="nav-icon">🔄</span>
-                        <span>Pipeline</span>
-                    </a>
-                    <a href="contacts.html" class="nav-item">
-                        <span class="nav-icon">👥</span>
-                        <span>Contacts</span>
-                    </a>
-                    <a href="deals.html" class="nav-item">
-                        <span class="nav-icon">💰</span>
-                        <span>Client Partnerships</span>
-                    </a>
-                </div>
-                
-               <div class="nav-section">
-    <div class="nav-section-title">Acquisition</div>
-    <a href="prequal-calls.html" class="nav-item">
-        <span class="nav-icon">📞</span>
-        <span>Pre-Qual Calls</span>
-    </a>
-    <a href="podcast-calls.html" class="nav-item">
-        <span class="nav-icon">🎙️</span>
-        <span>Podcast Calls</span>
-    </a>
-    <a href="discovery-calls.html" class="nav-item">
-        <span class="nav-icon">🔍</span>
-        <span>Discovery Calls</span>
-    </a>
-    <a href="strategy-calls.html" class="nav-item active">
-        <span class="nav-icon">💼</span>
-        <span>Strategy Calls</span>
-    </a>
-</div>
-                
-                <div class="nav-section">
-                    <div class="nav-section-title">Systems Management</div>
-                    <a href="campaigns.html" class="nav-item">
-                        <span class="nav-icon">🤖</span>
-                        <span>System Deployments</span>
-                    </a>
-                    <a href="analytics.html" class="nav-item">
-                        <span class="nav-icon">📈</span>
-                        <span>Analytics</span>
-                    </a>
-                    <a href="reports.html" class="nav-item">
-                        <span class="nav-icon">📋</span>
-                        <span>Reports</span>
-                    </a>
-                </div>
-
-                <div class="nav-section">
-                    <div class="nav-section-title">Operations</div>
-                    <a href="sprints.html" class="nav-item">
-                        <span class="nav-icon">⚡</span>
-                        <span>Sprints</span>
-                    </a>
-                    <a href="expense-tracker.html" class="nav-item">
-                        <span class="nav-icon">💳</span>
-                        <span>Expense Tracker</span>
-                    </a>
-                    <a href="cash-flow.html" class="nav-item">
-                        <span class="nav-icon">💵</span>
-                        <span>Cash Flow</span>
-                    </a>
-                    <a href="availability.html" class="nav-item">
-                        <span class="nav-icon">📅</span>
-                        <span>Availability</span>
-                    </a>
-                </div>
-
-                <div class="nav-section">
-                    <div class="nav-section-title">Settings</div>
-                    <a href="user-management.html" class="nav-item">
-                        <span class="nav-icon">⚙️</span>
-                        <span>User Management</span>
-                    </a>
-                </div>
-            </nav>
-            
-            <div class="sidebar-footer">
-                <a href="#" class="logout-link" onclick="handleLogout(); return false;">
-                    <span class="logout-icon">→</span>
-                    <span>Logout</span>
-                </a>
-            </div>
-        </aside>
+       
 
         <!-- Main Content -->
         <main class="main-content">
@@ -770,6 +671,8 @@
     </div>
 
     <script src="auth-helper.js"></script>
+    <script src="/nav.js"></script>
+    
     <script>
         const API_BASE = 'https://growthmanagerpro-backend.vercel.app';
         let callsData = [];
