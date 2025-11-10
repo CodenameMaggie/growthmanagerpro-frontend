@@ -2,7 +2,7 @@
 // 6 Sections: Profile, Overview, Acquisition, Sales & Revenue, Marketing, Settings
 
 const NavComponent = {
-    // Menu structure with role permissions (matching sidebar.js)
+    // Menu structure with role permissions (matching nav.js)
     menuItems: {
         profile: [
             { name: 'Profile', url: 'profile.html', icon: '⚙️', roles: ['admin', 'advisor', 'consultant', 'client', 'saas'] }
