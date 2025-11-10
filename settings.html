@@ -295,6 +295,24 @@
 </head>
 <body>
     <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <h1>Growth Manager Pro</h1>
+                <p id="userEmail">Loading...</p>
+            </div>
+
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="/dashboard.html" class="nav-link">📊 Dashboard</a></li>
+                <li class="nav-item"><a href="/contacts.html" class="nav-link">👥 Contacts</a></li>
+                <li class="nav-item"><a href="/deals.html" class="nav-link">💼 Deals</a></li>
+                <li class="nav-item"><a href="/user-management.html" class="nav-link">👤 Users</a></li>
+                <li class="nav-item"><a href="/profile.html" class="nav-link">⚙️ Profile</a></li>
+                <li class="nav-item"><a href="/settings.html" class="nav-link active">🔧 Settings</a></li>
+            </ul>
+
+            <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+        </aside>
 
         <!-- Main Content -->
         <main class="main-content">
@@ -417,8 +435,6 @@
     </div>
 
     <script src="/auth-helper.js"></script>
-    <script src="/nav.js"></script> 
-    
     <script>
         const API_BASE = 'https://growthmanagerpro-backend.vercel.app';
         let currentUser = null;
