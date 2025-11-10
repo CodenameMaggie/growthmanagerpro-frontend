@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Consultant Dashboard Preview - Growth Manager Pro</title>
+    <title>Consultant Dashboard - Growth Manager Pro</title>
     <style>
         * {
             margin: 0;
@@ -18,6 +18,7 @@
             display: flex;
         }
 
+        /* Sidebar */
         .sidebar {
             width: 280px;
             background: white;
@@ -164,6 +165,7 @@
             background: #c0392b;
         }
 
+        /* Main Content */
         .main-content {
             margin-left: 280px;
             flex: 1;
@@ -186,6 +188,7 @@
             font-size: 16px;
         }
 
+        /* Stats Grid */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -230,6 +233,7 @@
             color: #7f8c8d;
         }
 
+        /* Content Sections */
         .content-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
@@ -276,6 +280,48 @@
             background: #2980b9;
         }
 
+        .client-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .client-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .client-item:hover {
+            background: #e3f2fd;
+            transform: translateX(5px);
+        }
+
+        .client-info h4 {
+            color: #2c3e50;
+            font-size: 15px;
+            margin-bottom: 5px;
+        }
+
+        .client-info p {
+            color: #7f8c8d;
+            font-size: 13px;
+        }
+
+        .client-status {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            background: #d5f5e3;
+            color: #27ae60;
+        }
+
         .empty-state {
             text-align: center;
             padding: 40px;
@@ -301,15 +347,22 @@
 
         @media (max-width: 768px) {
             .sidebar {
-                width: 0;
+                transform: translateX(-100%);
             }
             .main-content {
                 margin-left: 0;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .content-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Sidebar -->
     <div class="sidebar">
         <div class="logo-section">
             <h1>Growth Manager Pro</h1>
@@ -319,27 +372,27 @@
 
         <nav class="nav-menu">
             <div class="nav-section-title">Overview</div>
-            <a href="#" class="nav-item active">
+            <a href="/consultant-dashboard.html" class="nav-item active">
                 <span class="icon">📊</span>
                 <span>Dashboard</span>
             </a>
 
             <div class="nav-section-title">Client Management</div>
-            <a href="#" class="nav-item">
+            <a href="/consultant-clients.html" class="nav-item">
                 <span class="icon">👥</span>
                 <span>Clients</span>
             </a>
-            <a href="#" class="nav-item">
+            <a href="/client-success.html" class="nav-item">
                 <span class="icon">🎯</span>
                 <span>Client Success</span>
             </a>
 
             <div class="nav-section-title">Account</div>
-            <a href="#" class="nav-item">
+            <a href="/edit-profile.html" class="nav-item">
                 <span class="icon">👤</span>
                 <span>Profile</span>
             </a>
-            <a href="#" class="nav-item">
+            <a href="/settings.html" class="nav-item">
                 <span class="icon">⚙️</span>
                 <span>Settings</span>
             </a>
@@ -347,107 +400,254 @@
 
         <div class="user-section">
             <div class="user-info">
-                <div class="user-avatar">M</div>
+                <div class="user-avatar" id="userAvatar">?</div>
                 <div class="user-details">
-                    <div class="user-name">Maggie Forbes</div>
+                    <div class="user-name" id="userName">Loading...</div>
                     <div class="user-role">Consultant</div>
                 </div>
             </div>
-            <button class="logout-btn">Logout</button>
+            <button class="logout-btn" onclick="logout()">Logout</button>
         </div>
     </div>
 
+    <!-- Main Content -->
     <div class="main-content">
         <div class="header">
             <h2>Welcome Back! 👋</h2>
             <p>Here's an overview of your consulting practice</p>
         </div>
 
+        <!-- Stats Grid -->
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-label">Total Clients</div>
-                <div class="stat-value">0</div>
+                <div class="stat-value" id="totalClients">0</div>
                 <div class="stat-change">
-                    <span>of 5 limit</span>
+                    <span id="clientsLimit">of 0 limit</span>
                 </div>
             </div>
 
             <div class="stat-card">
                 <div class="stat-label">Active Contracts</div>
-                <div class="stat-value">0</div>
+                <div class="stat-value" id="activeContracts">0</div>
                 <div class="stat-change">
-                    <span>0 in progress</span>
+                    <span id="contractsStatus">0 in progress</span>
                 </div>
             </div>
 
             <div class="stat-card">
                 <div class="stat-label">Total Revenue</div>
-                <div class="stat-value">$0</div>
+                <div class="stat-value" id="totalRevenue">$0</div>
                 <div class="stat-change">
-                    <span>This month</span>
+                    <span id="revenueChange">This month</span>
                 </div>
             </div>
 
             <div class="stat-card">
                 <div class="stat-label">Deliverables</div>
-                <div class="stat-value">0</div>
+                <div class="stat-value" id="completedDeliverables">0</div>
                 <div class="stat-change">
-                    <span>of 0 total</span>
+                    <span id="deliverablesTotal">of 0 total</span>
                 </div>
             </div>
         </div>
 
+        <!-- Content Grid -->
         <div class="content-grid">
+            <!-- Active Clients -->
             <div class="content-card">
                 <div class="card-header">
                     <h3 class="card-title">Active Clients</h3>
-                    <a href="#" class="view-all-btn">View All</a>
+                    <a href="/consultant-clients.html" class="view-all-btn">View All</a>
                 </div>
-                <div class="empty-state">
-                    <div class="icon">👥</div>
-                    <p>No clients yet</p>
+                <div id="activeClients">
+                    <div class="empty-state">
+                        <div class="icon">👥</div>
+                        <p>No clients yet</p>
+                    </div>
                 </div>
             </div>
 
+            <!-- Recent Activity -->
             <div class="content-card">
                 <div class="card-header">
                     <h3 class="card-title">Recent Activity</h3>
-                    <a href="#" class="view-all-btn">View Details</a>
+                    <a href="/client-success.html" class="view-all-btn">View Details</a>
                 </div>
-                <div class="empty-state">
-                    <div class="icon">📋</div>
-                    <p>No recent activity</p>
+                <div id="recentActivity">
+                    <div class="empty-state">
+                        <div class="icon">📋</div>
+                        <p>No recent activity</p>
+                    </div>
                 </div>
             </div>
 
+            <!-- Quick Actions -->
             <div class="content-card">
                 <div class="card-header">
                     <h3 class="card-title">Quick Actions</h3>
                 </div>
                 <div class="quick-actions">
-                    <a href="#" class="view-all-btn">➕ Invite New Client</a>
-                    <a href="#" class="view-all-btn">🎯 Track Client Success</a>
-                    <a href="#" class="view-all-btn">👤 Edit Profile</a>
+                    <a href="/consultant-clients.html?action=invite" class="view-all-btn">
+                        ➕ Invite New Client
+                    </a>
+                    <a href="/client-success.html" class="view-all-btn">
+                        🎯 Track Client Success
+                    </a>
+                    <a href="/edit-profile.html" class="view-all-btn">
+                        👤 Edit Profile
+                    </a>
                 </div>
             </div>
 
+            <!-- Tier Info -->
             <div class="content-card">
                 <div class="card-header">
                     <h3 class="card-title">Your Plan</h3>
                 </div>
                 <div style="padding: 20px; text-align: center;">
-                    <div style="font-size: 24px; font-weight: 700; color: #3498db; margin-bottom: 10px;">
-                        Starter
+                    <div style="font-size: 24px; font-weight: 700; color: #3498db; margin-bottom: 10px;" id="tierName">
+                        Loading...
                     </div>
-                    <div style="font-size: 14px; color: #7f8c8d; margin-bottom: 20px;">
-                        $99/month
+                    <div style="font-size: 14px; color: #7f8c8d; margin-bottom: 20px;" id="tierPrice">
+                        $0/month
                     </div>
                     <div style="font-size: 13px; color: #7f8c8d;">
-                        Up to 5 active clients
+                        <div id="tierLimits">Loading tier limits...</div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <script src="/auth-helper.js"></script>
+    <script>
+        const API_BASE = 'https://growthmanagerpro-backend.vercel.app';
+        let currentUserId = null;
+        let currentTenantId = null;
+        let currentUser = null;
+
+        // Tier configurations
+        const TIERS = {
+            starter: { name: 'Starter', price: 99, clients: 5 },
+            professional: { name: 'Professional', price: 299, clients: 15 },
+            premium: { name: 'Premium', price: 599, clients: 50 }
+        };
+
+        async function init() {
+            // Check authentication
+            const user = localStorage.getItem('currentUser');
+            
+            // If no user AND we're previewing locally (file:// protocol), use test data
+            if (!user && window.location.protocol === 'file:') {
+                console.log('🔍 PREVIEW MODE - Using test data');
+                currentUser = {
+                    id: 'preview-consultant-id',
+                    tenant_id: 'preview-tenant-id',
+                    full_name: 'Maggie Forbes',
+                    email: 'preview@example.com',
+                    role: 'consultant',
+                    subscription_tier: 'starter'
+                };
+                currentUserId = currentUser.id;
+                currentTenantId = currentUser.tenant_id;
+            } else if (!user) {
+                // No user and we're on a real domain - redirect to login
+                window.location.href = '/login.html';
+                return;
+            } else {
+                // User is logged in
+                currentUser = JSON.parse(user);
+                currentUserId = currentUser.id;
+                currentTenantId = currentUser.tenant_id;
+
+                // Check if user is consultant
+                if (currentUser.role !== 'consultant') {
+                    alert('Access denied. This portal is for consultants only.');
+                    window.location.href = '/dashboard.html';
+                    return;
+                }
+            }
+
+            displayUserInfo();
+            await loadDashboardData();
+        }
+
+        function displayUserInfo() {
+            const userName = document.getElementById('userName');
+            const userAvatar = document.getElementById('userAvatar');
+
+            const displayName = currentUser.full_name || currentUser.name || currentUser.email.split('@')[0];
+            userName.textContent = displayName;
+            userAvatar.textContent = displayName.charAt(0).toUpperCase();
+        }
+
+        async function loadDashboardData() {
+            try {
+                // Load consultant's tier info
+                displayTierInfo();
+
+                // Load clients (when API is ready)
+                // const clientsResponse = await fetch(`${API_BASE}/api/consultant/clients?user_id=${currentUserId}`);
+                // if (clientsResponse.ok) {
+                //     const clientsData = await clientsResponse.json();
+                //     updateClientStats(clientsData.data);
+                // }
+
+                // For now, show empty state
+                updateClientStats([]);
+
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+            }
+        }
+
+        function displayTierInfo() {
+            // Get tier from user metadata or default to starter
+            const tier = currentUser.subscription_tier || 'starter';
+            const tierInfo = TIERS[tier] || TIERS.starter;
+
+            document.getElementById('tierName').textContent = tierInfo.name;
+            document.getElementById('tierPrice').textContent = `$${tierInfo.price}/month`;
+            document.getElementById('tierLimits').textContent = `Up to ${tierInfo.clients} active clients`;
+            document.getElementById('clientsLimit').textContent = `of ${tierInfo.clients} limit`;
+        }
+
+        function updateClientStats(clients) {
+            const activeClients = clients.filter(c => c.status === 'active');
+            
+            document.getElementById('totalClients').textContent = clients.length;
+            document.getElementById('activeContracts').textContent = activeClients.length;
+            document.getElementById('contractsStatus').textContent = `${activeClients.length} in progress`;
+
+            if (clients.length === 0) {
+                return;
+            }
+
+            // Display active clients
+            const container = document.getElementById('activeClients');
+            container.innerHTML = clients.slice(0, 5).map(client => `
+                <div class="client-item" onclick="window.location.href='/client-success.html?client=${client.id}'">
+                    <div class="client-info">
+                        <h4>${client.name}</h4>
+                        <p>${client.company || 'No company'}</p>
+                    </div>
+                    <span class="client-status">${client.status || 'active'}</span>
+                </div>
+            `).join('');
+        }
+
+        function logout() {
+            if (window.location.protocol === 'file:') {
+                alert('Preview mode - logout disabled. This will work when deployed.');
+                return;
+            }
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('authToken');
+            window.location.href = '/login.html';
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
 </body>
 </html>
