@@ -529,83 +529,7 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <h1>Growth Manager Pro</h1>
-                <p>Client Acquisition System</p>
-            </div>
-            
-            <nav>
-                <div class="nav-section">
-                    <div class="nav-section-title">Overview</div>
-                    <a href="dashboard.html" class="nav-item">
-                        <span class="nav-icon">📊</span>
-                        Dashboard
-                    </a>
-                    <a href="contacts.html" class="nav-item">
-                        <span class="nav-icon">👥</span>
-                        Contacts
-                    </a>
-                </div>
-
-                <div class="nav-section">
-                    <div class="nav-section-title">Client Acquisition</div>
-                    <a href="podcast-calls.html" class="nav-item">
-                        <span class="nav-icon">🎙️</span>
-                        Podcast Calls
-                    </a>
-                    <a href="discovery-calls.html" class="nav-item">
-                        <span class="nav-icon">🔍</span>
-                        Discovery Calls
-                    </a>
-                    <a href="sales-calls.html" class="nav-item">
-                        <span class="nav-icon">💼</span>
-                        Sales Calls
-                    </a>
-                    <a href="pipeline.html" class="nav-item">
-                        <span class="nav-icon">📈</span>
-                        Pipeline
-                    </a>
-                    <a href="deals.html" class="nav-item">
-                        <span class="nav-icon">🤝</span>
-                        Deals
-                    </a>
-                </div>
-
-                <div class="nav-section">
-                    <div class="nav-section-title">Operations</div>
-                    <a href="cash-flow.html" class="nav-item">
-                        <span class="nav-icon">💰</span>
-                        Cash Flow
-                    </a>
-                    <a href="campaigns.html" class="nav-item">
-                        <span class="nav-icon">📧</span>
-                        Campaigns
-                    </a>
-                    <a href="sprints.html" class="nav-item">
-                        <span class="nav-icon">⚡</span>
-                        Sprints
-                    </a>
-                    <a href="expense-tracker.html" class="nav-item">
-                        <span class="nav-icon">🧾</span>
-                        Expense Tracker
-                    </a>
-                </div>
-
-                <div class="nav-section">
-                    <div class="nav-section-title">Settings</div>
-                    <a href="availability.html" class="nav-item active">
-                        <span class="nav-icon">📅</span>
-                        Availability
-                    </a>
-                    <a href="user-management.html" class="nav-item">
-                        <span class="nav-icon">⚙️</span>
-                        User Management
-                    </a>
-                </div>
-            </nav>
-        </aside>
+ 
 
         <!-- Main Content -->
         <main class="main-content">
@@ -640,8 +564,8 @@
                 </div>
 
                 <div class="stat-card">
-                    <div class="stat-label">💼 Sales Slots</div>
-                    <div class="stat-value" id="sales-slots">10</div>
+                    <div class="stat-label">💼 Strategy Slots</div>
+                    <div class="stat-value" id="strategy-slots">10</div>
                     <div class="stat-change">Available this week</div>
                 </div>
             </div>
@@ -806,12 +730,12 @@
                             </div>
                         </div>
 
-                        <!-- Sales Calls -->
+                        <!-- Strategy Calls -->
                         <div class="call-type-card">
                             <div class="call-type-header">
                                 <div class="call-type-name">
                                     <span>💼</span>
-                                    Sales Calls
+                                    Strategy Calls
                                 </div>
                                 <span class="status-badge status-connected">Active</span>
                             </div>
@@ -846,8 +770,18 @@
         </div>
     </div>
 
-    <script>
-        const API_URL = 'https://growthmanagerpro-backend.vercel.app';
+<script src="auth-helper.js"></script>
+<script src="/nav.js"></script>
+    
+<script>
+    (function() {
+        if (!AuthHelper.protectPage('advisor-dashboard.html')) {  // ← NOW CORRECT
+            throw new Error('Unauthorized access');
+        }
+        AuthHelper.applyPermissions();
+    })();
+    
+    const API_URL = 'https://growthmanagerpro-backend.vercel.app';
 
         // Working hours default
         const workingHours = {

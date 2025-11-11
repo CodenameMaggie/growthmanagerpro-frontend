@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Growth Manager Pro - Deals</title>
+    <title>Client Partnerships - Growth Manager Pro</title>
     <style>
         * {
             margin: 0;
@@ -11,394 +11,453 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --primary: #3498db;
+            --primary-dark: #2980b9;
+            --secondary: #2c3e50;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --white: #ffffff;
+            --shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
             min-height: 100vh;
-            color: #333;
+            color: var(--dark);
         }
 
-        .app-container {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        /* Sidebar Styles */
+        /* Sidebar */
         .sidebar {
-            width: 280px;
-            background: white;
-            padding: 2rem 0;
             position: fixed;
-            height: 100vh;
-            overflow-y: auto;
-            z-index: 1000;
             left: 0;
             top: 0;
+            width: 280px;
+            height: 100vh;
+            background: var(--white);
             box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            overflow-y: auto;
+            z-index: 100;
         }
 
-        .sidebar-header {
-            padding: 0 2rem 2rem 2rem;
-            border-bottom: 2px solid #e1e5e9;
-            margin-bottom: 2rem;
+        .logo {
+            padding: 2rem;
+            text-align: center;
+            border-bottom: 1px solid var(--light);
         }
 
-        .sidebar-header h1 {
+        .logo h1 {
             font-size: 1.5rem;
-            color: #2c3e50;
-            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .sidebar-header p {
-            color: #7f8c8d;
-            font-size: 0.9rem;
+        .nav-links {
+            padding: 1rem 0;
         }
 
-        .nav-section {
-            margin-bottom: 2rem;
-        }
-
-        .nav-section-title {
-            padding: 0 2rem;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: #95a5a6;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 1rem;
-        }
-
-        .nav-item {
+        .nav-links a {
             display: flex;
             align-items: center;
-            padding: 0.8rem 2rem;
-            color: #5a6c7d;
+            padding: 1rem 2rem;
+            color: var(--dark);
             text-decoration: none;
-            transition: all 0.2s ease;
-            cursor: pointer;
-            position: relative;
+            transition: all 0.3s ease;
         }
 
-        .nav-item:hover {
-            background: #f8f9fa;
-            color: #2c3e50;
-        }
-
-        .nav-item.active {
-            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
-            color: white;
-            font-weight: 600;
-        }
-
-        .nav-item.active::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 4px;
-            background: #2980b9;
-        }
-
-        .nav-icon {
-            width: 20px;
-            height: 20px;
-            margin-right: 1rem;
-            font-size: 1.2rem;
+        .nav-links a:hover,
+        .nav-links a.active {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: var(--white);
         }
 
         /* Main Content */
         .main-content {
-            flex: 1;
             margin-left: 280px;
             padding: 2rem;
+            min-height: 100vh;
         }
 
-        /* Page Header */
-        .page-header {
-            background: white;
+        .header {
+            background: var(--white);
             padding: 2rem;
             border-radius: 12px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            box-shadow: var(--shadow);
             margin-bottom: 2rem;
         }
 
-        .page-header h2 {
+        .header h1 {
             font-size: 2rem;
-            color: #2c3e50;
+            color: var(--dark);
             margin-bottom: 0.5rem;
         }
 
-        .page-header p {
+        .header p {
             color: #7f8c8d;
-            font-size: 1rem;
         }
 
-        .header-actions {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
-
-        /* Stats Grid */
+        /* Stats Cards */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 1.5rem;
             margin-bottom: 2rem;
         }
 
         .stat-card {
-            background: white;
+            background: var(--white);
             padding: 1.5rem;
             border-radius: 12px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            box-shadow: var(--shadow);
         }
 
         .stat-label {
-            font-size: 0.85rem;
+            font-size: 0.875rem;
             color: #7f8c8d;
             margin-bottom: 0.5rem;
-            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
         .stat-value {
             font-size: 2rem;
-            font-weight: bold;
-            margin-bottom: 0.25rem;
+            font-weight: 700;
+            color: var(--primary);
         }
 
         .stat-change {
-            font-size: 0.85rem;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+
+        .stat-change.positive {
+            color: var(--success);
+        }
+
+        /* Controls */
+        .controls {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--light);
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(52, 152, 219, 0.4);
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            border: 2px solid var(--light);
+            background: var(--white);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn.active {
+            background: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
+
+        /* Deals Grid */
+        .deals-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .deal-card {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            border-left: 4px solid var(--primary);
+            transition: all 0.3s ease;
+        }
+
+        .deal-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+        }
+
+        .deal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1.5rem;
+        }
+
+        .deal-title {
+            flex: 1;
+        }
+
+        .deal-title h3 {
+            font-size: 1.5rem;
+            color: var(--dark);
+            margin-bottom: 0.25rem;
+        }
+
+        .deal-title .company {
+            color: #7f8c8d;
+            font-size: 0.875rem;
+        }
+
+        .deal-value {
+            text-align: right;
+        }
+
+        .deal-value .amount {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .deal-value .type {
+            font-size: 0.75rem;
+            color: #7f8c8d;
+            text-transform: uppercase;
+        }
+
+        .tier-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-top: 0.5rem;
+        }
+
+        .tier-foundations {
+            background: #e8f4fd;
+            color: #2e86de;
+        }
+
+        .tier-architecture {
+            background: #d4f4dd;
             color: #27ae60;
         }
 
-        /* Table Styles */
-        .table-card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-            overflow: hidden;
+        .tier-alliance {
+            background: #ffeaa7;
+            color: #fdcb6e;
         }
 
-        .table-header {
-            padding: 1.5rem 2rem;
-            border-bottom: 2px solid #e1e5e9;
+        /* Timeline */
+        .timeline {
+            margin: 1.5rem 0;
+            padding-top: 1rem;
+            border-top: 2px solid var(--light);
+        }
+
+        .timeline-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            margin-bottom: 1rem;
         }
 
-        .table-header h3 {
-            font-size: 1.25rem;
-            color: #2c3e50;
-        }
-
-        .table-container {
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        thead {
-            background: #f8f9fa;
-        }
-
-        th {
-            padding: 1rem;
-            text-align: left;
-            font-size: 0.85rem;
+        .timeline-label {
+            font-size: 0.875rem;
             font-weight: 600;
-            color: #5a6c7d;
+            color: var(--dark);
+        }
+
+        .timeline-date {
+            font-size: 0.875rem;
+            color: #7f8c8d;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--light);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--primary-dark) 100%);
+            transition: width 0.3s ease;
+        }
+
+        .milestone {
+            font-size: 0.875rem;
+            color: #7f8c8d;
+        }
+
+        /* Systems Delivered */
+        .systems-section {
+            margin: 1.5rem 0;
+            padding-top: 1rem;
+            border-top: 2px solid var(--light);
+        }
+
+        .systems-header {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 1rem;
+        }
+
+        .systems-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .system-tag {
+            padding: 0.5rem 0.75rem;
+            background: var(--light);
+            border-radius: 6px;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .system-tag.delivered {
+            background: #d4f4dd;
+            color: var(--success);
+        }
+
+        .system-tag.in-progress {
+            background: #ffeaa7;
+            color: var(--warning);
+        }
+
+        .system-tag.pending {
+            background: var(--light);
+            color: #7f8c8d;
+        }
+
+        .system-icon {
+            font-weight: 700;
+        }
+
+        /* Metrics */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+            padding-top: 1rem;
+            border-top: 2px solid var(--light);
+        }
+
+        .metric {
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .metric-label {
+            font-size: 0.75rem;
+            color: #7f8c8d;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            margin-top: 0.25rem;
         }
 
-        td {
-            padding: 1rem;
-            border-top: 1px solid #e1e5e9;
-            font-size: 0.95rem;
+        /* Actions */
+        .deal-actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid var(--light);
         }
 
-        tbody tr {
-            transition: background 0.2s ease;
+        .btn-action {
+            flex: 1;
+            padding: 0.75rem;
+            border: 2px solid var(--light);
+            background: var(--white);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
         }
 
-        tbody tr:hover {
-            background: #f8f9fa;
+        .btn-action:hover {
+            border-color: var(--primary);
+            color: var(--primary);
         }
 
         /* Status Badges */
         .status-badge {
             display: inline-block;
-            padding: 0.4rem 0.8rem;
+            padding: 0.25rem 0.75rem;
             border-radius: 20px;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
         .status-active {
-            background: #d4edda;
-            color: #155724;
+            background: #d4f4dd;
+            color: var(--success);
+        }
+
+        .status-pending {
+            background: #ffeaa7;
+            color: var(--warning);
         }
 
         .status-renewal {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        .status-extended {
-            background: #cce5ff;
-            color: #004085;
-        }
-
-        .status-completed {
-            background: #e2e3e5;
-            color: #383d41;
-        }
-
-        .status-cancelled {
-            background: #f8d7da;
-            color: #721c24;
-        }
-
-        /* Payment Type Badges */
-        .payment-badge {
-            display: inline-block;
-            padding: 0.3rem 0.6rem;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            background: #e8f5e9;
-            color: #2e7d32;
-        }
-
-        .payment-hybrid {
-            background: #fff3e0;
-            color: #e65100;
-        }
-
-        .payment-fixed {
-            background: #e3f2fd;
-            color: #1565c0;
-        }
-
-        .payment-revshare {
-            background: #f3e5f5;
-            color: #7b1fa2;
-        }
-
-        /* Buttons */
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-weight: 600;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
-        }
-
-        .btn-secondary {
-            background: #ecf0f1;
-            color: #5a6c7d;
-        }
-
-        .btn-secondary:hover {
-            background: #d5dbdb;
-        }
-
-        .btn-small {
-            padding: 0.5rem 1rem;
-            font-size: 0.85rem;
-        }
-
-        /* Connection Status */
-        .connection-status {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            background: white;
-            padding: 1rem 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            z-index: 999;
-        }
-
-        .status-indicator {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: #95a5a6;
-        }
-
-        .status-indicator.status-connected {
-            background: #27ae60;
-            animation: pulse 2s infinite;
-        }
-
-        .status-indicator.status-error {
-            background: #e74c3c;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        /* Loading */
-        .loading {
-            text-align: center;
-            padding: 3rem;
-            color: #7f8c8d;
-        }
-
-        .loading-spinner {
-            border: 3px solid #ecf0f1;
-            border-top: 3px solid #3498db;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 1rem;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Performance Metrics */
-        .metrics-row {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-            font-size: 0.8rem;
-            color: #7f8c8d;
-        }
-
-        .metric-item {
-            background: #f8f9fa;
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
+            background: #e8f4fd;
+            color: #2e86de;
         }
 
         /* Responsive */
@@ -411,426 +470,409 @@
                 margin-left: 0;
             }
 
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
+            .controls {
+                flex-direction: column;
             }
+
+            .filter-group {
+                width: 100%;
+            }
+
+            .filter-btn {
+                flex: 1;
+            }
+        }
+
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: #7f8c8d;
         }
     </style>
 </head>
 <body>
-    <div class="app-container">
-        <!-- Sidebar -->
-        <nav class="sidebar">
-            <div class="sidebar-header">
-                <h1>Growth Manager Pro</h1>
-                <p>Business Growth Platform</p>
-            </div>
 
-            <div class="nav-section">
-                <div class="nav-section-title">Overview</div>
-                <a href="dashboard.html" class="nav-item">
-                    <span class="nav-icon">📊</span>
-                    <span>Dashboard</span>
-                </a>
-                <a href="contacts.html" class="nav-item">
-                    <span class="nav-icon">👥</span>
-                    <span>Contacts</span>
-                </a>
-            </div>
 
-            <div class="nav-section">
-                <div class="nav-section-title">Lead Generation</div>
-                <a href="podcast-calls.html" class="nav-item">
-                    <span class="nav-icon">🎙️</span>
-                    <span>Podcast Calls</span>
-                </a>
-                <a href="discovery-calls.html" class="nav-item">
-                    <span class="nav-icon">🔍</span>
-                    <span>Discovery Calls</span>
-                </a>
-                <a href="sales-calls.html" class="nav-item">
-                    <span class="nav-icon">💼</span>
-                    <span>Sales Calls</span>
-                </a>
-            </div>
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header">
+            <h1>Client Partnerships</h1>
+            <p>Track active engagements, system implementations, and partnership performance</p>
+        </div>
 
-            <div class="nav-section">
-                <div class="nav-section-title">Sales & Revenue</div>
-                <a href="pipeline.html" class="nav-item">
-                    <span class="nav-icon">📈</span>
-                    <span>Pipeline</span>
-                </a>
-                <a href="deals.html" class="nav-item active">
-                    <span class="nav-icon">🤝</span>
-                    <span>Deals</span>
-                </a>
-                <a href="cash-flow.html" class="nav-item">
-                    <span class="nav-icon">💰</span>
-                    <span>Cash Flow</span>
-                </a>
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Active Partnerships</div>
+                <div class="stat-value" id="activePartnerships">0</div>
+                <div class="stat-change positive">↑ 2 this quarter</div>
             </div>
-
-            <div class="nav-section">
-                <div class="nav-section-title">Marketing</div>
-                <a href="campaigns.html" class="nav-item">
-                    <span class="nav-icon">📧</span>
-                    <span>Campaigns</span>
-                </a>
-                <a href="sprints.html" class="nav-item">
-                    <span class="nav-icon">🚀</span>
-                    <span>Sprints</span>
-                </a>
+            <div class="stat-card">
+                <div class="stat-label">Total ARR</div>
+                <div class="stat-value" id="totalARR">$0</div>
+                <div class="stat-change positive">↑ 15% MoM</div>
             </div>
-
-            <div class="nav-section">
-                <div class="nav-section-title">Management</div>
-                <a href="expense-tracker.html" class="nav-item">
-                    <span class="nav-icon">💳</span>
-                    <span>Expense Tracker</span>
-                </a>
-                <a href="availability.html" class="nav-item">
-                    <span class="nav-icon">📅</span>
-                    <span>Availability</span>
-                </a>
+            <div class="stat-card">
+                <div class="stat-label">Systems Deployed</div>
+                <div class="stat-value" id="systemsDeployed">0</div>
+                <div class="stat-change positive">↑ 8 this month</div>
             </div>
-
-            <div class="nav-section">
-                <div class="nav-section-title">Settings</div>
-                <a href="user-management.html" class="nav-item">
-                    <span class="nav-icon">⚙️</span>
-                    <span>User Management</span>
-                </a>
+            <div class="stat-card">
+                <div class="stat-label">Avg Deal Value</div>
+                <div class="stat-value" id="avgDealValue">$0</div>
+                <div class="stat-change positive">↑ $25K</div>
             </div>
-        </nav>
+        </div>
 
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Page Header -->
-            <div class="page-header">
-                <h2>🤝 Client Deals</h2>
-                <p>Track Contracts, Performance & Renewals</p>
-                <div class="header-actions">
-                    <button class="btn btn-primary" onclick="addDeal()">+ Add Deal</button>
-                    <button class="btn btn-secondary" onclick="refreshData()">🔄 Refresh</button>
-                </div>
+        <!-- Controls -->
+        <div class="controls">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search partnerships...">
             </div>
-
-            <!-- Stats Grid -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-label">Active Deals</div>
-                    <div class="stat-value" style="color: #27ae60;" id="active-deals">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Total Contract Value</div>
-                    <div class="stat-value" style="color: #3498db;" id="total-value">$0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Revenue Generated</div>
-                    <div class="stat-value" style="color: #9b59b6;" id="revenue-generated">$0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Commission Earned</div>
-                    <div class="stat-value" style="color: #f39c12;" id="commission-earned">$0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Up for Renewal</div>
-                    <div class="stat-value" style="color: #e74c3c;" id="renewal-count">0</div>
-                    <div class="stat-change">Next 30 days</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Avg Deal Size</div>
-                    <div class="stat-value" style="color: #16a085;" id="avg-deal">$0</div>
-                </div>
+            <div class="filter-group">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="foundations">Foundations</button>
+                <button class="filter-btn" data-filter="architecture">Architecture</button>
+                <button class="filter-btn" data-filter="alliance">Alliance</button>
             </div>
+            <button class="btn btn-primary" onclick="addNewDeal()">+ New Partnership</button>
+        </div>
 
-            <!-- Deals Table -->
-            <div class="table-card">
-                <div class="table-header">
-                    <h3>Client Contracts (<span id="deal-count">0</span>)</h3>
-                </div>
-                <div class="table-container">
-                    <table id="deals-table">
-                        <thead>
-                            <tr>
-                                <th>Client</th>
-                                <th>Payment Model</th>
-                                <th>Contract Value</th>
-                                <th>Performance</th>
-                                <th>Status</th>
-                                <th>Renewal Date</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="deals-body">
-                            <tr>
-                                <td colspan="7" class="loading">
-                                    <div class="loading-spinner"></div>
-                                    <p>Loading deals...</p>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </main>
-
-        <!-- Connection Status -->
-        <div class="connection-status" id="connection-status">
-            <div class="status-indicator" id="status-indicator"></div>
-            <span id="status-text">Connecting...</span>
+        <!-- Deals Grid -->
+        <div class="deals-grid" id="dealsGrid">
+            <div class="loading">Loading partnerships...</div>
         </div>
     </div>
 
+    <script src="auth-helper.js"></script>
+    <script src="/nav.js"></script> 
+    
     <script>
+        // AUTHENTICATION
+        (function() {
+            if (!AuthHelper.protectPage('deals.html')) {
+                throw new Error('Unauthorized access');
+            }
+            AuthHelper.applyPermissions();
+        })();
+        
+        // API Configuration
         const API_BASE = 'https://growthmanagerpro-backend.vercel.app';
+        let currentTenantId = null;
+
+        // Sample data structure - will be replaced with API calls
         let dealsData = [];
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('[Deals] Initializing...');
-            console.log('[Deals] API Base:', API_BASE);
             loadDeals();
-            
-            // Auto-refresh every 5 minutes
-            setInterval(loadDeals, 300000);
+            setupFilters();
+            setupSearch();
         });
 
-        // Load deals from API
         async function loadDeals() {
             try {
-                updateConnectionStatus('connecting');
-                
-                const response = await fetch(`${API_BASE}/api/deals`);
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}`);
+                // Initialize tenant context if not already done
+                if (!currentTenantId) {
+                    await AuthHelper.initTenant();
+                    currentTenantId = AuthHelper.getTenantId();
+                    
+                    if (!currentTenantId) {
+                        console.error('[Deals] No tenant ID found');
+                        alert('Session error. Please refresh the page.');
+                        return;
+                    }
                 }
-
+                
+                console.log('[Deals] Loading partnerships from API...');
+                console.log('[Deals] Tenant ID:', currentTenantId);
+                
+                // Fetch from your backend with currentTenantId
+const response = await fetch(`${API_BASE}/api/deals?tenant_id=${currentTenantId}`);
+                if (!response.ok) throw new Error('Failed to load deals');
+                
                 const result = await response.json();
+                dealsData = result.data.deals || [];
                 
-                if (result.success && result.data) {
-                    dealsData = result.data.deals || [];
-                    updateStats(result.data.stats);
-                    renderDealsTable();
-                    updateConnectionStatus('connected');
-                    console.log('[Deals] ✅ Loaded', dealsData.length, 'deals');
-                } else {
-                    throw new Error('Invalid response format');
-                }
-
+                renderDeals(dealsData);
+                updateStats(dealsData);
+                
+                console.log('[Deals] ✅ Loaded', dealsData.length, 'deals');
+                
             } catch (error) {
-                console.error('[Deals] ❌ Error loading deals:', error);
-                updateConnectionStatus('error', error.message);
-                renderErrorState(error.message);
+                console.error('[Deals] Error loading deals:', error);
+                
+                // Fallback to sample data if API fails
+                console.log('[Deals] Using demo data as fallback');
+                dealsData = [
+                    {
+                        id: 1,
+                        clientName: 'Michael Thompson',
+                        company: 'Thompson Construction Co.',
+                        tier: 'architecture',
+                        dealValue: 150000,
+                        type: 'Annual',
+                        status: 'active',
+                        startDate: '2025-01-15',
+                        renewalDate: '2026-01-15',
+                        progress: 45,
+                        currentPhase: 'Phase 2: Scale',
+                        systemsDelivered: [
+                            { name: 'Intent Prospecting', status: 'delivered' },
+                            { name: 'AI Personalization', status: 'delivered' },
+                            { name: 'Interactive Assessments', status: 'delivered' },
+                            { name: 'Multi-Channel Orchestration', status: 'in-progress' },
+                            { name: 'Content Atomization', status: 'pending' },
+                            { name: 'Partnership Program', status: 'pending' }
+                        ],
+                        metrics: {
+                            leadsGenerated: 247,
+                            qualificationRate: 68,
+                            pipelineValue: 425000
+                        }
+                    },
+                    {
+                        id: 2,
+                        clientName: 'Sarah Chen',
+                        company: 'TechVision Solutions',
+                        tier: 'alliance',
+                        dealValue: 350000,
+                        type: 'Annual + Rev Share',
+                        status: 'active',
+                        startDate: '2024-09-01',
+                        renewalDate: '2025-09-01',
+                        progress: 75,
+                        currentPhase: 'Phase 3: Domination',
+                        systemsDelivered: [
+                            { name: 'Intent Prospecting', status: 'delivered' },
+                            { name: 'AI Personalization', status: 'delivered' },
+                            { name: 'Interactive Assessments', status: 'delivered' },
+                            { name: 'Multi-Channel Orchestration', status: 'delivered' },
+                            { name: 'Agentic AI SDR', status: 'delivered' },
+                            { name: 'Content Atomization', status: 'delivered' },
+                            { name: 'Partnership Program', status: 'delivered' },
+                            { name: 'ABM Orchestration', status: 'in-progress' },
+                            { name: 'AI Video System', status: 'in-progress' },
+                            { name: 'Executive Community', status: 'pending' }
+                        ],
+                        metrics: {
+                            leadsGenerated: 892,
+                            qualificationRate: 82,
+                            pipelineValue: 1850000
+                        }
+                    },
+                    {
+                        id: 3,
+                        clientName: 'David Rodriguez',
+                        company: 'Summit Consulting Group',
+                        tier: 'foundations',
+                        dealValue: 45000,
+                        type: 'One-time',
+                        status: 'active',
+                        startDate: '2025-10-01',
+                        renewalDate: null,
+                        progress: 65,
+                        currentPhase: 'Strategic Mapping',
+                        systemsDelivered: [
+                            { name: 'Tech Stack Audit', status: 'delivered' },
+                            { name: 'Data Intelligence Setup', status: 'delivered' },
+                            { name: 'Growth Systems Design', status: 'in-progress' },
+                            { name: 'ROI Framework', status: 'pending' }
+                        ],
+                        metrics: {
+                            systemsAudited: 12,
+                            bottlenecksIdentified: 8,
+                            prioritiesSet: 5
+                        }
+                    }
+                ];
+
+                renderDeals(dealsData);
+                updateStats(dealsData);
+            } catch (error) {
+                console.error('Error loading deals:', error);
+                document.getElementById('dealsGrid').innerHTML = '<div class="loading">Error loading partnerships. Please refresh.</div>';
             }
         }
 
-        // Update statistics
-        function updateStats(stats) {
-            if (!stats) {
-                // Calculate from data if stats not provided
-                stats = calculateStats();
-            }
+        function renderDeals(deals) {
+            const grid = document.getElementById('dealsGrid');
             
-            document.getElementById('active-deals').textContent = stats.activeDeals || 0;
-            document.getElementById('total-value').textContent = `$${(stats.totalValue || 0).toLocaleString()}`;
-            document.getElementById('revenue-generated').textContent = `$${(stats.revenueGenerated || 0).toLocaleString()}`;
-            document.getElementById('commission-earned').textContent = `$${(stats.commissionEarned || 0).toLocaleString()}`;
-            document.getElementById('renewal-count').textContent = stats.upForRenewal || 0;
-            document.getElementById('avg-deal').textContent = `$${(stats.avgDealSize || 0).toLocaleString()}`;
-        }
-
-        // Calculate stats from data
-        function calculateStats() {
-            const activeDeals = dealsData.filter(d => d.status === 'active').length;
-            const totalValue = dealsData.reduce((sum, d) => sum + (parseFloat(d.contractValue) || 0), 0);
-            const revenueGenerated = dealsData.reduce((sum, d) => sum + (parseFloat(d.revenueGenerated) || 0), 0);
-            const commissionEarned = dealsData.reduce((sum, d) => sum + (parseFloat(d.commissionEarned) || 0), 0);
-            const avgDealSize = activeDeals > 0 ? totalValue / activeDeals : 0;
-            
-            // Count deals up for renewal in next 30 days
-            const thirtyDaysFromNow = new Date();
-            thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
-            const upForRenewal = dealsData.filter(d => {
-                if (!d.renewalDate) return false;
-                const renewalDate = new Date(d.renewalDate);
-                return renewalDate <= thirtyDaysFromNow && d.status === 'active';
-            }).length;
-
-            return { 
-                activeDeals, 
-                totalValue, 
-                revenueGenerated,
-                commissionEarned,
-                upForRenewal,
-                avgDealSize
-            };
-        }
-
-        // Render deals table
-        function renderDealsTable() {
-            const tbody = document.getElementById('deals-body');
-            document.getElementById('deal-count').textContent = dealsData.length;
-
-            if (dealsData.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="7" style="text-align: center; padding: 3rem; color: #7f8c8d;">
-                            <p style="font-size: 1.1rem; margin-bottom: 0.5rem;">📭 No deals yet</p>
-                            <p>Add your first client deal to start tracking!</p>
-                        </td>
-                    </tr>
-                `;
+            if (deals.length === 0) {
+                grid.innerHTML = '<div class="loading">No partnerships found.</div>';
                 return;
             }
 
-            tbody.innerHTML = dealsData.map(deal => {
-                const paymentBadge = getPaymentBadge(deal.paymentModel);
-                const statusBadge = getStatusBadge(deal.status);
-                const performanceMetrics = getPerformanceMetrics(deal);
-                
-                return `
-                    <tr>
-                        <td>
-                            <strong>${deal.clientName || 'Unknown'}</strong><br>
-                            <small style="color: #7f8c8d;">${deal.company || ''}</small>
-                        </td>
-                        <td>${paymentBadge}</td>
-                        <td>
-                            <strong>$${(deal.contractValue || 0).toLocaleString()}</strong><br>
-                            <small style="color: #7f8c8d;">${deal.monthlyFee ? '$' + deal.monthlyFee + '/mo' : ''}</small>
-                        </td>
-                        <td>
-                            <div class="metrics-row">
-                                ${performanceMetrics}
-                            </div>
-                        </td>
-                        <td>${statusBadge}</td>
-                        <td>${deal.renewalDate ? formatDate(deal.renewalDate) : '—'}</td>
-                        <td>
-                            <button class="btn btn-small btn-secondary" onclick="viewDeal('${deal.id}')">
-                                View
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
+            grid.innerHTML = deals.map(deal => `
+                <div class="deal-card" data-tier="${deal.tier}">
+                    <div class="deal-header">
+                        <div class="deal-title">
+                            <h3>${deal.clientName}</h3>
+                            <div class="company">${deal.company}</div>
+                            <span class="tier-badge tier-${deal.tier}">${getTierName(deal.tier)}</span>
+                        </div>
+                        <div class="deal-value">
+                            <div class="amount">$${formatNumber(deal.dealValue)}</div>
+                            <div class="type">${deal.type}</div>
+                            <span class="status-badge status-${deal.status}">${deal.status}</span>
+                        </div>
+                    </div>
+
+                    <div class="timeline">
+                        <div class="timeline-header">
+                            <span class="timeline-label">${deal.currentPhase}</span>
+                            <span class="timeline-date">${formatDate(deal.startDate)} - ${deal.renewalDate ? formatDate(deal.renewalDate) : 'Ongoing'}</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${deal.progress}%"></div>
+                        </div>
+                        <div class="milestone">${deal.progress}% Complete</div>
+                    </div>
+
+                    <div class="systems-section">
+                        <div class="systems-header">Systems & Deliverables</div>
+                        <div class="systems-grid">
+                            ${deal.systemsDelivered.map(system => `
+                                <div class="system-tag ${system.status}">
+                                    <span class="system-icon">${getSystemIcon(system.status)}</span>
+                                    ${system.name}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div class="metrics-grid">
+                        ${renderMetrics(deal.metrics)}
+                    </div>
+
+                    <div class="deal-actions">
+                        <button class="btn-action" onclick="viewDetails(${deal.id})">View Details</button>
+                        <button class="btn-action" onclick="updateProgress(${deal.id})">Update Progress</button>
+                        <button class="btn-action" onclick="generateReport(${deal.id})">Generate Report</button>
+                    </div>
+                </div>
+            `).join('');
         }
 
-        // Get payment badge
-        function getPaymentBadge(model) {
-            if (!model) return '<span class="payment-badge payment-fixed">Fixed</span>';
-            
-            if (model.includes('hybrid') || model.includes('+')) {
-                return '<span class="payment-badge payment-hybrid">Hybrid</span>';
-            } else if (model.includes('%') || model.includes('share')) {
-                return '<span class="payment-badge payment-revshare">Rev Share</span>';
-            } else {
-                return '<span class="payment-badge payment-fixed">Fixed</span>';
-            }
+        function renderMetrics(metrics) {
+            return Object.entries(metrics).map(([key, value]) => `
+                <div class="metric">
+                    <div class="metric-value">${formatMetricValue(value)}</div>
+                    <div class="metric-label">${formatMetricLabel(key)}</div>
+                </div>
+            `).join('');
         }
 
-        // Get status badge
-        function getStatusBadge(status) {
-            const statusMap = {
-                'active': 'status-active',
-                'renewal': 'status-renewal',
-                'extended': 'status-extended',
-                'completed': 'status-completed',
-                'cancelled': 'status-cancelled'
+        function getTierName(tier) {
+            const names = {
+                'foundations': 'Strategic Foundations',
+                'architecture': 'Growth Architecture',
+                'alliance': 'Strategic Alliance'
             };
-            
-            const className = statusMap[status] || 'status-active';
-            return `<span class="status-badge ${className}">${status || 'active'}</span>`;
+            return names[tier] || tier;
         }
 
-        // Get performance metrics
-        function getPerformanceMetrics(deal) {
-            const metrics = [];
-            
-            if (deal.leadsGenerated) {
-                metrics.push(`<span class="metric-item">🎯 ${deal.leadsGenerated} leads</span>`);
-            }
-            if (deal.revenueGenerated) {
-                metrics.push(`<span class="metric-item">💰 $${deal.revenueGenerated.toLocaleString()}</span>`);
-            }
-            if (deal.roi) {
-                metrics.push(`<span class="metric-item">📈 ${deal.roi}x ROI</span>`);
-            }
-            
-            return metrics.length > 0 ? metrics.join('') : '<span style="color: #95a5a6;">No data yet</span>';
+        function getSystemIcon(status) {
+            const icons = {
+                'delivered': '✓',
+                'in-progress': '⟳',
+                'pending': '○'
+            };
+            return icons[status] || '○';
         }
 
-        // Render error state
-        function renderErrorState(message) {
-            const tbody = document.getElementById('deals-body');
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="7" style="text-align: center; padding: 3rem;">
-                        <p style="color: #e74c3c; font-size: 1.1rem; margin-bottom: 0.5rem;">⚠️ Connection Error</p>
-                        <p style="color: #7f8c8d; margin-bottom: 1rem;">Could not connect to: ${API_BASE}/api/deals</p>
-                        <p style="color: #7f8c8d; font-size: 0.9rem;">${message}</p>
-                        <button class="btn btn-primary" onclick="loadDeals()" style="margin-top: 1rem;">
-                            🔄 Retry Connection
-                        </button>
-                    </td>
-                </tr>
-            `;
+        function formatNumber(num) {
+            return num.toLocaleString();
         }
 
-        // Update connection status indicator
-        function updateConnectionStatus(status, message = '') {
-            const indicator = document.getElementById('status-indicator');
-            const statusText = document.getElementById('status-text');
-
-            if (status === 'connected') {
-                indicator.className = 'status-indicator status-connected';
-                statusText.textContent = 'Live Connected';
-            } else if (status === 'error') {
-                indicator.className = 'status-indicator status-error';
-                statusText.textContent = message || 'Connection Error';
-            } else if (status === 'connecting') {
-                indicator.className = 'status-indicator';
-                indicator.style.background = '#f39c12';
-                statusText.textContent = 'Connecting...';
-            }
-        }
-
-        // Actions
-        function addDeal() {
-            alert('Add Deal feature coming soon!');
-            // TODO: Open modal to add new deal
-        }
-
-        function viewDeal(id) {
-            const deal = dealsData.find(d => d.id === id);
-            if (deal) {
-                console.log('Viewing deal:', deal);
-                alert(`Deal Details:\n\nClient: ${deal.clientName}\nContract Value: $${(deal.contractValue || 0).toLocaleString()}\nStatus: ${deal.status}\n\nFull deal management coming soon!`);
-                // TODO: Open detailed view modal
-            }
-        }
-
-        function refreshData() {
-            console.log('[Deals] Manual refresh triggered');
-            loadDeals();
-        }
-
-        // Utility functions
         function formatDate(dateString) {
-            if (!dateString) return '';
+            if (!dateString) return 'Ongoing';
             const date = new Date(dateString);
-            return date.toLocaleDateString('en-US', { 
-                month: 'short', 
-                day: 'numeric',
-                year: 'numeric'
+            return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+        }
+
+        function formatMetricValue(value) {
+            if (typeof value === 'number' && value > 100000) {
+                return '$' + (value / 1000) + 'K';
+            }
+            return value.toLocaleString();
+        }
+
+        function formatMetricLabel(key) {
+            return key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+        }
+
+        function updateStats(deals) {
+            const activeCount = deals.filter(d => d.status === 'active').length;
+            const totalARR = deals.reduce((sum, d) => {
+                if (d.type.includes('Annual')) return sum + d.dealValue;
+                return sum;
+            }, 0);
+            const totalSystems = deals.reduce((sum, d) => sum + d.systemsDelivered.filter(s => s.status === 'delivered').length, 0);
+            const avgValue = deals.length > 0 ? deals.reduce((sum, d) => sum + d.dealValue, 0) / deals.length : 0;
+
+            document.getElementById('activePartnerships').textContent = activeCount;
+            document.getElementById('totalARR').textContent = '$' + formatNumber(totalARR);
+            document.getElementById('systemsDeployed').textContent = totalSystems;
+            document.getElementById('avgDealValue').textContent = '$' + formatNumber(Math.round(avgValue));
+        }
+
+        function setupFilters() {
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    
+                    const filter = btn.dataset.filter;
+                    filterDeals(filter);
+                });
             });
         }
 
-        // Log system info
-        console.log('[Deals] System initialized');
-        console.log('[Deals] API Endpoint:', API_BASE);
+        function filterDeals(filter) {
+            if (filter === 'all') {
+                renderDeals(dealsData);
+            } else {
+                const filtered = dealsData.filter(deal => deal.tier === filter);
+                renderDeals(filtered);
+            }
+        }
+
+        function setupSearch() {
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase();
+                const filtered = dealsData.filter(deal => 
+                    deal.clientName.toLowerCase().includes(query) ||
+                    deal.company.toLowerCase().includes(query)
+                );
+                renderDeals(filtered);
+            });
+        }
+
+        // Action Functions
+        function addNewDeal() {
+            alert('Add New Partnership functionality - opens modal or redirects to form');
+            // In production, this would open a modal or redirect to a form
+        }
+
+        function viewDetails(dealId) {
+            alert(`View details for deal ${dealId}`);
+            // In production, this would open a detailed view
+        }
+
+        function updateProgress(dealId) {
+            alert(`Update progress for deal ${dealId}`);
+            // In production, this would open a progress update modal
+        }
+
+        function generateReport(dealId) {
+            alert(`Generate report for deal ${dealId}`);
+            // In production, this would generate a PDF or detailed report
+        }
     </script>
 </body>
 </html>

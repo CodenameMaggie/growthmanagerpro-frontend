@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Growth Manager Pro - Client Success</title>
+    <title>Client Success - Growth Manager Pro</title>
     <style>
         * {
             margin: 0;
@@ -15,103 +15,173 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
             min-height: 100vh;
-            color: #333;
-        }
-
-        .app-container {
             display: flex;
-            min-height: 100vh;
         }
 
         /* Sidebar Styles */
         .sidebar {
             width: 280px;
             background: white;
-            padding: 2rem 0;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
             position: fixed;
             height: 100vh;
-            overflow-y: auto;
-            z-index: 1000;
             left: 0;
             top: 0;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            z-index: 1000;
         }
 
-        .sidebar-header {
-            padding: 0 2rem 2rem 2rem;
-            border-bottom: 2px solid #e1e5e9;
-            margin-bottom: 2rem;
+        .logo-section {
+            padding: 30px 25px;
+            border-bottom: 1px solid #ecf0f1;
         }
 
-        .sidebar-header h1 {
-            font-size: 1.5rem;
+        .logo-section h1 {
+            font-size: 22px;
             color: #2c3e50;
-            margin-bottom: 0.5rem;
+            margin-bottom: 8px;
         }
 
-        .sidebar-header p {
+        .logo-section .subtitle {
+            font-size: 13px;
             color: #7f8c8d;
-            font-size: 0.9rem;
         }
 
-        .nav-section {
-            margin-bottom: 2rem;
+        .role-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 12px;
+        }
+
+        .nav-menu {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 0;
         }
 
         .nav-section-title {
-            padding: 0 2rem;
-            font-size: 0.75rem;
+            padding: 0 25px;
+            font-size: 11px;
             font-weight: 600;
             color: #95a5a6;
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-bottom: 1rem;
+            margin: 20px 0 10px 0;
         }
 
         .nav-item {
+            padding: 12px 25px;
+            color: #2c3e50;
+            text-decoration: none;
             display: flex;
             align-items: center;
-            padding: 0.8rem 2rem;
-            color: #5a6c7d;
-            text-decoration: none;
-            transition: all 0.2s ease;
+            gap: 12px;
+            transition: all 0.2s;
+            font-size: 15px;
             cursor: pointer;
-            position: relative;
         }
 
         .nav-item:hover {
             background: #f8f9fa;
-            color: #2c3e50;
+            color: #3498db;
         }
 
         .nav-item.active {
-            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
-            color: white;
+            background: linear-gradient(90deg, #e3f2fd 0%, transparent 100%);
+            color: #3498db;
+            border-left: 3px solid #3498db;
             font-weight: 600;
         }
 
-        .nav-item.active::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 4px;
-            background: #2980b9;
+        .nav-item .icon {
+            font-size: 18px;
+            width: 20px;
+            text-align: center;
         }
 
-        .nav-icon {
-            width: 20px;
-            height: 20px;
-            margin-right: 1rem;
-            font-size: 1.2rem;
+        .user-section {
+            padding: 20px 25px;
+            border-top: 1px solid #ecf0f1;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 15px;
+            padding: 1rem;
+            background: linear-gradient(135deg, #e8f4f8 0%, #d6eaf8 100%);
+            border-radius: 12px;
+        }
+
+        .user-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .user-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .user-role {
+            font-size: 0.75rem;
+            color: #5a6c7d;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .logout-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            width: 100%;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .logout-btn:hover {
+            background: #c0392b;
         }
 
         /* Main Content */
         .main-content {
-            flex: 1;
             margin-left: 280px;
-            padding: 2rem;
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
         }
 
         /* Page Header */
@@ -258,7 +328,8 @@
         }
 
         .contract-field input,
-        .contract-field select {
+        .contract-field select,
+        .contract-field textarea {
             padding: 0.75rem;
             border: 2px solid #e1e5e9;
             border-radius: 8px;
@@ -266,15 +337,16 @@
         }
 
         .contract-field input:focus,
-        .contract-field select:focus {
+        .contract-field select:focus,
+        .contract-field textarea:focus {
             outline: none;
             border-color: #3498db;
         }
 
-        .contract-field .value {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #2c3e50;
+        .contract-field textarea {
+            min-height: 100px;
+            resize: vertical;
+            font-family: inherit;
         }
 
         /* Progress Bar */
@@ -304,85 +376,6 @@
             transition: width 0.3s ease;
         }
 
-        /* Deliverables List */
-        .deliverables-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .deliverable-item {
-            padding: 1.5rem;
-            background: #f8f9fa;
-            border: 2px solid #e1e5e9;
-            border-radius: 8px;
-            display: flex;
-            gap: 1rem;
-            align-items: flex-start;
-            transition: all 0.2s ease;
-        }
-
-        .deliverable-item:hover {
-            border-color: #3498db;
-        }
-
-        .deliverable-item.completed {
-            background: #d1fae5;
-            border-color: #27ae60;
-        }
-
-        .deliverable-item.in-progress {
-            background: #fef3c7;
-            border-color: #f39c12;
-        }
-
-        .deliverable-checkbox {
-            width: 24px;
-            height: 24px;
-            margin-top: 0.25rem;
-            cursor: pointer;
-        }
-
-        .deliverable-content {
-            flex: 1;
-        }
-
-        .deliverable-title {
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 0.5rem;
-        }
-
-        .deliverable-description {
-            color: #7f8c8d;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .deliverable-status {
-            display: inline-block;
-            padding: 0.3rem 0.8rem;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .status-completed {
-            background: #d1fae5;
-            color: #065f46;
-        }
-
-        .status-in-progress {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        .status-upcoming {
-            background: #e0e7ff;
-            color: #3730a3;
-        }
-
         /* Results Cards */
         .results-grid {
             display: grid;
@@ -404,12 +397,6 @@
             font-weight: 500;
         }
 
-        .result-value {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #27ae60;
-        }
-
         .result-input {
             width: 100%;
             padding: 0.75rem;
@@ -419,542 +406,666 @@
             font-weight: 600;
         }
 
-        /* Add Deliverable Form */
-        .add-deliverable-form {
-            display: none;
-            padding: 1.5rem;
-            background: #e3f2fd;
-            border-radius: 8px;
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem;
+            color: #7f8c8d;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            color: #2c3e50;
             margin-bottom: 1rem;
         }
 
-        .add-deliverable-form.show {
-            display: block;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .form-field {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .form-field label {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #1565c0;
-        }
-
-        .form-field input,
-        .form-field textarea,
-        .form-field select {
-            padding: 0.75rem;
-            border: 2px solid #90caf9;
-            border-radius: 6px;
-            font-size: 0.95rem;
-        }
-
-        .form-field textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
-
-        /* Connection Status */
-        .connection-status {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            padding: 0.75rem 1.5rem;
-            border-radius: 30px;
+        /* Back Button */
+        .back-btn {
             background: white;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            border: 2px solid #3498db;
+            color: #3498db;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            font-size: 0.85rem;
-            font-weight: 600;
-            z-index: 999;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
         }
 
-        .status-indicator {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: #95a5a6;
+        .back-btn:hover {
+            background: #3498db;
+            color: white;
+            transform: translateX(-2px);
         }
 
-        .status-indicator.status-connected {
-            background: #27ae60;
-            animation: pulse 2s infinite;
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #7f8c8d;
         }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        /* Read-only mode */
-        .read-only .contract-field input,
-        .read-only .contract-field select,
-        .read-only .result-input,
-        .read-only .deliverable-checkbox {
-            pointer-events: none;
-            opacity: 0.7;
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="app-container">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <h1>Growth Manager Pro</h1>
-                <p>Client Acquisition System</p>
-            </div>
-            
-            <nav>
-                <div class="nav-section">
-                    <div class="nav-section-title">Overview</div>
-                    <a href="dashboard.html" class="nav-item">
-                        <span class="nav-icon">📊</span>
-                        Dashboard
-                    </a>
-                    <a href="contacts.html" class="nav-item">
-                        <span class="nav-icon">👥</span>
-                        Contacts
-                    </a>
-                    <a href="client-success.html" class="nav-item active">
-                        <span class="nav-icon">🎯</span>
-                        Client Success
-                    </a>
-                </div>
+    <div class="sidebar">
+        <div class="logo-section">
+            <h1>Growth Manager Pro</h1>
+            <p class="subtitle" id="sidebar-subtitle">Loading...</p>
+            <span class="role-badge" id="user-role-badge">Loading...</span>
+        </div>
 
-                <div class="nav-section">
-                    <div class="nav-section-title">Client Acquisition</div>
-                    <a href="podcast-calls.html" class="nav-item">
-                        <span class="nav-icon">🎙️</span>
-                        Podcast Calls
-                    </a>
-                    <a href="discovery-calls.html" class="nav-item">
-                        <span class="nav-icon">🔍</span>
-                        Discovery Calls
-                    </a>
-                    <a href="sales-calls.html" class="nav-item">
-                        <span class="nav-icon">💼</span>
-                        Sales Calls
-                    </a>
-                    <a href="pipeline.html" class="nav-item">
-                        <span class="nav-icon">📈</span>
-                        Pipeline
-                    </a>
-                    <a href="deals.html" class="nav-item">
-                        <span class="nav-icon">🤝</span>
-                        Deals
-                    </a>
-                </div>
+        <!-- Centered User Profile Section -->
+        <div style="padding: 1.5rem 2rem; background: linear-gradient(135deg, #e8f4f8 0%, #d6eaf8 100%); margin: 0 1.5rem 1.5rem 1.5rem; border-radius: 12px; text-align: center;">
+            <div class="user-avatar" id="user-avatar-top" style="width: 60px; height: 60px; font-size: 1.5rem; margin: 0 auto 0.75rem auto;">?</div>
+            <div class="user-name" id="user-name-top" style="font-size: 1.1rem; font-weight: 700; color: #2c3e50; margin-bottom: 0.25rem;">Loading...</div>
+            <div class="user-role" id="user-role-top" style="font-size: 0.8rem; color: #5a6c7d; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;">Loading...</div>
+        </div>
 
-                <div class="nav-section">
-                    <div class="nav-section-title">Operations</div>
-                    <a href="cash-flow.html" class="nav-item">
-                        <span class="nav-icon">💰</span>
-                        Cash Flow
-                    </a>
-                    <a href="campaigns.html" class="nav-item">
-                        <span class="nav-icon">📧</span>
-                        Campaigns
-                    </a>
-                    <a href="sprints.html" class="nav-item">
-                        <span class="nav-icon">⚡</span>
-                        Sprints
-                    </a>
-                    <a href="expense-tracker.html" class="nav-item">
-                        <span class="nav-icon">🧾</span>
-                        Expense Tracker
-                    </a>
-                </div>
+        <nav class="nav-menu" id="nav-menu">
+            <!-- Will be populated by JavaScript based on role -->
+        </nav>
 
-                <div class="nav-section">
-                    <div class="nav-section-title">Settings</div>
-                    <a href="availability.html" class="nav-item">
-                        <span class="nav-icon">📅</span>
-                        Availability
-                    </a>
-                    <a href="user-management.html" class="nav-item">
-                        <span class="nav-icon">⚙️</span>
-                        User Management
-                    </a>
-                </div>
-            </nav>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="main-content" id="main-content">
-            <!-- Page Header -->
-            <header class="page-header">
-                <h2>🎯 Client Success Dashboard</h2>
-                <p>Track contract deliverables and client results</p>
-                <div class="header-actions">
-                    <div class="client-selector">
-                        <select id="client-select" onchange="loadClientData()">
-                            <option value="">Select Client...</option>
-                            <option value="jonathan">Jonathan Brewer - Brewer Suite Co</option>
-                            <option value="tye">Tye Shumway - TWS Construction</option>
-                        </select>
-                    </div>
-                    <button class="btn btn-success" onclick="saveClientData()">💾 Save Changes</button>
-                </div>
-            </header>
-
-            <!-- Content Container -->
-            <div id="client-content" style="display: none;">
-                <!-- Contract Overview Card -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3>📋 Contract Overview</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="contract-grid">
-                            <div class="contract-field">
-                                <label>Package Name</label>
-                                <input type="text" id="package-name" placeholder="e.g., Lead Gen + Sales Coaching">
-                            </div>
-                            <div class="contract-field">
-                                <label>Contract Duration</label>
-                                <input type="text" id="contract-duration" placeholder="e.g., 6 Months">
-                            </div>
-                            <div class="contract-field">
-                                <label>Start Date</label>
-                                <input type="date" id="start-date">
-                            </div>
-                            <div class="contract-field">
-                                <label>End Date</label>
-                                <input type="date" id="end-date">
-                            </div>
-                            <div class="contract-field">
-                                <label>Current Month</label>
-                                <input type="text" id="current-month" placeholder="e.g., Month 3 of 6">
-                            </div>
-                            <div class="contract-field">
-                                <label>Contract Value</label>
-                                <input type="text" id="contract-value" placeholder="e.g., $15,000">
-                            </div>
-                        </div>
-
-                        <div class="progress-container">
-                            <div class="progress-label">
-                                <span><strong>Contract Progress</strong></span>
-                                <span id="progress-percent">0%</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Deliverables Card -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3>✅ Deliverables</h3>
-                        <button class="btn btn-small btn-primary" onclick="toggleAddDeliverable()">+ Add Deliverable</button>
-                    </div>
-                    <div class="card-body">
-                        <!-- Add Deliverable Form -->
-                        <div class="add-deliverable-form" id="add-deliverable-form">
-                            <h4 style="margin-bottom: 1rem; color: #1565c0;">Add New Deliverable</h4>
-                            <div class="form-row">
-                                <div class="form-field">
-                                    <label>Deliverable Title</label>
-                                    <input type="text" id="new-deliverable-title" placeholder="e.g., Cold Email Campaign Setup">
-                                </div>
-                                <div class="form-field">
-                                    <label>Status</label>
-                                    <select id="new-deliverable-status">
-                                        <option value="upcoming">Upcoming</option>
-                                        <option value="in-progress">In Progress</option>
-                                        <option value="completed">Completed</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-field">
-                                <label>Description (Optional)</label>
-                                <textarea id="new-deliverable-description" placeholder="Add details about this deliverable..."></textarea>
-                            </div>
-                            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
-                                <button class="btn btn-success btn-small" onclick="addDeliverable()">✅ Add</button>
-                                <button class="btn btn-secondary btn-small" onclick="toggleAddDeliverable()">Cancel</button>
-                            </div>
-                        </div>
-
-                        <!-- Deliverables List -->
-                        <div class="deliverables-list" id="deliverables-list">
-                            <p style="text-align: center; color: #7f8c8d; padding: 2rem;">Select a client to view deliverables</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Results Card -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3>📊 Results Delivered</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="results-grid">
-                            <div class="result-card">
-                                <div class="result-label">Leads Generated</div>
-                                <input type="number" class="result-input" id="leads-generated" placeholder="0">
-                            </div>
-                            <div class="result-card">
-                                <div class="result-label">Calls Booked</div>
-                                <input type="number" class="result-input" id="calls-booked" placeholder="0">
-                            </div>
-                            <div class="result-card">
-                                <div class="result-label">Content Created</div>
-                                <input type="number" class="result-input" id="content-created" placeholder="0">
-                            </div>
-                            <div class="result-card">
-                                <div class="result-label">Sales Calls Analyzed</div>
-                                <input type="number" class="result-input" id="sales-calls-analyzed" placeholder="0">
-                            </div>
-                        </div>
-                    </div>
+        <div class="user-section">
+            <div class="user-info">
+                <div class="user-avatar" id="user-avatar">?</div>
+                <div class="user-details">
+                    <div class="user-name" id="user-name">Loading...</div>
+                    <div class="user-role" id="user-role-text">Loading...</div>
                 </div>
             </div>
-
-            <!-- Empty State -->
-            <div id="empty-state" style="text-align: center; padding: 4rem; color: #7f8c8d;">
-                <h3 style="font-size: 1.5rem; color: #2c3e50; margin-bottom: 1rem;">👆 Select a Client</h3>
-                <p>Choose a client from the dropdown above to view and manage their deliverables</p>
-            </div>
-        </main>
-
-        <!-- Connection Status -->
-        <div class="connection-status">
-            <div class="status-indicator status-connected"></div>
-            <span>Live Connected</span>
+            <button class="logout-btn" onclick="handleLogout()">Logout</button>
         </div>
     </div>
 
+    <div class="main-content">
+        <!-- Breadcrumb Navigation -->
+        <div style="margin-bottom: 1rem; display: flex; align-items: center; gap: 1rem;">
+            <button onclick="goBackToDashboard()" class="back-btn">
+                ← Back to Dashboard
+            </button>
+            <div style="color: white; font-size: 0.9rem;" id="breadcrumb-nav">
+                <span style="opacity: 0.7;">Dashboard</span> 
+                <span style="margin: 0 0.5rem;">›</span> 
+                <span>Client Success</span>
+            </div>
+        </div>
+
+        <!-- Page Header -->
+        <header class="page-header">
+            <h2>🎯 Client Success Dashboard</h2>
+            <p id="page-subtitle">Track contract deliverables and client results</p>
+            <div class="header-actions">
+                <div class="client-selector">
+                    <select id="client-select" onchange="loadClientData()">
+                        <option value="">Select Client...</option>
+                    </select>
+                </div>
+            </div>
+        </header>
+
+        <!-- Selected Client Info Banner (shows when client selected) -->
+        <div id="client-info-banner" style="display: none; background: white; padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-left: 4px solid #3498db;">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <div style="width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #3498db, #2980b9); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 24px;" id="client-avatar-large">
+                </div>
+                <div style="flex: 1;">
+                    <h3 style="color: #2c3e50; font-size: 1.5rem; margin-bottom: 0.25rem;" id="client-name-display">Client Name</h3>
+                    <p style="color: #7f8c8d; font-size: 0.95rem;" id="client-email-display"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="f596999c909b81b59098949c99db969a98">[email&#160;protected]</a></p>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-size: 0.85rem; color: #7f8c8d; margin-bottom: 0.25rem;">Client Since</div>
+                    <div style="font-weight: 600; color: #2c3e50;" id="client-since-display">-</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Container -->
+        <div id="client-content" style="display: none;">
+            <!-- Contract Overview Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h3>📋 Contract Overview</h3>
+                </div>
+                <div class="card-body">
+                    <div class="contract-grid">
+                        <div class="contract-field">
+                            <label>Package Name</label>
+                            <input type="text" id="package-name" placeholder="e.g., Lead Gen + Sales Coaching">
+                        </div>
+                        <div class="contract-field">
+                            <label>Contract Duration</label>
+                            <input type="text" id="contract-duration" placeholder="e.g., 6 Months">
+                        </div>
+                        <div class="contract-field">
+                            <label>Start Date</label>
+                            <input type="date" id="start-date">
+                        </div>
+                        <div class="contract-field">
+                            <label>End Date</label>
+                            <input type="date" id="end-date">
+                        </div>
+                        <div class="contract-field">
+                            <label>Monthly Value</label>
+                            <input type="number" id="monthly-value" placeholder="5000">
+                        </div>
+                        <div class="contract-field">
+                            <label>Total Contract Value</label>
+                            <input type="number" id="total-value" placeholder="30000">
+                        </div>
+                    </div>
+
+                    <div class="contract-field" style="margin-top: 1.5rem;">
+                        <label>Contract Notes</label>
+                        <textarea id="contract-notes" placeholder="Add any notes about this client contract..."></textarea>
+                    </div>
+
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span><strong>Contract Progress</strong></span>
+                            <span id="progress-text">Not started</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h3>📊 Results Delivered</h3>
+                </div>
+                <div class="card-body">
+                    <div class="results-grid">
+                        <div class="result-card">
+                            <div class="result-label">Leads Generated</div>
+                            <input type="number" class="result-input" id="leads-generated" placeholder="0">
+                        </div>
+                        <div class="result-card">
+                            <div class="result-label">Calls Booked</div>
+                            <input type="number" class="result-input" id="calls-booked" placeholder="0">
+                        </div>
+                        <div class="result-card">
+                            <div class="result-label">Content Created</div>
+                            <input type="number" class="result-input" id="content-created" placeholder="0">
+                        </div>
+                        <div class="result-card">
+                            <div class="result-label">Strategy Calls Completed</div>
+                            <input type="number" class="result-input" id="strategy-calls" placeholder="0">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div id="empty-state" class="empty-state">
+            <h3>👆 Select a Client</h3>
+            <p>Choose a client from the dropdown above to view and manage their contract details</p>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loading-state" class="loading" style="display: none;">
+            <p>Loading client data...</p>
+        </div>
+    </div>
+
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="auth-helper.js"></script>
     <script>
         const API_URL = 'https://growthmanagerpro-backend.vercel.app';
-        let currentClientData = null;
+        let currentTenantId = null;
+        let currentUser = null;
+        let allClients = [];
+        let currentClientId = null;
+        let selectedClient = null;
 
-        // Sample client data
-        const clientDatabase = {
-            jonathan: {
-                name: 'Jonathan Brewer',
-                company: 'Brewer Suite Co',
-                package: 'Lead Gen + Sales Coaching',
-                duration: '6 Months',
-                startDate: '2024-10-01',
-                endDate: '2025-03-31',
-                currentMonth: 'Month 3 of 6',
-                value: '$15,000',
-                deliverables: [
-                    { id: 1, title: 'Offer & Niche Definition Workshop', description: 'Define target market and service offerings', status: 'completed' },
-                    { id: 2, title: 'Cold Email Campaign Setup', description: 'Instantly account setup with sequences', status: 'completed' },
-                    { id: 3, title: 'LinkedIn Profile Optimization', description: 'Optimize profile for lead generation', status: 'completed' },
-                    { id: 4, title: 'Cold Email Campaign Optimization', description: 'A/B testing and performance improvements', status: 'in-progress' },
-                    { id: 5, title: 'Content Creation (12 Posts)', description: 'LinkedIn content strategy and posts', status: 'in-progress' },
-                    { id: 6, title: 'Sales Team Training (4 Sessions)', description: 'Sales coaching and call reviews', status: 'in-progress' },
-                    { id: 7, title: 'LinkedIn Outreach Campaign', description: 'Launch targeted outreach', status: 'upcoming' },
-                    { id: 8, title: 'Website Funnel Creation', description: 'Build high-converting landing page', status: 'upcoming' }
-                ],
-                results: {
-                    leadsGenerated: 47,
-                    callsBooked: 12,
-                    contentCreated: 8,
-                    salesCallsAnalyzed: 6
-                }
-            },
-            tye: {
-                name: 'Tye Shumway',
-                company: 'TWS Construction',
-                package: 'Cold Email + Content Authority',
-                duration: '3 Months',
-                startDate: '2024-11-01',
-                endDate: '2025-01-31',
-                currentMonth: 'Month 2 of 3',
-                value: '$8,000',
-                deliverables: [
-                    { id: 1, title: 'Offer & Niche Definition', description: 'Define target commercial clients', status: 'completed' },
-                    { id: 2, title: 'Cold Email Campaign Setup', description: 'Instantly setup and sequences', status: 'completed' },
-                    { id: 3, title: 'Content Strategy Development', description: 'LinkedIn content plan', status: 'in-progress' },
-                    { id: 4, title: 'Video Content Creation (6 Videos)', description: 'Record and edit video content', status: 'in-progress' },
-                    { id: 5, title: 'Cold Email Optimization', description: 'Campaign performance improvements', status: 'upcoming' }
-                ],
-                results: {
-                    leadsGenerated: 23,
-                    callsBooked: 5,
-                    contentCreated: 3,
-                    salesCallsAnalyzed: 0
-                }
+        // Go back to dashboard based on role
+        function goBackToDashboard() {
+            const user = AuthHelper.getCurrentUser();
+            
+            if (!user) {
+                console.error('[Client Success] No user found for redirect');
+                window.location.href = 'dashboard.html';
+                return;
             }
-        };
 
-        function loadClientData() {
+            console.log('[Client Success] Redirecting user with role:', user.role);
+
+            // Route based on role
+            switch(user.role) {
+                case 'consultant':
+                    window.location.href = 'consultant-dashboard.html';
+                    break;
+                case 'advisor':
+                    window.location.href = 'advisor-dashboard.html';
+                    break;
+                case 'admin':
+                case 'saas':
+                    window.location.href = 'dashboard.html';
+                    break;
+                default:
+                    console.warn('[Client Success] Unknown role:', user.role, '- redirecting to default dashboard');
+                    window.location.href = 'dashboard.html';
+            }
+        }
+
+        // Logout handler
+        function handleLogout() {
+            AuthHelper.logout();
+        }
+
+        // Initialize page
+        async function initPage() {
+            console.log('[Client Success] Initializing...');
+
+            // Initialize tenant context
+            await AuthHelper.initTenant();
+            currentTenantId = AuthHelper.getTenantId();
+            console.log('[Client Success] Tenant ID:', currentTenantId);
+
+            // Protect page
+            const granted = await AuthHelper.protectPage('client-success.html');
+            if (!granted) {
+                console.log('[Client Success] Access denied');
+                return;
+            }
+
+            currentUser = AuthHelper.getCurrentUser();
+            console.log('[Client Success] Current user:', currentUser);
+
+            // Check role access
+            const allowedRoles = ['admin', 'saas', 'advisor', 'consultant'];
+            if (!allowedRoles.includes(currentUser.role)) {
+                alert('You do not have access to this page.');
+                window.location.href = 'dashboard.html';
+                return;
+            }
+
+            // Update user info in sidebar
+            updateUserInfo(currentUser);
+
+            // Update breadcrumb based on role
+            updateBreadcrumb(currentUser.role);
+
+            // Build navigation based on role
+            buildNavigation(currentUser.role);
+
+            // Load clients
+            await loadClients();
+        }
+
+        // Update user info in sidebar
+        function updateUserInfo(user) {
+            const displayName = user.full_name || user.name || user.email.split('@')[0];
+            const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+            const roleDisplay = user.role.charAt(0).toUpperCase() + user.role.slice(1);
+
+            // Update bottom user section
+            document.getElementById('user-name').textContent = displayName;
+            document.getElementById('user-avatar').textContent = initials;
+            document.getElementById('user-role-text').textContent = roleDisplay;
+            document.getElementById('user-role-badge').textContent = roleDisplay;
+            
+            // Update top centered profile section
+            document.getElementById('user-name-top').textContent = displayName;
+            document.getElementById('user-avatar-top').textContent = initials;
+            
+            if (user.role === 'consultant') {
+                document.getElementById('sidebar-subtitle').textContent = 'Consultant Portal';
+                document.getElementById('user-role-top').textContent = '👑 CONSULTANT';
+            } else if (user.role === 'advisor') {
+                document.getElementById('sidebar-subtitle').textContent = 'Advisor Portal';
+                document.getElementById('user-role-top').textContent = '👑 ADVISOR';
+            } else {
+                document.getElementById('sidebar-subtitle').textContent = 'Admin Portal';
+                document.getElementById('user-role-top').textContent = '👑 ADMIN';
+            }
+        }
+
+        // Update breadcrumb based on role
+        function updateBreadcrumb(role) {
+            const breadcrumb = document.getElementById('breadcrumb-nav');
+            let dashboardName = 'Dashboard';
+            
+            switch(role) {
+                case 'consultant':
+                    dashboardName = 'Consultant Dashboard';
+                    document.getElementById('page-subtitle').textContent = 'Track deliverables and results for your clients';
+                    break;
+                case 'advisor':
+                    dashboardName = 'Advisor Dashboard';
+                    document.getElementById('page-subtitle').textContent = 'Monitor client progress and contract performance';
+                    break;
+                case 'admin':
+                case 'saas':
+                    dashboardName = 'Admin Dashboard';
+                    document.getElementById('page-subtitle').textContent = 'Track contract deliverables and client results across all clients';
+                    break;
+            }
+            
+            breadcrumb.innerHTML = `
+                <span style="opacity: 0.7;">${dashboardName}</span> 
+                <span style="margin: 0 0.5rem;">›</span> 
+                <span>Client Success</span>
+            `;
+        }
+
+        // Build navigation based on role
+        function buildNavigation(role) {
+            const navMenu = document.getElementById('nav-menu');
+            let navHTML = '';
+
+            if (role === 'consultant') {
+                navHTML = `
+                    <div class="nav-section-title">Overview</div>
+                    <a href="consultant-dashboard.html" class="nav-item">
+                        <span class="icon">📊</span>
+                        <span>Dashboard</span>
+                    </a>
+                    <div class="nav-section-title">Client Management</div>
+                    <a href="contacts.html" class="nav-item">
+                        <span class="icon">👥</span>
+                        <span>Clients</span>
+                    </a>
+                    <a href="client-success.html" class="nav-item active">
+                        <span class="icon">🎯</span>
+                        <span>Client Success</span>
+                    </a>
+                    <div class="nav-section-title">Account</div>
+                    <a href="edit-profile.html" class="nav-item">
+                        <span class="icon">👤</span>
+                        <span>Profile</span>
+                    </a>
+                    <a href="settings.html" class="nav-item">
+                        <span class="icon">⚙️</span>
+                        <span>Settings</span>
+                    </a>
+                `;
+            } else if (role === 'advisor') {
+                navHTML = `
+                    <div class="nav-section-title">Overview</div>
+                    <a href="advisor-dashboard.html" class="nav-item">
+                        <span class="icon">📊</span>
+                        <span>Dashboard</span>
+                    </a>
+                    <div class="nav-section-title">Client Management</div>
+                    <a href="contacts.html" class="nav-item">
+                        <span class="icon">👥</span>
+                        <span>Clients</span>
+                    </a>
+                    <a href="client-success.html" class="nav-item active">
+                        <span class="icon">🎯</span>
+                        <span>Client Success</span>
+                    </a>
+                    <div class="nav-section-title">Account</div>
+                    <a href="edit-profile.html" class="nav-item">
+                        <span class="icon">👤</span>
+                        <span>Profile</span>
+                    </a>
+                    <a href="settings.html" class="nav-item">
+                        <span class="icon">⚙️</span>
+                        <span>Settings</span>
+                    </a>
+                `;
+            } else {
+                // Admin/SaaS full navigation
+                navHTML = `
+                    <div class="nav-section-title">Overview</div>
+                    <a href="dashboard.html" class="nav-item">
+                        <span class="icon">📊</span>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="contacts.html" class="nav-item">
+                        <span class="icon">👥</span>
+                        <span>Contacts</span>
+                    </a>
+                    <div class="nav-section-title">Funnel</div>
+                    <a href="prequal-calls.html" class="nav-item">
+                        <span class="icon">📞</span>
+                        <span>Pre-Qual Calls</span>
+                    </a>
+                    <a href="podcast-interviews.html" class="nav-item">
+                        <span class="icon">🎙️</span>
+                        <span>Podcast Interviews</span>
+                    </a>
+                    <a href="discovery-calls.html" class="nav-item">
+                        <span class="icon">🔍</span>
+                        <span>Discovery Calls</span>
+                    </a>
+                    <a href="strategy-calls.html" class="nav-item">
+                        <span class="icon">💡</span>
+                        <span>Strategy Calls</span>
+                    </a>
+                    <div class="nav-section-title">Pipeline</div>
+                    <a href="pipeline.html" class="nav-item">
+                        <span class="icon">📈</span>
+                        <span>Pipeline</span>
+                    </a>
+                    <a href="deals.html" class="nav-item">
+                        <span class="icon">💰</span>
+                        <span>Deals</span>
+                    </a>
+                    <a href="client-success.html" class="nav-item active">
+                        <span class="icon">🎯</span>
+                        <span>Client Success</span>
+                    </a>
+                    <a href="cash-flow.html" class="nav-item">
+                        <span class="icon">💵</span>
+                        <span>Cash Flow</span>
+                    </a>
+                    <div class="nav-section-title">Operations</div>
+                    <a href="campaigns.html" class="nav-item">
+                        <span class="icon">📧</span>
+                        <span>Campaigns</span>
+                    </a>
+                    <a href="sprints.html" class="nav-item">
+                        <span class="icon">🏃</span>
+                        <span>Sprints</span>
+                    </a>
+                    <a href="expense-tracker.html" class="nav-item">
+                        <span class="icon">💳</span>
+                        <span>Expenses</span>
+                    </a>
+                    <a href="availability.html" class="nav-item">
+                        <span class="icon">📅</span>
+                        <span>Availability</span>
+                    </a>
+                    <div class="nav-section-title">Admin</div>
+                    <a href="user-management.html" class="nav-item">
+                        <span class="icon">👤</span>
+                        <span>Users</span>
+                    </a>
+                    <a href="settings.html" class="nav-item">
+                        <span class="icon">⚙️</span>
+                        <span>Settings</span>
+                    </a>
+                `;
+            }
+
+            navMenu.innerHTML = navHTML;
+        }
+
+        // Load clients based on role
+        async function loadClients() {
+            try {
+                const response = await fetch(
+                    `${API_URL}/api/users?tenant_id=${currentTenantId}`,
+                    {
+                        headers: {
+                            'X-Tenant-ID': currentTenantId
+                        }
+                    }
+                );
+
+                if (!response.ok) {
+                    throw new Error('Failed to load clients');
+                }
+
+                const data = await response.json();
+                console.log('[Client Success] Users data:', data);
+
+                // Filter based on role
+                if (currentUser.role === 'consultant') {
+                    // Consultants only see their assigned clients
+                    allClients = data.users?.filter(u => 
+                        u.user_type === 'client' && u.consultant_id === currentUser.id
+                    ) || [];
+                } else if (currentUser.role === 'advisor') {
+                    // Advisors only see their assigned clients
+                    allClients = data.users?.filter(u => 
+                        u.user_type === 'client' && u.advisor_id === currentUser.id
+                    ) || [];
+                } else {
+                    // Admin/SaaS see all clients
+                    allClients = data.users?.filter(u => u.user_type === 'client') || [];
+                }
+
+                console.log('[Client Success] Filtered clients:', allClients);
+                populateClientDropdown();
+
+            } catch (error) {
+                console.error('[Client Success] Error loading clients:', error);
+                alert('Error loading clients. Please try again.');
+            }
+        }
+
+        // Populate client dropdown
+        function populateClientDropdown() {
+            const select = document.getElementById('client-select');
+            select.innerHTML = '<option value="">Select Client...</option>';
+
+            allClients.forEach(client => {
+                const option = document.createElement('option');
+                option.value = client.id;
+                option.textContent = client.full_name || client.email.split('@')[0];
+                select.appendChild(option);
+            });
+        }
+
+        // Load client data
+        async function loadClientData() {
             const clientId = document.getElementById('client-select').value;
             
             if (!clientId) {
                 document.getElementById('client-content').style.display = 'none';
                 document.getElementById('empty-state').style.display = 'block';
+                document.getElementById('loading-state').style.display = 'none';
+                document.getElementById('client-info-banner').style.display = 'none';
                 return;
             }
 
-            currentClientData = clientDatabase[clientId];
+            currentClientId = clientId;
             
-            if (!currentClientData) {
-                alert('Client data not found');
-                return;
+            // Find selected client from allClients array
+            selectedClient = allClients.find(c => c.id === clientId);
+
+            // Show client info banner
+            if (selectedClient) {
+                const displayName = selectedClient.full_name || selectedClient.email.split('@')[0];
+                const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+                const clientSince = selectedClient.created_at ? new Date(selectedClient.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : '-';
+                
+                document.getElementById('client-name-display').textContent = displayName;
+                document.getElementById('client-email-display').textContent = selectedClient.email;
+                document.getElementById('client-avatar-large').textContent = initials;
+                document.getElementById('client-since-display').textContent = clientSince;
+                document.getElementById('client-info-banner').style.display = 'block';
             }
 
-            // Show content, hide empty state
-            document.getElementById('client-content').style.display = 'block';
+            // Show loading
             document.getElementById('empty-state').style.display = 'none';
+            document.getElementById('client-content').style.display = 'none';
+            document.getElementById('loading-state').style.display = 'block';
 
-            // Populate contract info
-            document.getElementById('package-name').value = currentClientData.package;
-            document.getElementById('contract-duration').value = currentClientData.duration;
-            document.getElementById('start-date').value = currentClientData.startDate;
-            document.getElementById('end-date').value = currentClientData.endDate;
-            document.getElementById('current-month').value = currentClientData.currentMonth;
-            document.getElementById('contract-value').value = currentClientData.value;
+            try {
+                // Fetch client success data from API
+                const response = await fetch(
+                    `${API_URL}/api/client-success?tenant_id=${currentTenantId}&client_id=${clientId}`,
+                    {
+                        headers: {
+                            'X-Tenant-ID': currentTenantId
+                        }
+                    }
+                );
 
-            // Calculate and display progress
-            updateProgress();
+                let clientData = {};
 
-            // Render deliverables
-            renderDeliverables();
+                if (response.ok) {
+                    const data = await response.json();
+                    clientData = data.clientSuccess || {};
+                    console.log('[Client Success] Loaded client data:', clientData);
+                } else {
+                    console.log('[Client Success] No existing data, starting fresh');
+                }
 
-            // Populate results
-            document.getElementById('leads-generated').value = currentClientData.results.leadsGenerated;
-            document.getElementById('calls-booked').value = currentClientData.results.callsBooked;
-            document.getElementById('content-created').value = currentClientData.results.contentCreated;
-            document.getElementById('sales-calls-analyzed').value = currentClientData.results.salesCallsAnalyzed;
+                // Populate form fields
+                document.getElementById('package-name').value = clientData.package_name || '';
+                document.getElementById('contract-duration').value = clientData.contract_duration || '';
+                document.getElementById('start-date').value = clientData.start_date || '';
+                document.getElementById('end-date').value = clientData.end_date || '';
+                document.getElementById('monthly-value').value = clientData.monthly_value || '';
+                document.getElementById('total-value').value = clientData.total_value || '';
+                document.getElementById('contract-notes').value = clientData.contract_notes || '';
+                
+                document.getElementById('leads-generated').value = clientData.leads_generated || 0;
+                document.getElementById('calls-booked').value = clientData.calls_booked || 0;
+                document.getElementById('content-created').value = clientData.content_created || 0;
+                document.getElementById('strategy-calls').value = clientData.strategy_calls || 0;
+
+                // Calculate progress
+                updateProgress(clientData);
+
+                // Show content
+                document.getElementById('loading-state').style.display = 'none';
+                document.getElementById('client-content').style.display = 'block';
+
+            } catch (error) {
+                console.error('[Client Success] Error loading client data:', error);
+                document.getElementById('loading-state').style.display = 'none';
+                alert('Error loading client data. Please try again.');
+            }
         }
 
-        function updateProgress() {
-            if (!currentClientData) return;
-
-            const completed = currentClientData.deliverables.filter(d => d.status === 'completed').length;
-            const total = currentClientData.deliverables.length;
-            const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
-
-            document.getElementById('progress-percent').textContent = `${percent}%`;
-            document.getElementById('progress-fill').style.width = `${percent}%`;
-        }
-
-        function renderDeliverables() {
-            if (!currentClientData) return;
-
-            const container = document.getElementById('deliverables-list');
-            
-            if (currentClientData.deliverables.length === 0) {
-                container.innerHTML = '<p style="text-align: center; color: #7f8c8d; padding: 2rem;">No deliverables yet. Click "Add Deliverable" to get started.</p>';
+        // Update progress bar
+        function updateProgress(clientData) {
+            if (!clientData.start_date || !clientData.end_date) {
+                document.getElementById('progress-text').textContent = 'Not started';
+                document.getElementById('progress-fill').style.width = '0%';
                 return;
             }
 
-            container.innerHTML = currentClientData.deliverables.map(d => {
-                const statusClass = `status-${d.status}`;
-                const itemClass = d.status === 'completed' ? 'completed' : (d.status === 'in-progress' ? 'in-progress' : '');
-                const checked = d.status === 'completed' ? 'checked' : '';
-                const statusLabel = d.status.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase());
+            const startDate = new Date(clientData.start_date);
+            const endDate = new Date(clientData.end_date);
+            const now = new Date();
 
-                return `
-                    <div class="deliverable-item ${itemClass}">
-                        <input type="checkbox" class="deliverable-checkbox" ${checked} 
-                               onchange="toggleDeliverable(${d.id})" data-id="${d.id}">
-                        <div class="deliverable-content">
-                            <div class="deliverable-title">${d.title}</div>
-                            ${d.description ? `<div class="deliverable-description">${d.description}</div>` : ''}
-                            <span class="deliverable-status ${statusClass}">${statusLabel}</span>
-                        </div>
-                    </div>
-                `;
-            }).join('');
+            const totalDays = (endDate - startDate) / (1000 * 60 * 60 * 24);
+            const daysPassed = (now - startDate) / (1000 * 60 * 60 * 24);
+            const progress = Math.min(Math.max((daysPassed / totalDays) * 100, 0), 100);
+
+            document.getElementById('progress-text').textContent = `${Math.round(progress)}% Complete`;
+            document.getElementById('progress-fill').style.width = `${progress}%`;
         }
 
-        function toggleDeliverable(id) {
-            if (!currentClientData) return;
 
-            const deliverable = currentClientData.deliverables.find(d => d.id === id);
-            if (deliverable) {
-                deliverable.status = deliverable.status === 'completed' ? 'in-progress' : 'completed';
-                renderDeliverables();
-                updateProgress();
-            }
+       // Initialize on page load
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initPage);
+        } else {
+            initPage();
         }
-
-        function toggleAddDeliverable() {
-            const form = document.getElementById('add-deliverable-form');
-            form.classList.toggle('show');
-        }
-
-        function addDeliverable() {
-            const title = document.getElementById('new-deliverable-title').value.trim();
-            const status = document.getElementById('new-deliverable-status').value;
-            const description = document.getElementById('new-deliverable-description').value.trim();
-
-            if (!title) {
-                alert('Please enter a deliverable title');
-                return;
-            }
-
-            if (!currentClientData) return;
-
-            const newId = Math.max(...currentClientData.deliverables.map(d => d.id), 0) + 1;
-
-            currentClientData.deliverables.push({
-                id: newId,
-                title,
-                description,
-                status
-            });
-
-            // Clear form
-            document.getElementById('new-deliverable-title').value = '';
-            document.getElementById('new-deliverable-description').value = '';
-            document.getElementById('new-deliverable-status').value = 'upcoming';
-
-            toggleAddDeliverable();
-            renderDeliverables();
-            updateProgress();
-        }
-
-        function saveClientData() {
-            if (!currentClientData) {
-                alert('Please select a client first');
-                return;
-            }
-
-            // Update current client data with form values
-            currentClientData.package = document.getElementById('package-name').value;
-            currentClientData.duration = document.getElementById('contract-duration').value;
-            currentClientData.startDate = document.getElementById('start-date').value;
-            currentClientData.endDate = document.getElementById('end-date').value;
-            currentClientData.currentMonth = document.getElementById('current-month').value;
-            currentClientData.value = document.getElementById('contract-value').value;
-
-            currentClientData.results.leadsGenerated = parseInt(document.getElementById('leads-generated').value) || 0;
-            currentClientData.results.callsBooked = parseInt(document.getElementById('calls-booked').value) || 0;
-            currentClientData.results.contentCreated = parseInt(document.getElementById('content-created').value) || 0;
-            currentClientData.results.salesCallsAnalyzed = parseInt(document.getElementById('sales-calls-analyzed').value) || 0;
-
-            alert('✅ Client data saved successfully!\n\nIn production, this will sync to the backend.');
-            console.log('Saved client data:', currentClientData);
-
-            // TODO: Save to backend API
-            // await fetch(`${API_URL}/api/client-success`, { method: 'POST', body: JSON.stringify(currentClientData) });
-        }
-
-        console.log('[Client Success] System initialized');
-        console.log('[Client Success] API Endpoint:', API_URL);
     </script>
 </body>
 </html>

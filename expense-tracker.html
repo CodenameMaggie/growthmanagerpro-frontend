@@ -177,6 +177,11 @@
             font-size: 0.85rem;
         }
 
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
         /* Stats Grid */
         .stats-grid {
             display: grid;
@@ -457,88 +462,143 @@
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
         }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h3 {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-header p {
+            color: #7f8c8d;
+            font-size: 0.95rem;
+        }
+
+        .modal-body {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-field {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-field label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .form-field label span {
+            color: #e74c3c;
+        }
+
+        .form-field input,
+        .form-field select,
+        .form-field textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+
+        .form-field input:focus,
+        .form-field select:focus,
+        .form-field textarea:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .form-field textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .modal-footer .btn {
+            flex: 1;
+        }
+
+        /* Alert Box */
+        .alert {
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
     </style>
 </head>
 <body>
     <div class="app-container">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <h1>Growth Manager Pro</h1>
-                <p>Client Acquisition System</p>
-            </div>
-            
-            <nav>
-                <div class="nav-section">
-                    <div class="nav-section-title">Overview</div>
-                    <a href="dashboard.html" class="nav-item">
-                        <span class="nav-icon">📊</span>
-                        Dashboard
-                    </a>
-                    <a href="contacts.html" class="nav-item">
-                        <span class="nav-icon">👥</span>
-                        Contacts
-                    </a>
-                </div>
-
-                <div class="nav-section">
-                    <div class="nav-section-title">Client Acquisition</div>
-                    <a href="podcast-calls.html" class="nav-item">
-                        <span class="nav-icon">🎙️</span>
-                        Podcast Calls
-                    </a>
-                    <a href="discovery-calls.html" class="nav-item">
-                        <span class="nav-icon">🔍</span>
-                        Discovery Calls
-                    </a>
-                    <a href="sales-calls.html" class="nav-item">
-                        <span class="nav-icon">💼</span>
-                        Sales Calls
-                    </a>
-                    <a href="pipeline.html" class="nav-item">
-                        <span class="nav-icon">📈</span>
-                        Pipeline
-                    </a>
-                    <a href="deals.html" class="nav-item">
-                        <span class="nav-icon">🤝</span>
-                        Deals
-                    </a>
-                </div>
-
-                <div class="nav-section">
-                    <div class="nav-section-title">Operations</div>
-                    <a href="cash-flow.html" class="nav-item">
-                        <span class="nav-icon">💰</span>
-                        Cash Flow
-                    </a>
-                    <a href="campaigns.html" class="nav-item">
-                        <span class="nav-icon">📧</span>
-                        Campaigns
-                    </a>
-                    <a href="sprints.html" class="nav-item">
-                        <span class="nav-icon">⚡</span>
-                        Sprints
-                    </a>
-                    <a href="expense-tracker.html" class="nav-item active">
-                        <span class="nav-icon">🧾</span>
-                        Expense Tracker
-                    </a>
-                </div>
-
-                <div class="nav-section">
-                    <div class="nav-section-title">Settings</div>
-                    <a href="availability.html" class="nav-item">
-                        <span class="nav-icon">📅</span>
-                        Availability
-                    </a>
-                    <a href="user-management.html" class="nav-item">
-                        <span class="nav-icon">⚙️</span>
-                        User Management
-                    </a>
-                </div>
-            </nav>
-        </aside>
-
+     
         <!-- Main Content -->
         <main class="main-content">
             <!-- Page Header -->
@@ -546,7 +606,7 @@
                 <h2>🧾 Expense Tracker</h2>
                 <p>Track recurring expenses & subscriptions (synced with Cash Flow)</p>
                 <div class="header-actions">
-                    <button class="btn btn-primary" onclick="addExpense()">+ Add Expense</button>
+                    <button class="btn btn-primary" onclick="openAddExpenseModal()">+ Add Expense</button>
                     <button class="btn btn-secondary" onclick="window.location.href='cash-flow.html'">💰 View Cash Flow</button>
                 </div>
             </header>
@@ -627,296 +687,463 @@
         </div>
     </div>
 
-    <script>
-        const API_BASE = 'https://growthmanagerpro-backend.vercel.app';
-        let expensesData = [];
-
-        // Budget limits by category (can be customized)
-        const budgetLimits = {
-            'Software': 500,
-            'Marketing': 1000,
-            'Tools': 300,
-            'Services': 400,
-            'Other': 200
-        };
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('[Expense Tracker] Initializing...');
-            console.log('[Expense Tracker] API Base:', API_BASE);
-            loadExpenses();
+    <!-- Add Expense Modal -->
+    <div class="modal-overlay" id="expenseModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>💸 Add Expense</h3>
+                <p>Record a new expense transaction</p>
+            </div>
             
-            // Auto-refresh every 5 minutes
-            setInterval(loadExpenses, 300000);
-        });
-
-        // Load expenses from Cash Flow API (same backend)
-        async function loadExpenses() {
-            try {
-                updateConnectionStatus('connecting');
-                
-                const response = await fetch(`${API_BASE}/api/cash-flow`);
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}`);
-                }
-
-                const result = await response.json();
-                
-                if (result.success && result.data) {
-                    // Filter only expenses (not income)
-                    const allTransactions = result.data.transactions || [];
-                    expensesData = allTransactions.filter(t => t.type === 'expense');
+            <div id="expense-alert" class="alert"></div>
+            
+            <div class="modal-body">
+                <form id="expenseForm">
+                    <div class="form-field">
+                        <label for="expenseDescription">Description <span>*</span></label>
+                        <input type="text" id="expenseDescription" placeholder="e.g., Software subscription, Marketing expense" required>
+                    </div>
                     
-                    updateStats();
-                    renderBudgetCards();
-                    renderExpensesTable();
-                    updateConnectionStatus('connected');
-                    console.log('[Expense Tracker] ✅ Loaded', expensesData.length, 'expenses');
-                } else {
-                    throw new Error('Invalid response format');
-                }
-
-            } catch (error) {
-                console.error('[Expense Tracker] ❌ Error loading expenses:', error);
-                updateConnectionStatus('error', error.message);
-                renderErrorState(error.message);
-            }
-        }
-
-        // Update statistics
-        function updateStats() {
-            const currentMonth = new Date().getMonth();
-            const currentYear = new Date().getFullYear();
-            const lastMonth = currentMonth === 0 ? 11 : currentMonth - 1;
-            const lastMonthYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+                    <div class="form-field">
+                        <label for="expenseAmount">Amount <span>*</span></label>
+                        <input type="number" id="expenseAmount" placeholder="0.00" step="0.01" min="0" required>
+                    </div>
+                    
+                    <div class="form-field">
+                        <label for="expenseCategory">Category</label>
+                        <select id="expenseCategory">
+                            <option value="Software">Software</option>
+                            <option value="Marketing">Marketing</option>
+                            <option value="Tools">Tools</option>
+                            <option value="Services">Services</option>
+                            <option value="Subscriptions">Subscriptions</option>
+                            <option value="Office">Office</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-field">
+                        <label for="expenseDate">Date</label>
+                        <input type="date" id="expenseDate">
+                    </div>
+                    
+                    <div class="form-field">
+                        <label for="expenseNotes">Notes</label>
+                        <textarea id="expenseNotes" placeholder="Optional notes about this expense..."></textarea>
+                    </div>
+                </form>
+            </div>
             
-            // This month's expenses
-            const thisMonthExpenses = expensesData.filter(e => {
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeExpenseModal()">Cancel</button>
+                <button class="btn btn-primary" id="saveExpenseBtn" onclick="saveExpense()">💸 Add Expense</button>
+            </div>
+        </div>
+    </div>
+
+<script src="auth-helper.js"></script>
+<script src="/nav.js"></script> 
+    
+<script>
+    (function() {
+        if (!AuthHelper.protectPage('advisor-dashboard.html')) {
+            throw new Error('Unauthorized access');
+        }
+        AuthHelper.applyPermissions();
+    })();
+    
+    const API_BASE = 'https://growthmanagerpro-backend.vercel.app';
+    let expensesData = [];
+
+    // Budget limits by category (can be customized)
+    const budgetLimits = {
+        'Software': 500,
+        'Marketing': 1000,
+        'Tools': 300,
+        'Services': 400,
+        'Other': 200
+    };
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('[Expense Tracker] Initializing...');
+        console.log('[Expense Tracker] API Base:', API_BASE);
+        loadExpenses();
+        
+        // Set today's date as default
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('expenseDate').value = today;
+        
+        // Auto-refresh every 5 minutes
+        setInterval(loadExpenses, 300000);
+    });
+
+    // Load expenses from Cash Flow API (same backend)
+    async function loadExpenses() {
+        try {
+            updateConnectionStatus('connecting');
+            
+            const response = await fetch(`${API_BASE}/api/cash-flow`);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+
+            const result = await response.json();
+            
+            if (result.success && result.data) {
+                // Filter only expenses (not income)
+                const allTransactions = result.data.transactions || [];
+                expensesData = allTransactions.filter(t => t.type === 'expense');
+                
+                updateStats();
+                renderBudgetCards();
+                renderExpensesTable();
+                updateConnectionStatus('connected');
+                console.log('[Expense Tracker] ✅ Loaded', expensesData.length, 'expenses');
+            } else {
+                throw new Error('Invalid response format');
+            }
+
+        } catch (error) {
+            console.error('[Expense Tracker] ❌ Error loading expenses:', error);
+            updateConnectionStatus('error', error.message);
+            renderErrorState(error.message);
+        }
+    }
+
+    // Update statistics
+    function updateStats() {
+        const currentMonth = new Date().getMonth();
+        const currentYear = new Date().getFullYear();
+        const lastMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+        const lastMonthYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+        
+        // This month's expenses
+        const thisMonthExpenses = expensesData.filter(e => {
+            const date = new Date(e.date);
+            return date.getMonth() === currentMonth && date.getFullYear() === currentYear;
+        });
+        
+        const thisMonthTotal = thisMonthExpenses.reduce((sum, e) => sum + (parseFloat(e.amount) || 0), 0);
+        
+        // Last month's expenses
+        const lastMonthExpenses = expensesData.filter(e => {
+            const date = new Date(e.date);
+            return date.getMonth() === lastMonth && date.getFullYear() === lastMonthYear;
+        });
+        
+        const lastMonthTotal = lastMonthExpenses.reduce((sum, e) => sum + (parseFloat(e.amount) || 0), 0);
+        
+        // Recurring expenses (those marked with recurring category or subscription-related)
+        const recurringExpenses = expensesData.filter(e => 
+            e.category && (
+                e.category.toLowerCase().includes('subscription') ||
+                e.category.toLowerCase().includes('recurring') ||
+                e.category.toLowerCase() === 'software' ||
+                e.category.toLowerCase() === 'tools'
+            )
+        );
+        
+        // Calculate monthly recurring (assuming all recurring are monthly)
+        const recurringTotal = recurringExpenses
+            .filter(e => {
                 const date = new Date(e.date);
                 return date.getMonth() === currentMonth && date.getFullYear() === currentYear;
-            });
-            
-            const thisMonthTotal = thisMonthExpenses.reduce((sum, e) => sum + (parseFloat(e.amount) || 0), 0);
-            
-            // Last month's expenses
-            const lastMonthExpenses = expensesData.filter(e => {
-                const date = new Date(e.date);
-                return date.getMonth() === lastMonth && date.getFullYear() === lastMonthYear;
-            });
-            
-            const lastMonthTotal = lastMonthExpenses.reduce((sum, e) => sum + (parseFloat(e.amount) || 0), 0);
-            
-            // Recurring expenses (those marked with recurring category or subscription-related)
-            const recurringExpenses = expensesData.filter(e => 
-                e.category && (
-                    e.category.toLowerCase().includes('subscription') ||
-                    e.category.toLowerCase().includes('recurring') ||
-                    e.category.toLowerCase() === 'software' ||
-                    e.category.toLowerCase() === 'tools'
-                )
-            );
-            
-            // Calculate monthly recurring (assuming all recurring are monthly)
-            const recurringTotal = recurringExpenses
-                .filter(e => {
-                    const date = new Date(e.date);
-                    return date.getMonth() === currentMonth && date.getFullYear() === currentYear;
-                })
-                .reduce((sum, e) => sum + (parseFloat(e.amount) || 0), 0);
-            
-            // Total budget
-            const totalBudget = Object.values(budgetLimits).reduce((sum, limit) => sum + limit, 0);
-            const budgetUsedPercent = totalBudget > 0 ? ((thisMonthTotal / totalBudget) * 100).toFixed(0) : 0;
-            const budgetRemaining = totalBudget - thisMonthTotal;
-            
-            // Comparison with last month
-            const difference = thisMonthTotal - lastMonthTotal;
-            const percentChange = lastMonthTotal > 0 ? ((difference / lastMonthTotal) * 100).toFixed(1) : 0;
-            
-            // Update UI
-            document.getElementById('monthly-expenses').textContent = `$${thisMonthTotal.toLocaleString()}`;
-            document.getElementById('recurring-costs').textContent = `$${recurringTotal.toLocaleString()}`;
-            document.getElementById('budget-used').textContent = `${budgetUsedPercent}%`;
-            document.getElementById('budget-remaining').textContent = `$${budgetRemaining.toLocaleString()} remaining`;
-            
-            const vsLastMonthEl = document.getElementById('vs-last-month');
-            const vsLastMonthTextEl = document.getElementById('vs-last-month-text');
-            
-            if (difference > 0) {
-                vsLastMonthEl.textContent = `+${percentChange}%`;
-                vsLastMonthEl.style.color = '#e74c3c';
-                vsLastMonthTextEl.textContent = `$${difference.toLocaleString()} more`;
-                vsLastMonthTextEl.style.color = '#e74c3c';
-            } else if (difference < 0) {
-                vsLastMonthEl.textContent = `${percentChange}%`;
-                vsLastMonthEl.style.color = '#27ae60';
-                vsLastMonthTextEl.textContent = `$${Math.abs(difference).toLocaleString()} less`;
-                vsLastMonthTextEl.style.color = '#27ae60';
-            } else {
-                vsLastMonthEl.textContent = '0%';
-                vsLastMonthTextEl.textContent = 'Same as last month';
-            }
+            })
+            .reduce((sum, e) => sum + (parseFloat(e.amount) || 0), 0);
+        
+        // Total budget
+        const totalBudget = Object.values(budgetLimits).reduce((sum, limit) => sum + limit, 0);
+        const budgetUsedPercent = totalBudget > 0 ? ((thisMonthTotal / totalBudget) * 100).toFixed(0) : 0;
+        const budgetRemaining = totalBudget - thisMonthTotal;
+        
+        // Comparison with last month
+        const difference = thisMonthTotal - lastMonthTotal;
+        const percentChange = lastMonthTotal > 0 ? ((difference / lastMonthTotal) * 100).toFixed(1) : 0;
+        
+        // Update UI
+        document.getElementById('monthly-expenses').textContent = `$${thisMonthTotal.toLocaleString()}`;
+        document.getElementById('recurring-costs').textContent = `$${recurringTotal.toLocaleString()}`;
+        document.getElementById('budget-used').textContent = `${budgetUsedPercent}%`;
+        document.getElementById('budget-remaining').textContent = `$${budgetRemaining.toLocaleString()} remaining`;
+        
+        const vsLastMonthEl = document.getElementById('vs-last-month');
+        const vsLastMonthTextEl = document.getElementById('vs-last-month-text');
+        
+        if (difference > 0) {
+            vsLastMonthEl.textContent = `+${percentChange}%`;
+            vsLastMonthEl.style.color = '#e74c3c';
+            vsLastMonthTextEl.textContent = `$${difference.toLocaleString()} more`;
+            vsLastMonthTextEl.style.color = '#e74c3c';
+        } else if (difference < 0) {
+            vsLastMonthEl.textContent = `${percentChange}%`;
+            vsLastMonthEl.style.color = '#27ae60';
+            vsLastMonthTextEl.textContent = `$${Math.abs(difference).toLocaleString()} less`;
+            vsLastMonthTextEl.style.color = '#27ae60';
+        } else {
+            vsLastMonthEl.textContent = '0%';
+            vsLastMonthTextEl.textContent = 'Same as last month';
         }
+    }
 
-        // Render budget cards by category
-        function renderBudgetCards() {
-            const container = document.getElementById('budget-grid');
-            const currentMonth = new Date().getMonth();
-            const currentYear = new Date().getFullYear();
+    // Render budget cards by category
+    function renderBudgetCards() {
+        const container = document.getElementById('budget-grid');
+        const currentMonth = new Date().getMonth();
+        const currentYear = new Date().getFullYear();
+        
+        const categoryTotals = {};
+        
+        // Calculate totals by category for this month
+        expensesData.forEach(expense => {
+            const date = new Date(expense.date);
+            if (date.getMonth() === currentMonth && date.getFullYear() === currentYear) {
+                const category = expense.category || 'Other';
+                categoryTotals[category] = (categoryTotals[category] || 0) + (parseFloat(expense.amount) || 0);
+            }
+        });
+        
+        // Render cards for each budget category
+        const cards = Object.keys(budgetLimits).map(category => {
+            const spent = categoryTotals[category] || 0;
+            const budget = budgetLimits[category];
+            const percent = (spent / budget) * 100;
             
-            const categoryTotals = {};
+            let progressClass = '';
+            if (percent > 90) progressClass = 'danger';
+            else if (percent > 75) progressClass = 'warning';
             
-            // Calculate totals by category for this month
-            expensesData.forEach(expense => {
-                const date = new Date(expense.date);
-                if (date.getMonth() === currentMonth && date.getFullYear() === currentYear) {
-                    const category = expense.category || 'Other';
-                    categoryTotals[category] = (categoryTotals[category] || 0) + (parseFloat(expense.amount) || 0);
-                }
-            });
-            
-            // Render cards for each budget category
-            const cards = Object.keys(budgetLimits).map(category => {
-                const spent = categoryTotals[category] || 0;
-                const budget = budgetLimits[category];
-                const percent = (spent / budget) * 100;
-                
-                let progressClass = '';
-                if (percent > 90) progressClass = 'danger';
-                else if (percent > 75) progressClass = 'warning';
-                
-                return `
-                    <div class="budget-card">
-                        <div class="budget-header">
-                            <span class="budget-category">${category}</span>
-                        </div>
-                        <div class="budget-amount">$${spent.toLocaleString()}</div>
-                        <div class="budget-progress">
-                            <div class="budget-progress-bar ${progressClass}" style="width: ${Math.min(percent, 100)}%"></div>
-                        </div>
-                        <div class="budget-text">
-                            ${percent.toFixed(0)}% of $${budget.toLocaleString()} budget
-                        </div>
+            return `
+                <div class="budget-card">
+                    <div class="budget-header">
+                        <span class="budget-category">${category}</span>
                     </div>
-                `;
-            }).join('');
-            
-            container.innerHTML = cards;
-        }
+                    <div class="budget-amount">$${spent.toLocaleString()}</div>
+                    <div class="budget-progress">
+                        <div class="budget-progress-bar ${progressClass}" style="width: ${Math.min(percent, 100)}%"></div>
+                    </div>
+                    <div class="budget-text">
+                        ${percent.toFixed(0)}% of $${budget.toLocaleString()} budget
+                    </div>
+                </div>
+            `;
+        }).join('');
+        
+        container.innerHTML = cards;
+    }
 
-        // Render expenses table
-        function renderExpensesTable() {
-            const tbody = document.getElementById('expenses-body');
-            document.getElementById('expense-count').textContent = expensesData.length;
+    // Render expenses table
+    function renderExpensesTable() {
+        const tbody = document.getElementById('expenses-body');
+        document.getElementById('expense-count').textContent = expensesData.length;
 
-            if (expensesData.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="6" style="text-align: center; padding: 3rem; color: #7f8c8d;">
-                            <p style="font-size: 1.1rem; margin-bottom: 0.5rem;">🧾 No expenses yet</p>
-                            <p>Add your first expense to start tracking!</p>
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
-
-            tbody.innerHTML = expensesData.map(expense => {
-                const categoryClass = `category-${(expense.category || 'other').toLowerCase().replace(/\s+/g, '-')}`;
-                const isRecurring = expense.category && (
-                    expense.category.toLowerCase().includes('subscription') ||
-                    expense.category.toLowerCase().includes('recurring') ||
-                    expense.category.toLowerCase() === 'software' ||
-                    expense.category.toLowerCase() === 'tools'
-                );
-                
-                return `
-                    <tr>
-                        <td>${formatDate(expense.date)}</td>
-                        <td>${expense.description || '—'}</td>
-                        <td>
-                            <span class="category-badge ${categoryClass}">${expense.category || 'Uncategorized'}</span>
-                        </td>
-                        <td>
-                            ${isRecurring ? '<span class="recurring-badge">🔄 Monthly</span>' : '—'}
-                        </td>
-                        <td class="amount-negative">$${(expense.amount || 0).toLocaleString()}</td>
-                        <td>
-                            <button class="btn btn-small btn-secondary" onclick="viewExpense('${expense.id}')">
-                                View
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        // Render error state
-        function renderErrorState(message) {
-            const tbody = document.getElementById('expenses-body');
+        if (expensesData.length === 0) {
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="6" style="text-align: center; padding: 3rem;">
-                        <p style="color: #e74c3c; font-size: 1.1rem; margin-bottom: 0.5rem;">⚠️ Connection Error</p>
-                        <p style="color: #7f8c8d; margin-bottom: 1rem;">Could not connect to: ${API_BASE}/api/cash-flow</p>
-                        <p style="color: #7f8c8d; font-size: 0.9rem;">${message}</p>
-                        <button class="btn btn-primary" onclick="loadExpenses()" style="margin-top: 1rem;">
-                            🔄 Retry Connection
+                    <td colspan="6" style="text-align: center; padding: 3rem; color: #7f8c8d;">
+                        <p style="font-size: 1.1rem; margin-bottom: 0.5rem;">🧾 No expenses yet</p>
+                        <p>Add your first expense to start tracking!</p>
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        tbody.innerHTML = expensesData.map(expense => {
+            const categoryClass = `category-${(expense.category || 'other').toLowerCase().replace(/\s+/g, '-')}`;
+            const isRecurring = expense.category && (
+                expense.category.toLowerCase().includes('subscription') ||
+                expense.category.toLowerCase().includes('recurring') ||
+                expense.category.toLowerCase() === 'software' ||
+                expense.category.toLowerCase() === 'tools'
+            );
+            
+            return `
+                <tr>
+                    <td>${formatDate(expense.date)}</td>
+                    <td>${expense.description || '—'}</td>
+                    <td>
+                        <span class="category-badge ${categoryClass}">${expense.category || 'Uncategorized'}</span>
+                    </td>
+                    <td>
+                        ${isRecurring ? '<span class="recurring-badge">🔄 Monthly</span>' : '—'}
+                    </td>
+                    <td class="amount-negative">$${(expense.amount || 0).toLocaleString()}</td>
+                    <td>
+                        <button class="btn btn-small btn-secondary" onclick="viewExpense('${expense.id}')">
+                            View
                         </button>
                     </td>
                 </tr>
             `;
+        }).join('');
+    }
+
+    // Render error state
+    function renderErrorState(message) {
+        const tbody = document.getElementById('expenses-body');
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="6" style="text-align: center; padding: 3rem;">
+                    <p style="color: #e74c3c; font-size: 1.1rem; margin-bottom: 0.5rem;">⚠️ Connection Error</p>
+                    <p style="color: #7f8c8d; margin-bottom: 1rem;">Could not connect to: ${API_BASE}/api/cash-flow</p>
+                    <p style="color: #7f8c8d; font-size: 0.9rem;">${message}</p>
+                    <button class="btn btn-primary" onclick="loadExpenses()" style="margin-top: 1rem;">
+                        🔄 Retry Connection
+                    </button>
+                </td>
+            </tr>
+        `;
+    }
+
+    // Update connection status indicator
+    function updateConnectionStatus(status, message = '') {
+        const indicator = document.getElementById('status-indicator');
+        const statusText = document.getElementById('status-text');
+
+        if (status === 'connected') {
+            indicator.className = 'status-indicator status-connected';
+            statusText.textContent = 'Synced with Cash Flow';
+        } else if (status === 'error') {
+            indicator.className = 'status-indicator status-error';
+            statusText.textContent = message || 'Connection Error';
+        } else if (status === 'connecting') {
+            indicator.className = 'status-indicator';
+            indicator.style.background = '#f39c12';
+            statusText.textContent = 'Connecting...';
+        }
+    }
+
+    // ==================== MODAL FUNCTIONS ====================
+
+    // Open Add Expense Modal
+    function openAddExpenseModal() {
+        document.getElementById('expenseModal').classList.add('show');
+        document.getElementById('expenseForm').reset();
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('expenseDate').value = today;
+        hideAlert('expense-alert');
+    }
+
+    // Close Expense Modal
+    function closeExpenseModal() {
+        document.getElementById('expenseModal').classList.remove('show');
+        document.getElementById('expenseForm').reset();
+        hideAlert('expense-alert');
+    }
+
+    // Save Expense
+    async function saveExpense() {
+        const description = document.getElementById('expenseDescription').value.trim();
+        const amount = parseFloat(document.getElementById('expenseAmount').value);
+        const category = document.getElementById('expenseCategory').value;
+        const date = document.getElementById('expenseDate').value;
+        const notes = document.getElementById('expenseNotes').value.trim();
+
+        // Validation
+        if (!description) {
+            showAlert('expense-alert', 'Please enter a description', 'error');
+            return;
         }
 
-        // Update connection status indicator
-        function updateConnectionStatus(status, message = '') {
-            const indicator = document.getElementById('status-indicator');
-            const statusText = document.getElementById('status-text');
-
-            if (status === 'connected') {
-                indicator.className = 'status-indicator status-connected';
-                statusText.textContent = 'Synced with Cash Flow';
-            } else if (status === 'error') {
-                indicator.className = 'status-indicator status-error';
-                statusText.textContent = message || 'Connection Error';
-            } else if (status === 'connecting') {
-                indicator.className = 'status-indicator';
-                indicator.style.background = '#f39c12';
-                statusText.textContent = 'Connecting...';
-            }
+        if (!amount || amount <= 0) {
+            showAlert('expense-alert', 'Please enter a valid amount', 'error');
+            return;
         }
 
-        // Actions
-        function addExpense() {
-            alert('Add Expense feature coming soon!\n\nFor now, add expenses in the Cash Flow page - they will automatically appear here!');
-            // TODO: Open modal to add expense (or redirect to Cash Flow)
-        }
+        // Disable button
+        const btn = document.getElementById('saveExpenseBtn');
+        btn.disabled = true;
+        btn.textContent = '⏳ Saving...';
 
-        function viewExpense(id) {
-            const expense = expensesData.find(e => e.id === id);
-            if (expense) {
-                console.log('Viewing expense:', expense);
-                alert(`Expense Details:\n\nAmount: $${(expense.amount || 0).toLocaleString()}\nCategory: ${expense.category}\nDate: ${formatDate(expense.date)}\nDescription: ${expense.description || 'N/A'}`);
-                // TODO: Open detailed view modal
-            }
-        }
-
-        // Utility functions
-        function formatDate(dateString) {
-            if (!dateString) return '';
-            const date = new Date(dateString);
-            return date.toLocaleDateString('en-US', { 
-                month: 'short', 
-                day: 'numeric',
-                year: 'numeric'
+        try {
+            const response = await fetch(`${API_BASE}/api/cash-flow`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    description: description,
+                    amount: amount,
+                    transactionType: 'expense',
+                    category: category,
+                    transactionDate: date,
+                    notes: notes || null
+                })
             });
-        }
 
-        // Log system info
-        console.log('[Expense Tracker] System initialized');
-        console.log('[Expense Tracker] API Endpoint:', API_BASE);
-        console.log('[Expense Tracker] Synced with Cash Flow database');
-    </script>
+            const result = await response.json();
+
+            if (!result.success) {
+                showAlert('expense-alert', result.error || 'Failed to add expense', 'error');
+                btn.disabled = false;
+                btn.textContent = '💸 Add Expense';
+                return;
+            }
+
+            // Success!
+            console.log('[Expense Tracker] ✅ Expense added:', result.data);
+            closeExpenseModal();
+            loadExpenses(); // Refresh the data
+            
+            // Show success message
+            alert('✅ Expense added successfully!');
+
+        } catch (error) {
+            console.error('[Expense Tracker] Error adding expense:', error);
+            showAlert('expense-alert', 'Connection error. Please try again.', 'error');
+            btn.disabled = false;
+            btn.textContent = '💸 Add Expense';
+        }
+    }
+
+    // Show alert message
+    function showAlert(elementId, message, type) {
+        const alert = document.getElementById(elementId);
+        alert.textContent = message;
+        alert.className = `alert show alert-${type}`;
+    }
+
+    // Hide alert message
+    function hideAlert(elementId) {
+        const alert = document.getElementById(elementId);
+        alert.className = 'alert';
+    }
+
+    // Close modals when clicking outside
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('modal-overlay')) {
+            e.target.classList.remove('show');
+        }
+    });
+
+    // ==================== OTHER FUNCTIONS ====================
+
+    function viewExpense(id) {
+        const expense = expensesData.find(e => e.id === id);
+        if (expense) {
+            console.log('Viewing expense:', expense);
+            alert(`Expense Details:\n\nAmount: $${(expense.amount || 0).toLocaleString()}\nCategory: ${expense.category}\nDate: ${formatDate(expense.date)}\nDescription: ${expense.description || 'N/A'}\n\nNotes: ${expense.notes || 'N/A'}`);
+            // TODO: Open detailed view modal with edit/delete options
+        }
+    }
+
+    // Utility functions
+    function formatDate(dateString) {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', { 
+            month: 'short', 
+            day: 'numeric',
+            year: 'numeric'
+        });
+    }
+
+    // Log system info
+    console.log('[Expense Tracker] System initialized');
+    console.log('[Expense Tracker] API Endpoint:', API_BASE);
+    console.log('[Expense Tracker] Synced with Cash Flow database');
+</script>
 </body>
 </html>

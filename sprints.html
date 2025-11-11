@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Growth Manager Pro - Sprints</title>
+    <title>Sprints Workspace - Growth Manager Pro</title>
     <style>
         * {
             margin: 0;
@@ -23,7 +23,7 @@
             min-height: 100vh;
         }
 
-        /* Sidebar Styles */
+        /* Sidebar Navigation */
         .sidebar {
             width: 280px;
             background: white;
@@ -71,6 +71,7 @@
         .nav-item {
             display: flex;
             align-items: center;
+            justify-content: space-between;
             padding: 0.8rem 2rem;
             color: #5a6c7d;
             text-decoration: none;
@@ -103,8 +104,35 @@
         .nav-icon {
             width: 20px;
             height: 20px;
+            min-width: 20px;
             margin-right: 1rem;
             font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-item-content {
+            display: flex;
+            align-items: center;
+            flex: 1;
+        }
+
+        .nav-item-text {
+            display: flex;
+            align-items: center;
+        }
+
+        .notification-badge {
+            background: #e74c3c;
+            color: white;
+            padding: 0.25rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            min-width: 22px;
+            text-align: center;
+            margin-left: 0.5rem;
         }
 
         /* Main Content */
@@ -129,15 +157,423 @@
             margin-bottom: 0.5rem;
         }
 
-        .page-header p {
+        .page-subtitle {
             color: #7f8c8d;
             font-size: 1rem;
         }
 
-        .header-actions {
+        /* Section Container */
+        .section-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .section-header {
+            padding: 1.5rem 2rem;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-header h3 {
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section-body {
+            padding: 2rem;
+        }
+
+        /* Action Items Section */
+        .action-category {
+            margin-bottom: 2rem;
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #e1e5e9;
+        }
+
+        .category-icon {
+            font-size: 1.5rem;
+        }
+
+        .category-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2c3e50;
+            flex: 1;
+        }
+
+        .category-count {
+            background: #3498db;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .task-item:hover {
+            border-color: #3498db;
+            background: #f8f9fa;
+        }
+
+        .task-item.completed {
+            opacity: 0.6;
+            background: #f8f9fa;
+        }
+
+        .task-checkbox {
+            width: 24px;
+            height: 24px;
+            min-width: 24px;
+            border: 2px solid #bdc3c7;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 0.25rem;
+        }
+
+        .task-item:hover .task-checkbox {
+            border-color: #3498db;
+        }
+
+        .task-checkbox.checked {
+            background: linear-gradient(135deg, #27ae60, #229954);
+            border-color: #27ae60;
+            color: white;
+        }
+
+        .task-content {
+            flex: 1;
+        }
+
+        .task-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .task-item.completed .task-title {
+            text-decoration: line-through;
+            color: #95a5a6;
+        }
+
+        .task-details {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            line-height: 1.5;
+        }
+
+        .task-meta {
             display: flex;
             gap: 1rem;
-            margin-top: 1.5rem;
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            color: #95a5a6;
+        }
+
+        .task-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .empty-category {
+            text-align: center;
+            padding: 2rem;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
+        /* Client Communication Section */
+        .client-tabs {
+            display: flex;
+            gap: 0.5rem;
+            padding: 1.5rem 2rem 0 2rem;
+            background: white;
+            overflow-x: auto;
+            border-bottom: 2px solid #e1e5e9;
+        }
+
+        .client-tab {
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            color: #7f8c8d;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+        }
+
+        .client-tab:hover {
+            color: #2c3e50;
+            background: #f8f9fa;
+        }
+
+        .client-tab.active {
+            color: #3498db;
+            border-bottom-color: #3498db;
+        }
+
+        .client-tab-badge {
+            background: #e74c3c;
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .client-tab.active .client-tab-badge {
+            background: #3498db;
+        }
+
+        .attention-indicator {
+            width: 8px;
+            height: 8px;
+            background: #e74c3c;
+            border-radius: 50%;
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            animation: pulse-attention 2s infinite;
+        }
+
+        @keyframes pulse-attention {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(1.2);
+            }
+        }
+
+        .client-content {
+            display: none;
+            padding: 2rem;
+        }
+
+        .client-content.active {
+            display: block;
+        }
+
+        .client-info-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+
+        .client-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .client-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1.25rem;
+        }
+
+        .client-details h4 {
+            font-size: 1.1rem;
+            color: #2c3e50;
+            margin-bottom: 0.25rem;
+        }
+
+        .client-details p {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+        }
+
+        .client-status {
+            padding: 0.5rem 1rem;
+            background: white;
+            border: 2px solid #e1e5e9;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: #7f8c8d;
+            font-weight: 600;
+        }
+
+        /* Message Thread */
+        .message-thread {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .message {
+            margin-bottom: 1.5rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: white;
+        }
+
+        .message.from-client .message-avatar {
+            background: linear-gradient(135deg, #27ae60, #229954);
+        }
+
+        .message.from-you .message-avatar {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+        }
+
+        .message-content {
+            flex: 1;
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .message-author {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 0.95rem;
+        }
+
+        .message-time {
+            font-size: 0.8rem;
+            color: #95a5a6;
+        }
+
+        .message-text {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            color: #5a6c7d;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .message-attachments {
+            margin-top: 0.75rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .attachment {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            background: #e8f4f8;
+            border: 1px solid #3498db;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: #3498db;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .attachment:hover {
+            background: #3498db;
+            color: white;
+        }
+
+        /* Message Input */
+        .message-input-container {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 1rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .message-input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .message-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
         }
 
         /* Button Styles */
@@ -149,6 +585,9 @@
             cursor: pointer;
             transition: all 0.2s ease;
             font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .btn-primary {
@@ -159,16 +598,6 @@
         .btn-primary:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, #27ae60, #229954);
-            color: white;
-        }
-
-        .btn-success:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
         }
 
         .btn-secondary {
@@ -187,321 +616,17 @@
             font-size: 0.85rem;
         }
 
-        /* Stats Grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-        }
-
-        .stat-label {
-            font-size: 0.85rem;
+        .btn-icon {
+            padding: 0.75rem;
+            background: transparent;
             color: #7f8c8d;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-        }
-
-        .stat-value {
-            font-size: 2rem;
-            font-weight: bold;
-            margin-bottom: 0.25rem;
-            color: #2c3e50;
-        }
-
-        .stat-change {
-            font-size: 0.85rem;
-            color: #7f8c8d;
-        }
-
-        /* Two Column Layout */
-        .two-column {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        /* Card Styles */
-        .card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
-
-        .card-header {
-            padding: 1.5rem 2rem;
-            border-bottom: 2px solid #e1e5e9;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .card-header h3 {
-            font-size: 1.25rem;
-            color: #2c3e50;
-        }
-
-        .card-body {
-            padding: 2rem;
-        }
-
-        /* Tasks Section */
-        .task-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .task-item {
-            background: #f8f9fa;
             border: 2px solid #e1e5e9;
-            border-radius: 8px;
-            padding: 1rem;
-            transition: all 0.2s ease;
         }
 
-        .task-item:hover {
+        .btn-icon:hover {
             border-color: #3498db;
-            transform: translateX(4px);
-        }
-
-        .task-item.blocked {
-            border-color: #e74c3c;
-            background: #fff5f5;
-        }
-
-        .task-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 0.75rem;
-        }
-
-        .task-title {
-            font-weight: 600;
-            color: #2c3e50;
-            font-size: 1rem;
-        }
-
-        .task-meta {
-            display: flex;
-            gap: 1rem;
-            font-size: 0.85rem;
-            color: #7f8c8d;
-            align-items: center;
-        }
-
-        .task-actions {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 0.75rem;
-        }
-
-        /* Status Badges */
-        .status-badge {
-            display: inline-block;
-            padding: 0.3rem 0.8rem;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .status-todo {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        .status-in-progress {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        .status-done {
-            background: #d1fae5;
-            color: #065f46;
-        }
-
-        .status-blocked {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        /* Communication Feed */
-        .communication-feed {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-            max-height: 500px;
-            overflow-y: auto;
-        }
-
-        .message {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .message-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            flex-shrink: 0;
-        }
-
-        .message-avatar.advisor {
-            background: linear-gradient(135deg, #e67e22, #d35400);
-        }
-
-        .message-content {
-            flex: 1;
-        }
-
-        .message-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.5rem;
-        }
-
-        .message-author {
-            font-weight: 600;
-            color: #2c3e50;
-        }
-
-        .message-time {
-            font-size: 0.8rem;
-            color: #7f8c8d;
-        }
-
-        .message-text {
-            color: #2c3e50;
-            line-height: 1.5;
-        }
-
-        .message-input-container {
-            margin-top: 1.5rem;
-            padding-top: 1.5rem;
-            border-top: 2px solid #e1e5e9;
-        }
-
-        .message-input {
-            width: 100%;
-            padding: 1rem;
-            border: 2px solid #e1e5e9;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            resize: vertical;
-            min-height: 100px;
-            font-family: inherit;
-        }
-
-        .message-input:focus {
-            outline: none;
-            border-color: #3498db;
-        }
-
-        /* File Sharing */
-        .file-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .file-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 1rem;
-            background: #f8f9fa;
-            border: 2px solid #e1e5e9;
-            border-radius: 8px;
-            transition: all 0.2s ease;
-        }
-
-        .file-item:hover {
-            border-color: #3498db;
-        }
-
-        .file-info {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .file-icon {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.2rem;
-        }
-
-        .file-details h4 {
-            color: #2c3e50;
-            margin-bottom: 0.25rem;
-        }
-
-        .file-details p {
-            color: #7f8c8d;
-            font-size: 0.85rem;
-        }
-
-        .file-upload-area {
-            border: 2px dashed #e1e5e9;
-            border-radius: 8px;
-            padding: 2rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            margin-bottom: 1.5rem;
-        }
-
-        .file-upload-area:hover {
-            border-color: #3498db;
-            background: #f8f9fa;
-        }
-
-        .file-upload-area input {
-            display: none;
-        }
-
-        /* Blockers Section */
-        .blocker-item {
-            background: #fff5f5;
-            border: 2px solid #e74c3c;
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .blocker-title {
-            font-weight: 600;
-            color: #e74c3c;
-            margin-bottom: 0.5rem;
-        }
-
-        .blocker-description {
-            color: #2c3e50;
-            font-size: 0.95rem;
+            color: #3498db;
+            transform: none;
         }
 
         /* Empty State */
@@ -512,8 +637,12 @@
         }
 
         .empty-state h3 {
-            color: #2c3e50;
+            font-size: 1.25rem;
             margin-bottom: 0.5rem;
+        }
+
+        .empty-state p {
+            font-size: 0.95rem;
         }
 
         /* Connection Status */
@@ -521,40 +650,39 @@
             position: fixed;
             bottom: 2rem;
             right: 2rem;
-            padding: 0.75rem 1.5rem;
-            border-radius: 30px;
             background: white;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            font-size: 0.85rem;
-            font-weight: 600;
-            z-index: 999;
+            z-index: 1000;
         }
 
         .status-indicator {
-            width: 10px;
-            height: 10px;
+            width: 12px;
+            height: 12px;
             border-radius: 50%;
-            background: #95a5a6;
+            animation: pulse-status 2s infinite;
         }
 
-        .status-indicator.status-connected {
+        .status-connected {
             background: #27ae60;
-            animation: pulse 2s infinite;
         }
 
-        .status-indicator.status-error {
-            background: #e74c3c;
-        }
-
-        @keyframes pulse {
+        @keyframes pulse-status {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
         }
 
-        /* Loading Spinner */
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: #7f8c8d;
+        }
+
         .loading-spinner {
             width: 50px;
             height: 50px;
@@ -562,7 +690,7 @@
             border-top-color: #3498db;
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin: 2rem auto;
+            margin: 0 auto 1rem;
         }
 
         @keyframes spin {
@@ -570,88 +698,102 @@
         }
 
         /* Responsive */
-        @media (max-width: 1024px) {
-            .two-column {
-                grid-template-columns: 1fr;
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .client-tabs {
+                overflow-x: scroll;
+            }
+
+            .message-input-container {
+                flex-direction: column;
+            }
+
+            .message-actions {
+                flex-direction: row;
+                width: 100%;
             }
         }
     </style>
 </head>
 <body>
     <div class="app-container">
-        <!-- Sidebar -->
+        <!-- Sidebar Navigation -->
         <aside class="sidebar">
             <div class="sidebar-header">
                 <h1>Growth Manager Pro</h1>
-                <p>Client Acquisition System</p>
+                <p>Sprints Workspace</p>
             </div>
-            
+
             <nav>
                 <div class="nav-section">
-                    <div class="nav-section-title">Overview</div>
+                    <div class="nav-section-title">Navigation</div>
                     <a href="dashboard.html" class="nav-item">
-                        <span class="nav-icon">📊</span>
-                        Dashboard
-                    </a>
-                    <a href="contacts.html" class="nav-item">
-                        <span class="nav-icon">👥</span>
-                        Contacts
-                    </a>
-                </div>
-
-                <div class="nav-section">
-                    <div class="nav-section-title">Client Acquisition</div>
-                    <a href="podcast-calls.html" class="nav-item">
-                        <span class="nav-icon">🎙️</span>
-                        Podcast Calls
-                    </a>
-                    <a href="discovery-calls.html" class="nav-item">
-                        <span class="nav-icon">🔍</span>
-                        Discovery Calls
-                    </a>
-                    <a href="sales-calls.html" class="nav-item">
-                        <span class="nav-icon">💼</span>
-                        Sales Calls
-                    </a>
-                    <a href="pipeline.html" class="nav-item">
-                        <span class="nav-icon">📈</span>
-                        Pipeline
-                    </a>
-                    <a href="deals.html" class="nav-item">
-                        <span class="nav-icon">🤝</span>
-                        Deals
-                    </a>
-                </div>
-
-                <div class="nav-section">
-                    <div class="nav-section-title">Operations</div>
-                    <a href="cash-flow.html" class="nav-item">
-                        <span class="nav-icon">💰</span>
-                        Cash Flow
-                    </a>
-                    <a href="campaigns.html" class="nav-item">
-                        <span class="nav-icon">📧</span>
-                        Campaigns
+                        <div class="nav-item-content">
+                            <span class="nav-icon">📊</span>
+                            <span class="nav-item-text">Dashboard</span>
+                        </div>
                     </a>
                     <a href="sprints.html" class="nav-item active">
-                        <span class="nav-icon">⚡</span>
-                        Sprints
-                    </a>
-                    <a href="expense-tracker.html" class="nav-item">
-                        <span class="nav-icon">🧾</span>
-                        Expense Tracker
+                        <div class="nav-item-content">
+                            <span class="nav-icon">⚡</span>
+                            <span class="nav-item-text">Sprints Workspace</span>
+                        </div>
+                        <span class="notification-badge" id="tasks-badge">5</span>
                     </a>
                 </div>
 
                 <div class="nav-section">
-                    <div class="nav-section-title">Settings</div>
-                    <a href="availability.html" class="nav-item">
-                        <span class="nav-icon">📅</span>
-                        Availability
+                    <div class="nav-section-title">Dashboards</div>
+                    <a href="advisor-dashboard.html" class="nav-item">
+                        <div class="nav-item-content">
+                            <span class="nav-icon">🎯</span>
+                            <span class="nav-item-text">Advisor Dashboard</span>
+                        </div>
+                    </a>
+                    <a href="client-dashboard.html" class="nav-item">
+                        <div class="nav-item-content">
+                            <span class="nav-icon">👤</span>
+                            <span class="nav-item-text">Client Dashboard</span>
+                        </div>
+                    </a>
+                    <a href="client-success.html" class="nav-item">
+                        <div class="nav-item-content">
+                            <span class="nav-icon">🎯</span>
+                            <span class="nav-item-text">Client Success</span>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">System</div>
+                    <a href="pipeline.html" class="nav-item">
+                        <div class="nav-item-content">
+                            <span class="nav-icon">💼</span>
+                            <span class="nav-item-text">Pipeline</span>
+                        </div>
                     </a>
                     <a href="user-management.html" class="nav-item">
-                        <span class="nav-icon">⚙️</span>
-                        User Management
+                        <div class="nav-item-content">
+                            <span class="nav-icon">⚙️</span>
+                            <span class="nav-item-text">Users</span>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Account</div>
+                    <a href="login.html" class="nav-item">
+                        <div class="nav-item-content">
+                            <span class="nav-icon">🚪</span>
+                            <span class="nav-item-text">Logout</span>
+                        </div>
                     </a>
                 </div>
             </nav>
@@ -660,569 +802,638 @@
         <!-- Main Content -->
         <main class="main-content">
             <!-- Page Header -->
-            <header class="page-header">
-                <h2>⚡ Weekly Sprint Tracker</h2>
-                <p>Collaborative workspace with your advisor</p>
-                <div class="header-actions">
-                    <button class="btn btn-success" onclick="addTask()">+ Add Task</button>
-                    <button class="btn btn-primary" onclick="refreshData()">🔄 Refresh</button>
-                </div>
-            </header>
-
-            <!-- Stats Grid -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-label">🎙️ Podcast Calls</div>
-                    <div class="stat-value" id="podcast-calls">-</div>
-                    <div class="stat-change">This week</div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-label">🔍 Discovery Calls</div>
-                    <div class="stat-value" id="discovery-calls">-</div>
-                    <div class="stat-change">This week</div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-label">📊 Leads Generated</div>
-                    <div class="stat-value" id="leads-generated">-</div>
-                    <div class="stat-change">This week</div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-label">✅ Tasks Complete</div>
-                    <div class="stat-value" id="tasks-complete">-</div>
-                    <div class="stat-change" id="tasks-total">of - total</div>
-                </div>
+            <div class="page-header">
+                <h2>⚡ Sprints Workspace</h2>
+                <p class="page-subtitle">Action items needing your attention and private client communication</p>
             </div>
 
-            <!-- Two Column Layout -->
-            <div class="two-column">
-                <!-- Tasks Column -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3>📋 This Week's Tasks</h3>
-                        <span id="task-count">Loading...</span>
-                    </div>
-                    <div class="card-body">
-                        <div id="task-list" class="task-list">
-                            <div class="loading-spinner"></div>
+            <!-- Section 1: Action Items -->
+            <div class="section-container">
+                <div class="section-header">
+                    <h3>
+                        <span>🎯</span>
+                        <span>Action Items</span>
+                    </h3>
+                    <button class="btn btn-secondary btn-small" onclick="refreshTasks()">🔄 Refresh</button>
+                </div>
+                <div class="section-body">
+                    <!-- Podcast Exceptions -->
+                    <div class="action-category">
+                        <div class="category-header">
+                            <span class="category-icon">🎙️</span>
+                            <span class="category-title">Podcast Exceptions</span>
+                            <span class="category-count" id="podcast-count">0</span>
+                        </div>
+                        <div class="task-list" id="podcast-tasks">
+                            <div class="loading">
+                                <div class="loading-spinner"></div>
+                                <p>Loading tasks...</p>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Communication Column -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3>💬 Notes & Communication</h3>
-                    </div>
-                    <div class="card-body">
-                        <div id="communication-feed" class="communication-feed">
-                            <div class="loading-spinner"></div>
+                    <!-- Post-Discovery Actions -->
+                    <div class="action-category">
+                        <div class="category-header">
+                            <span class="category-icon">📞</span>
+                            <span class="category-title">Post-Discovery Actions</span>
+                            <span class="category-count" id="discovery-count">0</span>
                         </div>
-                        
-                        <div class="message-input-container">
-                            <textarea 
-                                id="message-input" 
-                                class="message-input" 
-                                placeholder="Add a note or message to your advisor..."></textarea>
-                            <button class="btn btn-primary btn-small" onclick="sendMessage()" style="margin-top: 1rem;">
-                                📤 Send Message
-                            </button>
+                        <div class="task-list" id="discovery-tasks">
+                            <div class="loading">
+                                <div class="loading-spinner"></div>
+                                <p>Loading tasks...</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
 
-            <!-- Blockers Section -->
-            <div class="card" style="margin-bottom: 2rem;">
-                <div class="card-header">
-                    <h3>🚨 Blockers & Stuck Items</h3>
-                    <button class="btn btn-secondary btn-small" onclick="addBlocker()">+ Add Blocker</button>
-                </div>
-                <div class="card-body">
-                    <div id="blockers-list">
-                        <div class="loading-spinner"></div>
+                    <!-- Post-Strategy Actions -->
+                    <div class="action-category">
+                        <div class="category-header">
+                            <span class="category-icon">💼</span>
+                            <span class="category-title">Post-Strategy Actions</span>
+                            <span class="category-count" id="strategy-count">0</span>
+                        </div>
+                        <div class="task-list" id="strategy-tasks">
+                            <div class="loading">
+                                <div class="loading-spinner"></div>
+                                <p>Loading tasks...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Client To-Dos -->
+                    <div class="action-category">
+                        <div class="category-header">
+                            <span class="category-icon">👥</span>
+                            <span class="category-title">client To-Dos</span>
+                            <span class="category-count" id="client-count">0</span>
+                        </div>
+                        <div class="task-list" id="client-tasks">
+                            <div class="loading">
+                                <div class="loading-spinner"></div>
+                                <p>Loading tasks...</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- File Sharing Section -->
-            <div class="card">
-                <div class="card-header">
-                    <h3>📎 Shared Files</h3>
+            <!-- Section 2: Client Communication Hub -->
+            <div class="section-container">
+                <div class="section-header">
+                    <h3>
+                        <span>💬</span>
+                        <span>Client Communication Hub</span>
+                    </h3>
+                    <button class="btn btn-secondary btn-small" onclick="refreshMessages()">🔄 Refresh</button>
                 </div>
-                <div class="card-body">
-                    <div class="file-upload-area" onclick="document.getElementById('file-input').click()">
-                        <input type="file" id="file-input" onchange="uploadFile()" multiple>
-                        <p style="font-size: 1.1rem; color: #2c3e50; margin-bottom: 0.5rem;">📁 Click to upload files</p>
-                        <p style="font-size: 0.9rem; color: #7f8c8d;">or drag and drop</p>
-                    </div>
-                    
-                    <div id="file-list" class="file-list">
-                        <div class="loading-spinner"></div>
-                    </div>
+                
+                <!-- Client Tabs -->
+                <div class="client-tabs" id="client-tabs">
+                    <!-- Tabs will be dynamically generated -->
+                </div>
+
+                <!-- Client Content Areas -->
+                <div id="client-contents">
+                    <!-- Content will be dynamically generated -->
                 </div>
             </div>
         </main>
 
         <!-- Connection Status -->
-        <div class="connection-status" id="connection-status">
-            <div class="status-indicator" id="status-indicator"></div>
-            <span id="status-text">Connecting...</span>
+        <div class="connection-status">
+            <div class="status-indicator status-connected" id="status-indicator"></div>
+            <span id="status-text">Live Connected</span>
         </div>
     </div>
 
-    <script>
-        const API_URL = 'https://growthmanagerpro-backend.vercel.app';
-        let tasksData = [];
-        let messagesData = [];
-        let blockersData = [];
-        let filesData = [];
+    <!-- Hidden file input -->
+    <input type="file" id="file-input" style="display: none;" onchange="handleFileUpload()">
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('[Sprints] Initializing...');
-            loadAllData();
+   
+<script src="auth-helper.js"></script>
+    
+<script>
+    // ====== AUTHENTICATION ======
+    (function() {
+        if (!AuthHelper.protectPage('sprints.html')) {
+            throw new Error('Unauthorized access');
+        }
+        AuthHelper.applyPermissions();
+    })();
+    
+    const API_URL = 'https://growthmanagerpro-backend.vercel.app';
+    const userRole = localStorage.getItem('userRole') || 'admin';
+    const userId = localStorage.getItem('userId');
+    
+    // Data stores
+    let tasksData = {
+        podcast: [],
+        discovery: [],
+        strategy: [],
+        client: []
+    };
+    
+    let clientsData = [];
+    let messagesData = {};
+    let activeClientId = null;
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('[Sprints] Initializing for role:', userRole);
+        loadAllData();
+        setInterval(loadAllData, 2 * 60 * 1000);
+    });
+
+    async function loadAllData() {
+        try {
+            await Promise.all([
+                loadTasks(),
+                loadClients(),
+                loadMessages()
+            ]);
+            updateTaskBadge();
+        } catch (error) {
+            console.error('[Sprints] Error loading data:', error);
+            loadDemoData();
+        }
+    }
+
+    async function loadTasks() {
+        try {
+            const response = await fetch(`${API_URL}/api/sprints/action-items`);
+            if (!response.ok) throw new Error('Failed to load tasks');
             
-            // Auto-refresh every 2 minutes
-            setInterval(loadAllData, 120000);
+            const result = await response.json();
+            tasksData = result.tasks || tasksData;
+            renderAllTasks();
+        } catch (error) {
+            console.error('[Sprints] Error loading tasks:', error);
+            loadDemoTasks();
+        }
+    }
+
+    function loadDemoTasks() {
+        tasksData = {
+            podcast: [
+                {
+                    id: 'p1',
+                    title: 'Sarah Johnson - Score 28, Requested Discovery',
+                    details: 'Despite low score, prospect is very interested. Review recording to assess fit.',
+                    date: '2 hours ago',
+                    completed: false
+                }
+            ],
+            discovery: [
+                {
+                    id: 'd1',
+                    title: 'Create Growth Plan for Jonathan (Brewer & Company)',
+                    details: 'Discovery call completed Oct 23. Prospect agreed to see offer. Build custom 7x ROI strategy.',
+                    date: 'Yesterday',
+                    client: 'Jonathan Brewer',
+                    completed: false
+                },
+                {
+                    id: 'd2',
+                    title: 'Prepare Strategy Call for Tye (TWS Construction)',
+                    details: 'Discovery went great! Build custom proposal focusing on contractor lead generation.',
+                    date: '2 days ago',
+                    client: 'Tye Shumway',
+                    completed: false
+                }
+            ],
+            strategy: [
+                {
+                    id: 's1',
+                    title: 'Onboard New Client: Sarah (Design Co)',
+                    details: 'Contract signed Oct 24. Set up in systems, send welcome materials, schedule kickoff.',
+                    date: 'Today',
+                    client: 'Sarah',
+                    completed: false
+                }
+            ],
+            client: [
+                {
+                    id: 'c1',
+                    title: 'Weekly Check-in with Jonathan',
+                    details: 'Review progress, discuss Q4 goals, address any blockers.',
+                    date: 'Tomorrow',
+                    client: 'Jonathan Brewer',
+                    completed: false
+                },
+                {
+                    id: 'c2',
+                    title: 'Review Q4 Results with Tye',
+                    details: 'Scheduled for Friday. Prepare performance report and recommendations.',
+                    date: 'Friday',
+                    client: 'Tye Shumway',
+                    completed: false
+                }
+            ]
+        };
+        renderAllTasks();
+    }
+
+    function renderAllTasks() {
+        renderTaskCategory('podcast', tasksData.podcast, 'podcast-tasks', 'podcast-count');
+        renderTaskCategory('discovery', tasksData.discovery, 'discovery-tasks', 'discovery-count');
+        renderTaskCategory('strategy', tasksData.strategy, 'strategy-tasks', 'strategy-count');
+        renderTaskCategory('client', tasksData.client, 'client-tasks', 'client-count');
+    }
+
+    function renderTaskCategory(category, tasks, containerId, countId) {
+        const container = document.getElementById(containerId);
+        const countEl = document.getElementById(countId);
+        
+        const incompleteTasks = tasks.filter(t => !t.completed);
+        countEl.textContent = incompleteTasks.length;
+        
+        if (tasks.length === 0) {
+            container.innerHTML = `
+                <div class="empty-category">
+                    ✅ No ${category} tasks - all clear!
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = tasks.map(task => `
+            <div class="task-item ${task.completed ? 'completed' : ''}" data-task-id="${task.id}">
+                <div class="task-checkbox ${task.completed ? 'checked' : ''}" onclick="toggleTask('${task.id}', '${category}')">
+                    ${task.completed ? '✓' : ''}
+                </div>
+                <div class="task-content">
+                    <div class="task-title">${task.title}</div>
+                    <div class="task-details">${task.details}</div>
+                    <div class="task-meta">
+                        <span>📅 ${task.date}</span>
+                        ${task.client ? `<span>👤 ${task.client}</span>` : ''}
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function toggleTask(taskId, category) {
+        const categoryTasks = tasksData[category];
+        const task = categoryTasks.find(t => t.id === taskId);
+        
+        if (task) {
+            task.completed = !task.completed;
+            renderAllTasks();
+            updateTaskBadge();
+        }
+    }
+
+    function updateTaskBadge() {
+        const totalIncomplete = 
+            tasksData.podcast.filter(t => !t.completed).length +
+            tasksData.discovery.filter(t => !t.completed).length +
+            tasksData.strategy.filter(t => !t.completed).length +
+            tasksData.client.filter(t => !t.completed).length;
+        
+        const badge = document.getElementById('tasks-badge');
+        if (badge) {
+            badge.textContent = totalIncomplete;
+            badge.style.display = totalIncomplete > 0 ? 'block' : 'none';
+        }
+    }
+
+    async function loadClients() {
+        try {
+            const response = await fetch(`${API_URL}/api/clients/active`);
+            if (!response.ok) throw new Error('Failed to load clients');
+            
+            const result = await response.json();
+            clientsData = result.clients || [];
+            renderClientTabs();
+        } catch (error) {
+            console.error('[Sprints] Error loading clients:', error);
+            loadDemoClients();
+        }
+    }
+
+    function loadDemoClients() {
+        clientsData = [
+            {
+                id: 'c1',
+                name: 'Jonathan Brewer',
+                company: 'Brewer & Company',
+                stage: 'Discovery',
+                unreadCount: 3
+            },
+            {
+                id: 'c2',
+                name: 'Tye Shumway',
+                company: 'TWS Construction',
+                stage: 'Strategy',
+                unreadCount: 0
+            },
+            {
+                id: 'c3',
+                name: 'Sarah Johnson',
+                company: 'Design Co',
+                stage: 'Client',
+                unreadCount: 1
+            }
+        ];
+        renderClientTabs();
+    }
+
+    function renderClientTabs() {
+        const tabsContainer = document.getElementById('client-tabs');
+        const contentsContainer = document.getElementById('client-contents');
+        
+        if (clientsData.length === 0) {
+            tabsContainer.innerHTML = '<p style="padding: 1rem; color: #7f8c8d;">No active clients yet</p>';
+            contentsContainer.innerHTML = '';
+            return;
+        }
+
+        tabsContainer.innerHTML = clientsData.map((client, index) => `
+            <button 
+                class="client-tab ${index === 0 ? 'active' : ''}" 
+                onclick="switchClient('${client.id}')"
+                data-client-id="${client.id}"
+            >
+                ${client.name}
+                ${client.unreadCount > 0 ? `
+                    <span class="client-tab-badge">${client.unreadCount}</span>
+                    <span class="attention-indicator"></span>
+                ` : ''}
+            </button>
+        `).join('');
+
+        contentsContainer.innerHTML = clientsData.map((client, index) => `
+            <div class="client-content ${index === 0 ? 'active' : ''}" data-client-id="${client.id}">
+                <div class="client-info-bar">
+                    <div class="client-info">
+                        <div class="client-avatar">${client.name.split(' ').map(n => n[0]).join('')}</div>
+                        <div class="client-details">
+                            <h4>${client.name}</h4>
+                            <p>${client.company}</p>
+                        </div>
+                    </div>
+                    <div class="client-status">Stage: ${client.stage}</div>
+                </div>
+
+                <div class="message-thread" id="messages-${client.id}">
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                        <p>Loading messages...</p>
+                    </div>
+                </div>
+
+                <div class="message-input-container">
+                    <textarea 
+                        class="message-input" 
+                        id="input-${client.id}"
+                        placeholder="Type your message to ${client.name}..."
+                    ></textarea>
+                    <div class="message-actions">
+                        <button class="btn btn-primary" onclick="sendMessage('${client.id}')">
+                            📤 Send
+                        </button>
+                        <button class="btn btn-icon" onclick="attachFile('${client.id}')" title="Attach File">
+                            📎
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+
+        if (clientsData.length > 0) {
+            activeClientId = clientsData[0].id;
+            loadClientMessages(activeClientId);
+        }
+    }
+
+    function switchClient(clientId) {
+        document.querySelectorAll('.client-tab').forEach(tab => {
+            if (tab.dataset.clientId === clientId) {
+                tab.classList.add('active');
+            } else {
+                tab.classList.remove('active');
+            }
         });
 
-        async function loadAllData() {
-            try {
-                updateConnectionStatus('connecting');
-                
-                await Promise.all([
-                    loadTasks(),
-                    loadMessages(),
-                    loadBlockers(),
-                    loadFiles(),
-                    loadStats()
-                ]);
-                
-                updateConnectionStatus('connected');
-            } catch (error) {
-                console.error('[Sprints] Error loading data:', error);
-                updateConnectionStatus('error');
+        document.querySelectorAll('.client-content').forEach(content => {
+            if (content.dataset.clientId === clientId) {
+                content.classList.add('active');
+            } else {
+                content.classList.remove('active');
             }
+        });
+
+        activeClientId = clientId;
+        
+        if (!messagesData[clientId]) {
+            loadClientMessages(clientId);
         }
 
-        async function loadTasks() {
-            try {
-                const response = await fetch(`${API_URL}/api/sprints/tasks`);
-                if (!response.ok) throw new Error('Failed to load tasks');
-                
-                const result = await response.json();
-                tasksData = result.tasks || [];
-                renderTasks();
-            } catch (error) {
-                console.error('[Sprints] Error loading tasks:', error);
-                renderTasksError();
-            }
-        }
+        markMessagesRead(clientId);
+    }
 
-        function renderTasks() {
-            const container = document.getElementById('task-list');
-            const taskCount = document.getElementById('task-count');
+    async function loadMessages() {
+        for (const client of clientsData) {
+            await loadClientMessages(client.id);
+        }
+    }
+
+    async function loadClientMessages(clientId) {
+        try {
+            const response = await fetch(`${API_URL}/api/clients/${clientId}/messages`);
+            if (!response.ok) throw new Error('Failed to load messages');
             
-            if (tasksData.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <h3>No tasks yet</h3>
-                        <p>Click "Add Task" to create your first task</p>
-                    </div>
-                `;
-                taskCount.textContent = '0 tasks';
-                return;
-            }
-
-            const completedCount = tasksData.filter(t => t.status === 'done').length;
-            taskCount.textContent = `${completedCount}/${tasksData.length} complete`;
-
-            container.innerHTML = tasksData.map(task => {
-                const statusClass = `status-${task.status || 'todo'}`;
-                const isBlocked = task.status === 'blocked';
-                
-                return `
-                    <div class="task-item ${isBlocked ? 'blocked' : ''}">
-                        <div class="task-header">
-                            <div class="task-title">${task.title}</div>
-                            <span class="status-badge ${statusClass}">${task.status || 'To Do'}</span>
-                        </div>
-                        <div class="task-meta">
-                            <span>👤 ${task.assigned_to || 'Unassigned'}</span>
-                            ${task.due_date ? `<span>📅 ${new Date(task.due_date).toLocaleDateString()}</span>` : ''}
-                        </div>
-                        ${task.notes ? `<p style="margin-top: 0.75rem; color: #7f8c8d; font-size: 0.9rem;">${task.notes}</p>` : ''}
-                        <div class="task-actions">
-                            <button class="btn btn-small btn-primary" onclick="updateTaskStatus('${task.id}', 'done')">
-                                ✅ Mark Done
-                            </button>
-                            <button class="btn btn-small btn-secondary" onclick="editTask('${task.id}')">
-                                ✏️ Edit
-                            </button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
+            const result = await response.json();
+            messagesData[clientId] = result.messages || [];
+            renderMessages(clientId);
+        } catch (error) {
+            console.error('[Sprints] Error loading messages:', error);
+            loadDemoMessages(clientId);
         }
+    }
 
-        function renderTasksError() {
-            document.getElementById('task-list').innerHTML = `
+    function loadDemoMessages(clientId) {
+        const demoMessages = {
+            'c1': [
+                {
+                    id: 'm1',
+                    from: 'client',
+                    author: 'Jonathan',
+                    text: 'Hey Maggie, here\'s our company logo and brand colors as requested!',
+                    time: '2 hours ago',
+                    attachments: [
+                        { name: 'brewer-logo.png', type: 'image' },
+                        { name: 'brand-guidelines.pdf', type: 'pdf' }
+                    ]
+                },
+                {
+                    id: 'm2',
+                    from: 'you',
+                    author: 'You',
+                    text: 'Perfect! I\'ll incorporate these into your growth plan. Draft will be ready by Friday.',
+                    time: '1 hour ago',
+                    attachments: []
+                },
+                {
+                    id: 'm3',
+                    from: 'client',
+                    author: 'Jonathan',
+                    text: 'Great! Also, can we schedule our strategy call for next Tuesday afternoon?',
+                    time: '30 minutes ago',
+                    attachments: []
+                }
+            ],
+            'c2': [
+                {
+                    id: 'm4',
+                    from: 'you',
+                    author: 'You',
+                    text: 'Hi Tye! Your custom growth plan is attached. Let me know your thoughts!',
+                    time: 'Yesterday',
+                    attachments: [
+                        { name: 'TWS-Growth-Plan.pdf', type: 'pdf' }
+                    ]
+                },
+                {
+                    id: 'm5',
+                    from: 'client',
+                    author: 'Tye',
+                    text: 'This looks amazing, Maggie! Love the ROI projections. Let\'s discuss implementation on our call.',
+                    time: '12 hours ago',
+                    attachments: []
+                }
+            ],
+            'c3': [
+                {
+                    id: 'm6',
+                    from: 'client',
+                    author: 'Sarah',
+                    text: 'Quick question - can we adjust the timeline for phase 2 by a week?',
+                    time: '3 hours ago',
+                    attachments: []
+                }
+            ]
+        };
+
+        messagesData[clientId] = demoMessages[clientId] || [];
+        renderMessages(clientId);
+    }
+
+    function renderMessages(clientId) {
+        const container = document.getElementById(`messages-${clientId}`);
+        const messages = messagesData[clientId] || [];
+        
+        if (messages.length === 0) {
+            container.innerHTML = `
                 <div class="empty-state">
-                    <h3>⚠️ Unable to load tasks</h3>
-                    <button class="btn btn-primary" onclick="loadTasks()">Retry</button>
+                    <p>No messages yet. Start the conversation!</p>
                 </div>
             `;
+            return;
         }
 
-        async function loadMessages() {
-            try {
-                const response = await fetch(`${API_URL}/api/sprints/messages`);
-                if (!response.ok) throw new Error('Failed to load messages');
-                
-                const result = await response.json();
-                messagesData = result.messages || [];
-                renderMessages();
-            } catch (error) {
-                console.error('[Sprints] Error loading messages:', error);
-                renderMessagesError();
-            }
-        }
-
-        function renderMessages() {
-            const container = document.getElementById('communication-feed');
-            
-            if (messagesData.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <p>No messages yet. Start the conversation!</p>
+        container.innerHTML = messages.map(msg => `
+            <div class="message from-${msg.from}">
+                <div class="message-avatar">${msg.author[0]}</div>
+                <div class="message-content">
+                    <div class="message-header">
+                        <span class="message-author">${msg.author}</span>
+                        <span class="message-time">${msg.time}</span>
                     </div>
-                `;
-                return;
-            }
-
-            container.innerHTML = messagesData.map(msg => {
-                const isAdvisor = msg.author === 'advisor';
-                const initials = msg.author === 'advisor' ? 'AD' : 'MF';
-                
-                return `
-                    <div class="message">
-                        <div class="message-avatar ${isAdvisor ? 'advisor' : ''}">${initials}</div>
-                        <div class="message-content">
-                            <div class="message-header">
-                                <span class="message-author">${isAdvisor ? 'Advisor' : 'Maggie'}</span>
-                                <span class="message-time">${formatDate(msg.created_at)}</span>
-                            </div>
-                            <div class="message-text">${msg.message}</div>
+                    <div class="message-text">${msg.text}</div>
+                    ${msg.attachments && msg.attachments.length > 0 ? `
+                        <div class="message-attachments">
+                            ${msg.attachments.map(att => `
+                                <div class="attachment" onclick="downloadAttachment('${att.name}')">
+                                    <span>📎</span>
+                                    <span>${att.name}</span>
+                                </div>
+                            `).join('')}
                         </div>
-                    </div>
-                `;
-            }).join('');
-
-            // Scroll to bottom
-            container.scrollTop = container.scrollHeight;
-        }
-
-        function renderMessagesError() {
-            document.getElementById('communication-feed').innerHTML = `
-                <div class="empty-state">
-                    <h3>⚠️ Unable to load messages</h3>
-                    <button class="btn btn-primary" onclick="loadMessages()">Retry</button>
+                    ` : ''}
                 </div>
-            `;
+            </div>
+        `).join('');
+
+        container.scrollTop = container.scrollHeight;
+    }
+
+    function sendMessage(clientId) {
+        const input = document.getElementById(`input-${clientId}`);
+        const text = input.value.trim();
+        
+        if (!text) {
+            alert('Please enter a message');
+            return;
         }
 
-        async function sendMessage() {
-            const input = document.getElementById('message-input');
-            const message = input.value.trim();
-            
-            if (!message) {
-                alert('Please enter a message');
-                return;
-            }
-
-            try {
-                const response = await fetch(`${API_URL}/api/sprints/messages`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        message,
-                        author: 'maggie'
-                    })
-                });
-
-                if (!response.ok) throw new Error('Failed to send message');
-
-                input.value = '';
-                await loadMessages();
-            } catch (error) {
-                console.error('[Sprints] Error sending message:', error);
-                alert('Failed to send message. Please try again.');
-            }
+        if (!messagesData[clientId]) {
+            messagesData[clientId] = [];
         }
 
-        async function loadBlockers() {
-            try {
-                const response = await fetch(`${API_URL}/api/sprints/blockers`);
-                if (!response.ok) throw new Error('Failed to load blockers');
-                
-                const result = await response.json();
-                blockersData = result.blockers || [];
-                renderBlockers();
-            } catch (error) {
-                console.error('[Sprints] Error loading blockers:', error);
-                renderBlockersError();
-            }
+        messagesData[clientId].push({
+            id: 'm' + Date.now(),
+            from: 'you',
+            author: 'You',
+            text: text,
+            time: 'Just now',
+            attachments: []
+        });
+
+        input.value = '';
+        renderMessages(clientId);
+        console.log('Sending message to', clientId, ':', text);
+    }
+
+    function attachFile(clientId) {
+        const input = document.getElementById('file-input');
+        input.dataset.clientId = clientId;
+        input.click();
+    }
+
+    function handleFileUpload() {
+        const input = document.getElementById('file-input');
+        const clientId = input.dataset.clientId;
+        const files = input.files;
+        
+        if (files.length === 0) return;
+
+        alert(`📤 Uploading ${files[0].name} to ${clientsData.find(c => c.id === clientId)?.name}...`);
+        console.log('Uploading file to', clientId, ':', files[0].name);
+        input.value = '';
+    }
+
+    function downloadAttachment(filename) {
+        alert(`📥 Downloading ${filename}...`);
+        console.log('Downloading:', filename);
+    }
+
+    function markMessagesRead(clientId) {
+        const client = clientsData.find(c => c.id === clientId);
+        if (client) {
+            client.unreadCount = 0;
+            renderClientTabs();
         }
+    }
 
-        function renderBlockers() {
-            const container = document.getElementById('blockers-list');
-            
-            if (blockersData.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <p>🎉 No blockers! Everything is on track.</p>
-                    </div>
-                `;
-                return;
-            }
+    function refreshTasks() {
+        loadTasks();
+    }
 
-            container.innerHTML = blockersData.map(blocker => `
-                <div class="blocker-item">
-                    <div class="blocker-title">🚨 ${blocker.title}</div>
-                    <div class="blocker-description">${blocker.description}</div>
-                    <button class="btn btn-small btn-success" onclick="resolveBlocker('${blocker.id}')" style="margin-top: 0.75rem;">
-                        ✅ Mark Resolved
-                    </button>
-                </div>
-            `).join('');
-        }
+    function refreshMessages() {
+        loadMessages();
+    }
 
-        function renderBlockersError() {
-            document.getElementById('blockers-list').innerHTML = `
-                <div class="empty-state">
-                    <h3>⚠️ Unable to load blockers</h3>
-                    <button class="btn btn-primary" onclick="loadBlockers()">Retry</button>
-                </div>
-            `;
-        }
+    function loadDemoData() {
+        loadDemoTasks();
+        loadDemoClients();
+    }
 
-        async function loadFiles() {
-            try {
-                const response = await fetch(`${API_URL}/api/sprints/files`);
-                if (!response.ok) throw new Error('Failed to load files');
-                
-                const result = await response.json();
-                filesData = result.files || [];
-                renderFiles();
-            } catch (error) {
-                console.error('[Sprints] Error loading files:', error);
-                renderFilesError();
-            }
-        }
-
-        function renderFiles() {
-            const container = document.getElementById('file-list');
-            
-            if (filesData.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <p>No files shared yet</p>
-                    </div>
-                `;
-                return;
-            }
-
-            container.innerHTML = filesData.map(file => `
-                <div class="file-item">
-                    <div class="file-info">
-                        <div class="file-icon">📄</div>
-                        <div class="file-details">
-                            <h4>${file.filename}</h4>
-                            <p>Uploaded ${formatDate(file.created_at)} • ${file.uploaded_by}</p>
-                        </div>
-                    </div>
-                    <button class="btn btn-small btn-secondary" onclick="downloadFile('${file.id}')">
-                        ⬇️ Download
-                    </button>
-                </div>
-            `).join('');
-        }
-
-        function renderFilesError() {
-            document.getElementById('file-list').innerHTML = `
-                <div class="empty-state">
-                    <h3>⚠️ Unable to load files</h3>
-                    <button class="btn btn-primary" onclick="loadFiles()">Retry</button>
-                </div>
-            `;
-        }
-
-        async function loadStats() {
-            try {
-                const response = await fetch(`${API_URL}/api/sprints/stats`);
-                if (!response.ok) throw new Error('Failed to load stats');
-                
-                const result = await response.json();
-                const stats = result.stats || {};
-                
-                document.getElementById('podcast-calls').textContent = stats.podcast_calls || 0;
-                document.getElementById('discovery-calls').textContent = stats.discovery_calls || 0;
-                document.getElementById('leads-generated').textContent = stats.leads_generated || 0;
-                document.getElementById('tasks-complete').textContent = stats.tasks_completed || 0;
-                document.getElementById('tasks-total').textContent = `of ${stats.tasks_total || 0} total`;
-            } catch (error) {
-                console.error('[Sprints] Error loading stats:', error);
-            }
-        }
-
-        // Action Functions
-        async function addTask() {
-            const title = prompt('Task title:');
-            if (!title) return;
-            
-            const assignedTo = prompt('Assigned to (leave blank for yourself):') || 'Maggie';
-            const dueDate = prompt('Due date (YYYY-MM-DD):');
-            
-            try {
-                const response = await fetch(`${API_URL}/api/sprints/tasks`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        title,
-                        assigned_to: assignedTo,
-                        due_date: dueDate || null,
-                        status: 'todo'
-                    })
-                });
-
-                if (!response.ok) throw new Error('Failed to add task');
-
-                await loadTasks();
-                await loadStats();
-            } catch (error) {
-                console.error('[Sprints] Error adding task:', error);
-                alert('Failed to add task. Please try again.');
-            }
-        }
-
-        async function updateTaskStatus(taskId, status) {
-            try {
-                const response = await fetch(`${API_URL}/api/sprints/tasks/${taskId}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ status })
-                });
-
-                if (!response.ok) throw new Error('Failed to update task');
-
-                await loadTasks();
-                await loadStats();
-            } catch (error) {
-                console.error('[Sprints] Error updating task:', error);
-                alert('Failed to update task. Please try again.');
-            }
-        }
-
-        async function editTask(taskId) {
-            alert('Edit task feature coming soon!');
-        }
-
-        async function addBlocker() {
-            const title = prompt('Blocker title:');
-            if (!title) return;
-            
-            const description = prompt('Describe the blocker:');
-            if (!description) return;
-            
-            try {
-                const response = await fetch(`${API_URL}/api/sprints/blockers`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ title, description })
-                });
-
-                if (!response.ok) throw new Error('Failed to add blocker');
-
-                await loadBlockers();
-            } catch (error) {
-                console.error('[Sprints] Error adding blocker:', error);
-                alert('Failed to add blocker. Please try again.');
-            }
-        }
-
-        async function resolveBlocker(blockerId) {
-            try {
-                const response = await fetch(`${API_URL}/api/sprints/blockers/${blockerId}`, {
-                    method: 'DELETE'
-                });
-
-                if (!response.ok) throw new Error('Failed to resolve blocker');
-
-                await loadBlockers();
-            } catch (error) {
-                console.error('[Sprints] Error resolving blocker:', error);
-                alert('Failed to resolve blocker. Please try again.');
-            }
-        }
-
-        async function uploadFile() {
-            const input = document.getElementById('file-input');
-            const files = input.files;
-            
-            if (files.length === 0) return;
-
-            alert('File upload feature coming soon! Files will be stored and shared with your advisor.');
-            input.value = '';
-        }
-
-        async function downloadFile(fileId) {
-            alert('Download feature coming soon!');
-        }
-
-        function refreshData() {
-            loadAllData();
-        }
-
-        function updateConnectionStatus(status) {
-            const indicator = document.getElementById('status-indicator');
-            const text = document.getElementById('status-text');
-            
-            if (status === 'connected') {
-                indicator.className = 'status-indicator status-connected';
-                text.textContent = 'Live Connected';
-            } else if (status === 'error') {
-                indicator.className = 'status-indicator status-error';
-                text.textContent = 'Connection Error';
-            } else if (status === 'connecting') {
-                indicator.className = 'status-indicator';
-                indicator.style.background = '#f39c12';
-                text.textContent = 'Connecting...';
-            }
-        }
-
-        function formatDate(dateString) {
-            if (!dateString) return '';
-            const date = new Date(dateString);
-            const now = new Date();
-            const diff = now - date;
-            const hours = Math.floor(diff / 3600000);
-            
-            if (hours < 1) return 'Just now';
-            if (hours < 24) return `${hours}h ago`;
-            if (hours < 48) return 'Yesterday';
-            
-            return date.toLocaleDateString('en-US', { 
-                month: 'short', 
-                day: 'numeric'
-            });
-        }
-
-        // Log system info
-        console.log('[Sprints] System initialized');
-        console.log('[Sprints] API Endpoint:', API_URL);
-    </script>
+    console.log('[Sprints] System initialized');
+    console.log('[Sprints] API Endpoint:', API_URL);
+</script>
 </body>
 </html>

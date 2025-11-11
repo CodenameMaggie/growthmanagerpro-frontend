@@ -1,9 +1,490 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta http-equiv="refresh" content="0; url=dashboard.html">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Growth Manager Pro - Enterprise Growth Without Enterprise Complexity</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+        
+        /* Navigation */
+        .nav {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+        
+        .nav-link {
+            color: #5a6c7d;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+        
+        .nav-link:hover {
+            color: #3498db;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #3498db;
+            border: 2px solid #3498db;
+        }
+        
+        .btn-secondary:hover {
+            background: #3498db;
+            color: white;
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            padding: 8rem 2rem 6rem;
+            margin-top: 70px;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: rgba(52, 152, 219, 0.15);
+            border-radius: 50%;
+            top: -300px;
+            right: -200px;
+            animation: float 25s infinite ease-in-out;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-40px) scale(1.08); }
+        }
+        
+        .hero-content {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+        }
+        
+        .hero p {
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            opacity: 0.95;
+            font-weight: 500;
+        }
+        
+        .tagline {
+            font-size: 1.1rem;
+            padding: 0.75rem 1.5rem;
+            background: rgba(255,255,255,0.2);
+            border-radius: 30px;
+            display: inline-block;
+            margin-bottom: 3rem;
+            backdrop-filter: blur(10px);
+        }
+        
+        .hero-cta {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .hero .btn {
+            padding: 1.25rem 2.5rem;
+            font-size: 1.1rem;
+        }
+        
+        /* Features Section */
+        .section {
+            padding: 6rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+        
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+        }
+        
+        .section-subtitle {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
+        }
+        
+        .feature-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.12);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .feature-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+        }
+        
+        .feature-description {
+            font-size: 1.05rem;
+            color: #5a6c7d;
+            line-height: 1.7;
+        }
+        
+        /* Benefits Section */
+        .benefits-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e8f4f8 100%);
+        }
+        
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+        
+        .benefits-content h3 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: #2c3e50;
+        }
+        
+        .benefit-item {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .benefit-icon {
+            flex-shrink: 0;
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .benefit-text {
+            font-size: 1.1rem;
+            color: #5a6c7d;
+        }
+        
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            text-align: center;
+        }
+        
+        .cta-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .cta-section p {
+            font-size: 1.2rem;
+            margin-bottom: 2.5rem;
+            opacity: 0.9;
+        }
+        
+        /* Footer */
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+        
+        .footer p {
+            opacity: 0.8;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1.2rem;
+            }
+            
+            .benefits-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-links {
+                gap: 1rem;
+            }
+            
+            .section {
+                padding: 4rem 1.5rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    <p>Redirecting to dashboard...</p>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <div class="logo">Growth Manager Pro</div>
+            <div class="nav-links">
+                <a href="login.html" class="nav-link">Login</a>
+                <a href="signup-saas.html" class="btn btn-secondary">For Businesses</a>
+                <a href="signup-consultant.html" class="btn btn-primary">For Consultants</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Enterprise Growth<br>Without Enterprise Complexity</h1>
+            <p>The complete growth management system for B2B businesses scaling from $3M to $25M+</p>
+            <div class="tagline">Strategic Growth Architecture™</div>
+            <div class="hero-cta">
+                <a href="signup-saas.html" class="btn btn-primary">For Businesses</a>
+                <a href="signup-consultant.html" class="btn btn-primary">For Consultants</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="section" id="features">
+        <div class="section-header">
+            <h2 class="section-title">Everything You Need to Scale</h2>
+            <p class="section-subtitle">
+                Automate your client acquisition pipeline from first contact to closed deal
+            </p>
+        </div>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🎙️</div>
+                <h3 class="feature-title">Podcast Pipeline</h3>
+                <p class="feature-description">
+                    Track guest appearances, automatically analyze conversations with AI, and convert listeners into qualified leads
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🤖</div>
+                <h3 class="feature-title">AI Call Analysis</h3>
+                <p class="feature-description">
+                    Automatic transcript analysis scores every call, identifies buying signals, and triggers the next step in your pipeline
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">📧</div>
+                <h3 class="feature-title">Smart Email Automation</h3>
+                <p class="feature-description">
+                    Integrated with SmartLead for seamless follow-up campaigns that nurture prospects through discovery to close
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3 class="feature-title">Real-Time Pipeline</h3>
+                <p class="feature-description">
+                    Visual pipeline tracking from pre-qual through strategy calls with automated stage progression
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">💰</div>
+                <h3 class="feature-title">Cash Flow Tracking</h3>
+                <p class="feature-description">
+                    Monitor deals, forecast revenue, and track actual cash flow against projections in real-time
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">👥</div>
+                <h3 class="feature-title">Client Portals</h3>
+                <p class="feature-description">
+                    Give clients branded access to their progress, deliverables, and communication history
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="section benefits-section">
+        <div class="benefits-grid">
+            <div class="benefits-content">
+                <h3>Built for B2B Growth Teams</h3>
+                <div class="benefit-item">
+                    <div class="benefit-icon">✓</div>
+                    <div class="benefit-text">Eliminate manual data entry with automated call capture and analysis</div>
+                </div>
+                <div class="benefit-item">
+                    <div class="benefit-icon">✓</div>
+                    <div class="benefit-text">Never lose a lead with intelligent pipeline automation</div>
+                </div>
+                <div class="benefit-item">
+                    <div class="benefit-icon">✓</div>
+                    <div class="benefit-text">Scale your team with role-based access for advisors and clients</div>
+                </div>
+                <div class="benefit-item">
+                    <div class="benefit-icon">✓</div>
+                    <div class="benefit-text">Get real-time visibility into your entire growth engine</div>
+                </div>
+                <div class="benefit-item">
+                    <div class="benefit-icon">✓</div>
+                    <div class="benefit-text">14-day free trial · No credit card required · Cancel anytime</div>
+                </div>
+            </div>
+            <div class="benefits-visual">
+                <div class="feature-card" style="margin-bottom: 2rem;">
+                    <h4 style="font-size: 1.3rem; margin-bottom: 1rem; color: #2c3e50;">Perfect For:</h4>
+                    <p style="font-size: 1.05rem; color: #5a6c7d; line-height: 1.8; margin-bottom: 1.5rem;">
+                        <strong style="color: #2c3e50;">B2B leaders and service providers.</strong><br>
+                        Build visibility, strengthen client relationships, and expand your network through meaningful conversations that drive real business growth.
+                    </p>
+                    <ul style="list-style: none; font-size: 0.95rem; color: #5a6c7d;">
+                        <li style="padding: 0.5rem 0; display: flex; align-items: center; gap: 0.75rem;">
+                            <span style="color: #27ae60; font-weight: bold;">✓</span>
+                            <span>Consultants & coaches building their practice</span>
+                        </li>
+                        <li style="padding: 0.5rem 0; display: flex; align-items: center; gap: 0.75rem;">
+                            <span style="color: #27ae60; font-weight: bold;">✓</span>
+                            <span>Service providers deepening client relationships</span>
+                        </li>
+                        <li style="padding: 0.5rem 0; display: flex; align-items: center; gap: 0.75rem;">
+                            <span style="color: #27ae60; font-weight: bold;">✓</span>
+                            <span>Leaders expanding their professional network</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="section cta-section">
+        <h2>Ready to Scale Your Growth?</h2>
+        <p>Choose the plan that fits your business. Start your 14-day free trial today.</p>
+        <div style="display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; margin-top: 2rem;">
+            <a href="signup-saas.html" class="btn btn-primary" style="background: white; color: #3498db; font-size: 1.1rem; padding: 1.15rem 2.5rem;">
+                For Businesses
+            </a>
+            <a href="signup-consultant.html" class="btn btn-primary" style="background: rgba(255,255,255,0.2); color: white; font-size: 1.1rem; padding: 1.15rem 2.5rem; border: 2px solid white;">
+                For Consultants
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p><strong>Maggie Forbes Strategies</strong></p>
+        <p>Empowering B2B Growth Through Strategic Growth Architecture</p>
+        <p style="margin-top: 1.5rem; opacity: 0.6;">© 2025 Growth Manager Pro. All rights reserved.</p>
+    </footer>
 </body>
 </html>
