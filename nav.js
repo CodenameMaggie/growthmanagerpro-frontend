@@ -21,6 +21,7 @@ const NavComponent = {
         sales: [
             { name: 'Pipeline', url: 'pipeline.html', icon: '📈', roles: ['admin', 'advisor', 'saas'] },
             { name: 'Deals', url: 'deals.html', icon: '🤝', roles: ['admin', 'advisor', 'consultant', 'saas'] },
+            { name: 'Client Success', url: 'client-success.html', icon: '🎯', roles: ['admin', 'advisor', 'consultant', 'saas'] },
             { name: 'Cash Flow', url: 'cash-flow.html', icon: '💰', roles: ['admin', 'saas'] },
             { name: 'Expense Tracker', url: 'expense-tracker.html', icon: '💳', roles: ['admin', 'saas'] }
         ],
